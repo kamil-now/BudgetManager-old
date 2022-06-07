@@ -4,14 +4,17 @@ public class Budget
 {
   public IEnumerable<Account> Accounts { get; }
   public IEnumerable<Fund> Funds { get; }
+  public SpendingFund SpendingFund { get; }
   private IEnumerable<MoneyOperation> Operations { get; }
 
   public Budget(
+    SpendingFund spendingFund,
     IEnumerable<Account> accounts,
     IEnumerable<Fund> funds,
     IEnumerable<MoneyOperation> operations
     )
   {
+    SpendingFund = spendingFund;
     Accounts = accounts;
     Funds = funds;
     Operations = operations;
