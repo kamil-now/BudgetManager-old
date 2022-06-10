@@ -14,12 +14,23 @@ builder.Services.AddApplicationServices();
 
 var app = builder.Build();
 
+app.UseStaticFiles(
+  new StaticFileOptions
+  {
+    FileProvider = new PhysicalFileProvider(
+      Path.Combine(builder.Environment.ContentRootPath, "Assets")
+      ),
+    RequestPath = "/assets"
+  }
+);
+
 if (app.Environment.IsDevelopment())
 {
   app.UseSwagger();
   app.UseSwaggerUI(c =>
   {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", $"{builder.Environment.ApplicationName} v1");
+    c.InjectStylesheet("/assets/swagger-dark.css");
   });
 }
 
