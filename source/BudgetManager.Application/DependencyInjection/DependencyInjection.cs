@@ -1,6 +1,7 @@
 namespace BudgetManager.Application.DependencyInjection;
 
 using System.Reflection;
+using BudgetManager.Infrastructure.DependencyInjection;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,6 +15,8 @@ public static class DependencyInjection
     services.AddMediatR(Assembly.GetExecutingAssembly());
 
     RegisterValidators(services);
+
+    services.UseMongoDB("");
 
     return services;
   }
