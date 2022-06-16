@@ -1,6 +1,3 @@
-using FluentValidation;
-using MediatR;
-
 public record BalanceDto(Dictionary<string, decimal> currencyAmounts);
 public record BalanceRequest(int UserId) : IRequest<BalanceDto>;
 

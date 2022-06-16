@@ -1,8 +1,5 @@
 namespace BudgetManager.Application.DependencyInjection;
 
-using FluentValidation;
-using MediatR;
-
 internal sealed class RequestValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IRequest<TResponse>
 {
