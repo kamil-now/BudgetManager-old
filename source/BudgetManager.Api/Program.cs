@@ -1,14 +1,38 @@
 using System.Net;
+using BudgetManager.Api.Extensions;
 using BudgetManager.Application.DependencyInjection;
 using MediatR;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Identity.Web;
+using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Annotations;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+builder.Services.AddMicrosoftIdentityWebApiAuthentication(builder.Configuration);
+
+var tenantIdUri = builder.Configuration["AzureAd:Instance"] + builder.Configuration["AzureAd:TenantId"];
+
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c => c.EnableAnnotations());
+builder.Services.AddSwaggerGen(options =>
+{
+  options.EnableAnnotations();
+  options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+  {
+    Type = SecuritySchemeType.OAuth2,
+    Flows = new OpenApiOAuthFlows
+    {
+      Implicit = new OpenApiOAuthFlow
+      {
+        AuthorizationUrl = new Uri($"{tenantIdUri}/oauth2/v2.0/authorize"),
+        TokenUrl = new Uri($"{tenantIdUri}/oauth2/v2.0/token"),
+        Scopes = new Dictionary<string, string> { { $"{builder.Configuration["AzureAd:Audience"]}/full", "full access" } }
+      }
+    }
+  });
+  options.OperationFilter<AuthenticationOperationFilter>();
+});
 
 builder.Services.AddApplicationServices();
 
@@ -24,31 +48,28 @@ app.UseStaticFiles(
   }
 );
 
-if (app.Environment.IsDevelopment())
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-  app.UseSwagger();
-  app.UseSwaggerUI(c =>
-  {
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", $"{builder.Environment.ApplicationName} v1");
-    c.InjectStylesheet("/assets/swagger-dark.css");
-  });
-}
+  c.SwaggerEndpoint("/swagger/v1/swagger.json", $"{builder.Environment.ApplicationName} v1");
+  c.InjectStylesheet("/assets/swagger-dark.css");
+  c.OAuthClientId(builder.Configuration["AzureAd:ClientId"]);
+});
 
 app.UseHttpsRedirection();
 
 app.MapGet("/balance",
-  [
-    SwaggerOperation(
-      Summary = "User account balance",
-      Description = "Overall balance in a form of a dictionary with currency codes as keys")
-  ]
-[SwaggerResponse((int)HttpStatusCode.BadRequest, "User with the specified id does not exist")]
+  [SwaggerOperation(Summary = "Gets user overall balance in a form of a dictionary with currency codes as keys")]
 async (
+  HttpContext context,
   IMediator mediator,
-  CancellationToken cancellationToken,
-  [FromQuery] int userId
+  CancellationToken cancellationToken
   )
-  => Results.Ok(await mediator.Send(new BalanceRequest(userId), cancellationToken)))
-.Produces<BalanceDto>();
+  => Results.Ok(await mediator.Send(new BalanceRequest(context.GetUserId()), cancellationToken)))
+.Produces<BalanceDto>()
+.RequireAuthorization();
 
 app.Run();
