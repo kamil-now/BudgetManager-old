@@ -73,4 +73,5 @@ async (
 .Produces<BalanceDto>()
 .RequireAuthorization();
 
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.Run();
