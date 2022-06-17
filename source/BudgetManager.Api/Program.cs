@@ -54,6 +54,7 @@ app.UseAuthorization();
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
+  c.OAuthScopes($"{builder.Configuration["AzureAd:Audience"]}/full");
   c.SwaggerEndpoint("/swagger/v1/swagger.json", $"{builder.Environment.ApplicationName} v1");
   c.InjectStylesheet("/assets/swagger-dark.css");
   c.OAuthClientId(builder.Configuration["AzureAd:ClientId"]);
