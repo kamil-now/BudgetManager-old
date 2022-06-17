@@ -4,23 +4,14 @@ using System.Reflection;
 using BudgetManager.Infrastructure.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 
-
 public static class DependencyInjection
 {
   public static IServiceCollection AddApplicationServices(this IServiceCollection services)
-  {
-    services.AddAutoMapper(Assembly.GetExecutingAssembly());
-    services.AddMediatR(Assembly.GetExecutingAssembly());
+   => services.AddAutoMapper(Assembly.GetExecutingAssembly())
+    .AddMediatR(Assembly.GetExecutingAssembly())
+    .AddValidatorsFromAssembly(Assembly.GetExecutingAssembly())
+    .AddScoped(typeof(IPipelineBehavior<,>), typeof(RequestValidationBehavior<,>));
 
-    RegisterValidators(services);
-
-    services.UseMongoDB("");
-
-    return services;
-  }
-  private static void RegisterValidators(IServiceCollection services)
-  {
-    services.AddTransient<IValidator<BalanceRequest>, BalanceRequestValidator>();
-    services.AddScoped(typeof(IPipelineBehavior<,>), typeof(RequestValidationBehavior<,>));
-  }
+  public static IServiceCollection AddDatabaseConnection(this IServiceCollection services, string connectionString)
+   => services.UseMongoDB(connectionString);
 }

@@ -35,6 +35,9 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 builder.Services.AddApplicationServices();
+builder.Services.AddDatabaseConnection(builder.Configuration.GetConnectionString("Database"));
+
+builder.Services.AddCors();
 
 var app = builder.Build();
 
@@ -73,5 +76,7 @@ async (
 .Produces<BalanceDto>()
 .RequireAuthorization();
 
+app.UseCors();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
+
 app.Run();
