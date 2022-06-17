@@ -65,6 +65,16 @@ app.UseSwaggerUI(c =>
 
 app.UseHttpsRedirection();
 
+app.MapPost("/create-budget",
+  [SwaggerOperation(Summary = "Creates budget for the authenticated user")]
+async (
+  HttpContext context,
+  IMediator mediator,
+  CancellationToken cancellationToken
+  ) => Results.Created(await mediator.Send(new CreateBudgetCommand(context.GetUserId()), cancellationToken), context.GetUserId()))
+.Produces((int)HttpStatusCode.Created)
+.RequireAuthorization();
+
 app.MapGet("/balance",
   [SwaggerOperation(Summary = "Gets user overall balance in a form of a dictionary with currency codes as keys")]
 async (
