@@ -8,7 +8,7 @@ on:
 
 env:
   AZURE_WEBAPP_NAME: budget-manager
-  AZURE_WEBAPP_PACKAGE_PATH: './source/BudgetManager.API'
+  AZURE_WEBAPP_PACKAGE_PATH: '.'
   DOTNET_VERSION: '6.0.x'   
 
 jobs:
@@ -24,6 +24,7 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }} 
       
       - name: Build & Publish
+        working-directory: source/BudgetManager.Api
         run: |
           dotnet restore
           dotnet build --configuration Release
