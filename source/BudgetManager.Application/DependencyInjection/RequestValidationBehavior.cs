@@ -14,7 +14,7 @@ internal sealed class RequestValidationBehavior<TRequest, TResponse> : IPipeline
     var context = new ValidationContext<TRequest>(request);
 
     var validationErrors = _validators
-        .Select(x => x.Validate(context))
+        .Select(x => x.ValidateAsync(context).Result)
         .SelectMany(x => x.Errors)
         .ToArray();
 
