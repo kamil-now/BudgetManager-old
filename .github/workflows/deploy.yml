@@ -2,14 +2,14 @@ name: Build & Deploy Azure AppService
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 env:
   AZURE_WEBAPP_NAME: hajs
-  AZURE_WEBAPP_PACKAGE_PATH: 'source/BudgetManager.Api'
-  DOTNET_VERSION: '6.0.x'   
+  AZURE_WEBAPP_PACKAGE_PATH: "source/BudgetManager.Api"
+  DOTNET_VERSION: "6.0.x"
 
 jobs:
   build:
@@ -17,18 +17,18 @@ jobs:
 
     steps:
       - uses: actions/checkout@main
-      
+
       - name: Setup .NET
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: ${{ env.DOTNET_VERSION }} 
-      
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
       - name: Build & Publish
         working-directory: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
         run: |
           dotnet restore
           dotnet build --configuration Release
-          dotnet publish -c Release -o './myapp' 
+          dotnet publish -c Release -o './myapp'
 
       - name: Configure
         uses: microsoft/variable-substitution@v1
@@ -41,9 +41,15 @@ jobs:
           AzureAd.Audience: api://${{ secrets.AZURE_CLIENT_ID }}
           ConnectionStrings.Database: ${{ secrets.DATABASE_CONNECTION_STRING }}
 
-      - name: 'Deploy'
+      - name: Copy static files
+        uses: canastro/copy-file-action@master
+        with:
+          source: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/Assets
+          target: ${{env.AZURE_WEBAPP_PACKAGE_PATH}}/myapp/Assets
+
+      - name: "Deploy"
         uses: azure/webapps-deploy@v2
-        with: 
+        with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE  }}
-          package: '${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/myapp'
+          package: "${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/myapp"
