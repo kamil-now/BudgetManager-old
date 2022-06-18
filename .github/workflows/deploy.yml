@@ -35,10 +35,10 @@ jobs:
         with:
           files: ${{env.AZURE_WEBAPP_PACKAGE_PATH}}/myapp/appsettings.json
         env:
-          Azure.Instance: ${{ secrets.AZURE_INSTANCE }}
-          Azure.ClientId: ${{ secrets.AZURE_CLIENT_ID }}
-          Azure.TenantId: ${{ secrets.AZURE_TENANT_ID }}
-          Azure.Audience: api://${{ secrets.AZURE_CLIENT_ID }}
+          AzureAd.Instance: ${{ secrets.AZURE_INSTANCE }}
+          AzureAd.ClientId: ${{ secrets.AZURE_CLIENT_ID }}
+          AzureAd.TenantId: ${{ secrets.AZURE_TENANT_ID }}
+          AzureAd.Audience: api://${{ secrets.AZURE_CLIENT_ID }}
           ConnectionStrings.Database: ${{ secrets.DATABASE_CONNECTION_STRING }}
 
       - name: 'Deploy'
