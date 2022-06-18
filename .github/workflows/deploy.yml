@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
 
 env:
-  AZURE_WEBAPP_NAME: budget-manager
+  AZURE_WEBAPP_NAME: hajs
   AZURE_WEBAPP_PACKAGE_PATH: 'source/BudgetManager.Api'
   DOTNET_VERSION: '6.0.x'   
 
