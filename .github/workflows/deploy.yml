@@ -29,6 +29,7 @@ jobs:
           dotnet restore
           dotnet build --configuration Release
           dotnet publish -c Release -o './myapp'
+          cp -vr ./Assets ./myapp/Assets
 
       - name: Configure
         uses: microsoft/variable-substitution@v1
@@ -40,12 +41,6 @@ jobs:
           AzureAd.TenantId: ${{ secrets.AZURE_TENANT_ID }}
           AzureAd.Audience: api://${{ secrets.AZURE_CLIENT_ID }}
           ConnectionStrings.Database: ${{ secrets.DATABASE_CONNECTION_STRING }}
-
-      - name: Copy static files
-        uses: canastro/copy-file-action@master
-        with:
-          source: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/Assets
-          target: ${{env.AZURE_WEBAPP_PACKAGE_PATH}}/myapp/Assets
 
       - name: "Deploy"
         uses: azure/webapps-deploy@v2
