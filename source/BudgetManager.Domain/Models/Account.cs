@@ -2,11 +2,11 @@ namespace BudgetManager.Domain.Models;
 
 public class Account
 {
-  public int Id { get; }
+  public string? Id { get; }
   public string Name { get; }
   public Money Balance { get; private set; }
 
-  public Account(int id, string name, Money balance)
+  public Account(string id, string name, Money balance)
   {
     Id = id;
     Name = name;

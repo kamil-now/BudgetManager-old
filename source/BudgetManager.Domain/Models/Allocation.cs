@@ -2,9 +2,9 @@ namespace BudgetManager.Domain.Models;
 
 public class Allocation : MoneyOperation
 {
-  public int FundId { get; }
+  public string? FundId { get; }
   public Allocation(
-    int fundId,
+    string fundId,
     string title,
     Money value,
     DateTime date

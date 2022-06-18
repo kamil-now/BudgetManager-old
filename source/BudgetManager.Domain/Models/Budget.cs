@@ -2,6 +2,7 @@ namespace BudgetManager.Domain.Models;
 
 public class Budget
 {
+  public string? Id { get; init; }
   public IEnumerable<Account> Accounts { get; }
   public IEnumerable<Fund> Funds { get; }
   public SpendingFund SpendingFund { get; }

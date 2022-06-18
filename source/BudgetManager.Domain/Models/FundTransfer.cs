@@ -2,13 +2,13 @@ namespace BudgetManager.Domain.Models;
 
 public class FundTransfer : MoneyOperation
 {
-  public int SourceFundId { get; }
-  public int TargetFundId { get; }
+  public string? SourceFundId { get; }
+  public string? TargetFundId { get; }
   public FundTransfer(
     string title,
      Money value,
-     int sourceFundId,
-     int targetFundId,
+     string sourceFundId,
+     string targetFundId,
      DateTime date
      ) : base(title, value, date)
   {

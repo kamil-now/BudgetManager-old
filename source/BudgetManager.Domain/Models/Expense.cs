@@ -2,11 +2,11 @@ namespace BudgetManager.Domain.Models;
 
 public class Expense : MoneyOperation
 {
-  public int AccountId { get; }
-  public int FundId { get; }
+  public string? AccountId { get; }
+  public string? FundId { get; }
   public Expense(
-    int fundId,
-    int accountId,
+    string fundId,
+    string accountId,
     string title,
     Money value,
     DateTime date
