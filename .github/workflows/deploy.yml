@@ -1,0 +1,48 @@
+name: Build & Deploy Azure AppService
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  AZURE_WEBAPP_NAME: budget-manager
+  AZURE_WEBAPP_PACKAGE_PATH: './source/BudgetManager.API'
+  DOTNET_VERSION: '6.0.x'   
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@main
+      
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }} 
+      
+      - name: Build & Publish
+        run: |
+          dotnet restore
+          dotnet build --configuration Release
+          dotnet publish -c Release -o '${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/myapp' 
+
+      - name: Configure
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: '${{env.DOTNET_ROOT}}/myapp/appsettings.json'
+        env:
+          Azure.Instance: '${{ secrets.AZURE_INSTANCE }}'
+          Azure.ClientId: '${{ secrets.AZURE_CLIENT_ID }}'
+          Azure.TenantId: '${{ secrets.AZURE_TENANT_ID }}'
+          Azure.Audience: 'api://${{ secrets.AZURE_CLIENT_ID }}'
+          ConnectionStrings.Database: '${{ secrets.DATABASE_CONNECTION_STRING }}'
+
+      - name: 'Deploy'
+        uses: azure/webapps-deploy@v2
+        with: 
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE  }}
+          package: '${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/myapp'
