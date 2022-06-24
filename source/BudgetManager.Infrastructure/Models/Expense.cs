@@ -1,6 +1,6 @@
 namespace BudgetManager.Infrastructure.Models;
 
-public class Expense : MoneyOperation
+public class ExpenseEntity : MoneyOperationEntity
 {
   public string? AccountId { get; set; }
   public string? FundId { get; set; }

@@ -1,6 +1,6 @@
 namespace BudgetManager.Infrastructure.Models;
 
-public class MoneyOperation
+public class MoneyOperationEntity
 {
   public string? Title { get; set; }
   public decimal Amount { get; set; }

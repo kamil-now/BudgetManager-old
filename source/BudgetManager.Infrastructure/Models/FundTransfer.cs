@@ -1,6 +1,6 @@
 namespace BudgetManager.Infrastructure.Models;
 
-public class FundTransfer : MoneyOperation
+public class FundTransferEntity : MoneyOperationEntity
 {
   public string? SourceFundId { get; set; }
   public string? TargetFundId { get; set; }

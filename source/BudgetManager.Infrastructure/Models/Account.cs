@@ -1,9 +1,9 @@
 namespace BudgetManager.Infrastructure.Models;
 
-public class Account
+public class AccountEntity
 {
   public string? Id { get; set; }
   public string? Name { get; set; }
-  public decimal Amount { get; set; }
+  public decimal InitialAmount { get; set; }
   public string? Currency { get; set; }
 }

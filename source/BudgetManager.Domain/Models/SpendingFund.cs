@@ -6,8 +6,9 @@ public class SpendingFund : Fund
   public SpendingFund(
     IEnumerable<SpendingCategory> categories,
      string id,
-     string name
-     ) : base(id, name)
+     string name,
+     Balance initialBalance
+     ) : base(id, name, initialBalance)
   {
     Categories = categories;
   }

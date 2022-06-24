@@ -1,6 +1,6 @@
 namespace BudgetManager.Infrastructure.Models;
 
-public class SpendingFund : Fund
+public class SpendingFundEntity : FundEntity
 {
-  public IEnumerable<SpendingCategory>? Categories { get; set; }
+  public IEnumerable<SpendingCategoryEntity>? Categories { get; set; }
 }

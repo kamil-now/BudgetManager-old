@@ -1,12 +1,17 @@
+using System.Collections.ObjectModel;
+
 namespace BudgetManager.Domain.Models;
 
 public class Budget
 {
   public string? Id { get; init; }
-  public IEnumerable<Account> Accounts { get; }
-  public IEnumerable<Fund> Funds { get; }
   public SpendingFund SpendingFund { get; }
-  private IEnumerable<MoneyOperation> Operations { get; }
+  public IReadOnlyCollection<Account> Accounts => _accounts.AsReadOnly();
+  public IReadOnlyCollection<Fund> Funds => _funds.AsReadOnly();
+  public IReadOnlyCollection<MoneyOperation> Operations => _operations.AsReadOnly();
+  private List<MoneyOperation> _operations;
+  public List<Account> _accounts;
+  public List<Fund> _funds;
 
   public Budget(
     SpendingFund spendingFund,
@@ -16,9 +21,9 @@ public class Budget
     )
   {
     SpendingFund = spendingFund;
-    Accounts = accounts;
-    Funds = funds;
-    Operations = operations;
+    _accounts = accounts.ToList();
+    _funds = funds.ToList();
+    _operations = operations.ToList();
 
     foreach (var operation in Operations)
     {
@@ -28,9 +33,14 @@ public class Budget
 
   public void AddOperation<T>(T operation) where T : MoneyOperation
   {
-    Operations.Append(operation);
+    _operations.Add(operation);
     ApplyOperation(operation);
   }
+
+  public void AddAccount(Account account) => _accounts.Add(account);
+  public void RemoveAccount(Account account) => _accounts.Remove(account);
+  public void AddFund(Fund fund) => _funds.Add(fund);
+  public void RemoveFund(Fund fund) => _funds.Remove(fund);
 
   public Balance GetUnallocatedFunds()
   {

@@ -1,7 +1,9 @@
 using System.Net;
 using BudgetManager.Api.Extensions;
+using BudgetManager.Application.Commands;
 using BudgetManager.Application.DependencyInjection;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Identity.Web;
 using Microsoft.OpenApi.Models;
@@ -72,6 +74,51 @@ async (
   IMediator mediator,
   CancellationToken cancellationToken
   ) => Results.Created(await mediator.Send(new CreateBudgetCommand(context.GetUserId()), cancellationToken), context.GetUserId()))
+.Produces((int)HttpStatusCode.Created)
+.RequireAuthorization();
+
+app.MapPost("/create-account",
+  [SwaggerOperation(Summary = "Creates an account in authenticated users budget")]
+async (
+  HttpContext context,
+  IMediator mediator,
+  [FromBody] CreateAccountRequest request,
+  CancellationToken cancellationToken
+  ) => Results.Created(
+        await mediator.Send(
+          new CreateAccountCommand(
+            context.GetUserId(),
+            request.Name,
+            request.InitialAmount,
+            request.Currency
+            ),
+            cancellationToken
+          ),
+          context.GetUserId()
+        )
+      )
+.Produces((int)HttpStatusCode.Created)
+.RequireAuthorization();
+
+app.MapPost("/create-fund",
+  [SwaggerOperation(Summary = "Creates a fund in authenticated users budget")]
+async (
+  HttpContext context,
+  IMediator mediator,
+  [FromBody] CreateFundRequest request,
+  CancellationToken cancellationToken
+  ) => Results.Created(
+        await mediator.Send(
+          new CreateFundCommand(
+            context.GetUserId(),
+            request.Name,
+            request.InitialBalance
+            ),
+            cancellationToken
+          ),
+          context.GetUserId()
+        )
+      )
 .Produces((int)HttpStatusCode.Created)
 .RequireAuthorization();
 

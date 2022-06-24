@@ -1,29 +1,29 @@
-using BudgetManager.Infrastructure.Models;
-using MongoDB.Bson;
-
 namespace BudgetManager.Infrastructure;
+
+using BudgetManager.Infrastructure.Models;
+using DnsClient.Protocol;
 
 internal class UserBudgetRepository : IUserBudgetRepository
 {
-  private IMongoCollection<UserBudget> _collection;
+  private IMongoCollection<BudgetEntity> _collection;
 
-  public UserBudgetRepository(IMongoCollection<UserBudget> collection) => _collection = collection;
+  public UserBudgetRepository(IMongoCollection<BudgetEntity> collection) => _collection = collection;
 
   public async Task<string> Create(string userId)
   {
-    var doc = new UserBudget() { UserId = userId, Id = ObjectId.GenerateNewId().ToString() };
+    var doc = new BudgetEntity() { UserId = userId };
     return await _collection
       .InsertOneAsync(doc)
-      .ContinueWith(t => t.IsCompletedSuccessfully ? doc.Id : throw t.Exception ?? new Exception("Failed to create UserBudget"));
+      .ContinueWith(t => t.IsCompletedSuccessfully ? doc.UserId : throw t.Exception ?? new Exception("Failed to create UserBudget"));
   }
 
-  public async Task<UserBudget> Get(string userId)
+  public async Task<BudgetEntity> Get(string userId)
     => await _collection
     .FindAsync(b => b.UserId == userId)
     .ContinueWith(t => t.IsCompletedSuccessfully ? t.Result.First() : throw t.Exception ?? new Exception("Failed to retrieve UserBudget"));
 
-  public async Task Update(UserBudget budget)
-    => await _collection.ReplaceOneAsync(b => b.UserId == b.UserId, budget);
+  public async Task<ReplaceOneResult> Update(BudgetEntity budget)
+    => await _collection.ReplaceOneAsync(x => x.UserId == budget.UserId, budget);
 
   public async Task<bool> Exists(string userId)
     => await _collection

@@ -14,7 +14,7 @@ public static class DependencyInjection
       new UserBudgetRepository(
         new MongoClient(connectionString)
           .GetDatabase(DATABASE_NAME)
-          .GetCollection<UserBudget>(USER_BUDGETS_COLLECTION)
+          .GetCollection<BudgetEntity>(USER_BUDGETS_COLLECTION)
         )
     );
     return services;
