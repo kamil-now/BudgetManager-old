@@ -1,0 +1,26 @@
+<p>
+  <h3>How to use it:</h3>
+  <ol>
+    <li>Create a budget</li>
+    <li>Add your accounts - an actual places where you have the money (e.g. bank accounts, investment platform, physical wallet)</li>
+    <li>Add your spending categories - for you regular expenses</li>
+    <li>Add your funds - distribution of money from your accounts, each dedicated for a certain type of savings or irregular expenses (e.g. backup savings, vacation, new car)</li>
+    <li>Add income - choose account where you received the money - it will create unallocated funds</li>
+    <li>Allocate new income to your funds</li>
+    <li>Transfer your funds - when you decide to change your money allocation</li>
+    <li>Add new expense - choose account from which you paid and fund from which to deduct spent amount</li>
+  </ol>
+</p>
+<p>
+  <h4>How it works:</h4>
+  <ul>
+    <li>Each account can have only one currency. For example if you have multiple currencies in your bank account, you'll need to create separate accounts for each currency.</li>
+    <li>Funds can have multiple currencies, so the balance of a fund is represented by a dictionary with currencies as keys.</li>
+    <li>Source of your Spending Fund are the unallocated funds.</li>
+    <li>If the expense does not have the FundId specified, it will be automatically set to Spending Fund ID.</li>
+    <li>Spending Fund categories are optional.</li>
+    <li>Budget operation (income/expense/transfer/allocation) amount cannot be modified. In case of transfer and allocation source and target also cannot be modified. If a mistake was made, then the operation needs to be deleted or a new operation needs to be created in order to correct it.</li>
+    <li>Budget operation date can be set in the future.</li>
+    <li>Only budget operations with date in the future can be removed.</li>
+  </ul>
+</p>

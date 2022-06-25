@@ -19,6 +19,16 @@ var tenantIdUri = builder.Configuration["AzureAd:Instance"] + builder.Configurat
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
+  options.SwaggerDoc("v1", new OpenApiInfo
+  {
+    Version = "v1",
+    Title = "Budget API",
+    Description = File.ReadAllText("./assets/api-description.html"),
+    Contact = new OpenApiContact
+    {
+      Email = builder.Configuration["Contact"]
+    },
+  });
   options.EnableAnnotations();
   options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
   {
