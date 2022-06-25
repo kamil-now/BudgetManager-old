@@ -38,9 +38,12 @@ public class Budget
   }
 
   public void AddAccount(Account account) => _accounts.Add(account);
-  public void RemoveAccount(Account account) => _accounts.Remove(account);
+  public void RenameAccount(string accountId, string newName) => _accounts.First(x => x.Id == accountId).Name = newName;
+  public void RemoveAccount(string accountId) => _accounts.RemoveAll(x => x.Id == accountId);
+
   public void AddFund(Fund fund) => _funds.Add(fund);
-  public void RemoveFund(Fund fund) => _funds.Remove(fund);
+  public void RenameFund(string fundId, string newName) => _funds.First(x => x.Id == fundId).Name = newName;
+  public void RemoveFund(string fundId) => _funds.RemoveAll(x => x.Id == fundId);
 
   public Balance GetUnallocatedFunds()
   {

@@ -1,10 +1,12 @@
 namespace BudgetManager.Application.Commands;
 
+using System.Text.Json.Serialization;
 using AutoMapper;
 using BudgetManager.Domain.Models;
 using BudgetManager.Infrastructure;
 
-public record CreateAccountCommand(string UserId, string Name, decimal InitialAmount, string Currency)
+public record CreateAccountCommand(
+  [property: JsonIgnore()] string UserId, string Name, decimal InitialAmount, string Currency)
   : IRequest<string>, IBudgetCommand;
 
 public class CreateAccountCommandHandler : BudgetCommandHandler<CreateAccountCommand, string>
@@ -30,10 +32,10 @@ public class CreateAccountCommandValidator : BudgetCommandValidator<CreateAccoun
   {
     RuleFor(x => x.Currency)
       .NotEmpty()
-      .WithMessage($"{nameof(CreateAccountCommand.Currency)} cannot be empty");
+      .MaximumLength(3);
 
     RuleFor(x => x.Name)
       .NotEmpty()
-      .WithMessage($"{nameof(CreateAccountCommand.Name)} cannot be empty");
+      .MaximumLength(50);
   }
 }

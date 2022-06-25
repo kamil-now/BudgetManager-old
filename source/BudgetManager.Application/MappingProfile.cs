@@ -1,6 +1,7 @@
 namespace BudgetManager.Application;
 
 using AutoMapper;
+using BudgetManager.Application.Requests;
 
 public class MappingProfile : Profile
 {
@@ -177,5 +178,8 @@ public class MappingProfile : Profile
     CreateMap<MoneyOperation, MoneyOperationEntity>()
       .ForMember(x => x.Amount, opt => opt.MapFrom(src => src.Value.Amount))
       .ForMember(x => x.Currency, opt => opt.MapFrom(src => src.Value.Currency));
+
+    CreateMap<Account, AccountDto>();
+    CreateMap<Fund, FundDto>();
   }
 }

@@ -3,7 +3,7 @@ namespace BudgetManager.Domain.Models;
 public class Account
 {
   public string? Id { get; }
-  public string Name { get; }
+  public string Name { get; internal set; }
   public Money Balance { get; private set; }
   public Money InitialBalance { get; private set; }
 

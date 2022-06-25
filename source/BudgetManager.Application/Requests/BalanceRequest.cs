@@ -1,10 +1,32 @@
-public record BalanceDto(Dictionary<string, decimal> currencyAmounts);
-public record BalanceRequest(string UserId) : IRequest<BalanceDto>;
+namespace BudgetManager.Application.Requests;
 
-public class BalanceRequestHandler : IRequestHandler<BalanceRequest, BalanceDto>
+using AutoMapper;
+
+public record BalanceRequest(string UserId) : IBudgetRequest, IRequest<Dictionary<string, decimal>>;
+
+public class BalanceRequestHandler : BudgetRequestHandler<BalanceRequest, Dictionary<string, decimal>>
 {
-  private IUserBudgetRepository _repository;
-  public BalanceRequestHandler(IUserBudgetRepository repository) => _repository = repository;
-  public Task<BalanceDto> Handle(BalanceRequest request, CancellationToken cancellationToken)
-    => Task.FromResult(new BalanceDto(new Dictionary<string, decimal>()));
+  public BalanceRequestHandler(IUserBudgetRepository repo, IMapper map)
+   : base(repo, map)
+  {
+  }
+
+  public override Dictionary<string, decimal> Get(BalanceRequest request, Budget budget)
+  {
+    var balance = new Dictionary<string, decimal>();
+
+    foreach (var accountBalance in budget.Accounts.Select(x => x.Balance))
+    {
+      if (balance.ContainsKey(accountBalance.Currency))
+      {
+        balance[accountBalance.Currency] += accountBalance.Amount;
+      }
+      else
+      {
+        balance.Add(accountBalance.Currency, accountBalance.Amount);
+      }
+    }
+
+    return balance;
+  }
 }

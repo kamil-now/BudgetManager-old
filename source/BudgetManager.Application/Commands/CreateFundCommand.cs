@@ -1,10 +1,11 @@
 namespace BudgetManager.Application.Commands;
 
+using System.Text.Json.Serialization;
 using AutoMapper;
 using BudgetManager.Domain.Models;
 using BudgetManager.Infrastructure;
 
-public record CreateFundCommand(string UserId, string Name, Dictionary<string, decimal> InitialBalance)
+public record CreateFundCommand([property: JsonIgnore()] string UserId, string Name, Dictionary<string, decimal> InitialBalance)
   : IRequest<string>, IBudgetCommand;
 
 public class CreateFundCommandHandler : BudgetCommandHandler<CreateFundCommand, string>
@@ -28,5 +29,8 @@ public class CreateFundCommandValidator : BudgetCommandValidator<CreateFundComma
 {
   public CreateFundCommandValidator(IUserBudgetRepository repository) : base(repository)
   {
+    RuleFor(x => x.Name)
+      .NotEmpty()
+      .MaximumLength(50);
   }
 }

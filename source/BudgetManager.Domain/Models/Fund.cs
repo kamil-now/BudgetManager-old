@@ -3,7 +3,7 @@ namespace BudgetManager.Domain.Models;
 public class Fund
 {
   public string? Id { get; }
-  public string Name { get; }
+  public string Name { get; internal set; }
   public Balance Balance { get; }
   public Balance InitialBalance { get; }
 

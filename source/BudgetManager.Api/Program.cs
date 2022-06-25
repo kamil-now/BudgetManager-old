@@ -1,16 +1,16 @@
 using System.Net;
+using BudgetManager.Api;
 using BudgetManager.Api.Extensions;
 using BudgetManager.Application.Commands;
 using BudgetManager.Application.DependencyInjection;
+using BudgetManager.Application.Requests;
 using MediatR;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Identity.Web;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Annotations;
 
 var builder = WebApplication.CreateBuilder(args);
-
 
 builder.Services.AddMicrosoftIdentityWebApiAuthentication(builder.Configuration);
 
@@ -59,6 +59,7 @@ app.UseAuthorization();
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
+  c.DocumentTitle = "Budget API";
   c.OAuthScopes($"{builder.Configuration["AzureAd:Audience"]}/full");
   c.SwaggerEndpoint("/swagger/v1/swagger.json", $"{builder.Environment.ApplicationName} v1");
   c.InjectStylesheet("/assets/swagger-dark.css");
@@ -67,58 +68,13 @@ app.UseSwaggerUI(c =>
 
 app.UseHttpsRedirection();
 
-app.MapPost("/create-budget",
+app.MapPost("/budget",
   [SwaggerOperation(Summary = "Creates budget for the authenticated user")]
 async (
   HttpContext context,
   IMediator mediator,
   CancellationToken cancellationToken
   ) => Results.Created(await mediator.Send(new CreateBudgetCommand(context.GetUserId()), cancellationToken), context.GetUserId()))
-.Produces((int)HttpStatusCode.Created)
-.RequireAuthorization();
-
-app.MapPost("/create-account",
-  [SwaggerOperation(Summary = "Creates an account in authenticated users budget")]
-async (
-  HttpContext context,
-  IMediator mediator,
-  [FromBody] CreateAccountRequest request,
-  CancellationToken cancellationToken
-  ) => Results.Created(
-        await mediator.Send(
-          new CreateAccountCommand(
-            context.GetUserId(),
-            request.Name,
-            request.InitialAmount,
-            request.Currency
-            ),
-            cancellationToken
-          ),
-          context.GetUserId()
-        )
-      )
-.Produces((int)HttpStatusCode.Created)
-.RequireAuthorization();
-
-app.MapPost("/create-fund",
-  [SwaggerOperation(Summary = "Creates a fund in authenticated users budget")]
-async (
-  HttpContext context,
-  IMediator mediator,
-  [FromBody] CreateFundRequest request,
-  CancellationToken cancellationToken
-  ) => Results.Created(
-        await mediator.Send(
-          new CreateFundCommand(
-            context.GetUserId(),
-            request.Name,
-            request.InitialBalance
-            ),
-            cancellationToken
-          ),
-          context.GetUserId()
-        )
-      )
 .Produces((int)HttpStatusCode.Created)
 .RequireAuthorization();
 
@@ -130,8 +86,33 @@ async (
   CancellationToken cancellationToken
   )
   => Results.Ok(await mediator.Send(new BalanceRequest(context.GetUserId()), cancellationToken)))
-.Produces<BalanceDto>()
+.Produces<Dictionary<string, decimal>>()
 .RequireAuthorization();
+
+app.MapCRUD<AccountDto, CreateAccountCommand, AccountRequest, UpdateAccountCommand, DeleteAccountCommand>(
+  "account",
+  (ctx, create) => create with { UserId = ctx.GetUserId() },
+  (ctx, accountId) => new AccountRequest(ctx.GetUserId(), accountId),
+  (ctx, update) => update with { UserId = ctx.GetUserId() },
+  (ctx, accountId) => new DeleteAccountCommand(ctx.GetUserId(), accountId)
+);
+
+app.MapCRUD<FundDto, CreateFundCommand, FundRequest, UpdateFundCommand, DeleteFundCommand>(
+  "fund",
+  (ctx, create) => create with { UserId = ctx.GetUserId() },
+  (ctx, accountId) => new FundRequest(ctx.GetUserId(), accountId),
+  (ctx, update) => update with { UserId = ctx.GetUserId() },
+  (ctx, accountId) => new DeleteFundCommand(ctx.GetUserId(), accountId)
+);
+
+// TODO CRUD category
+
+// TODO CRUD expense
+// TODO CRUD income
+// TODO CRUD allocation
+// TODO CRUD transfer
+
+// TODO spending fund
 
 app.UseCors();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
