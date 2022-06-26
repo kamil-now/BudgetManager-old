@@ -93,17 +93,17 @@ public class Budget
     switch (operation)
     {
       case Allocation op:
-        Funds.First(x => x.Id == op.FundId).Add(operation.Value);
+        _funds.First(x => x.Id == op.FundId).Add(operation.Value);
         break;
       case Expense op:
         if (op.Date <= DateOnly.FromDateTime(DateTime.Now) && op.IsConfirmed)
         {
           (op.FundId is null ? SpendingFund : Funds.First(x => x.Id == op.FundId)).Deduct(operation.Value);
-          Accounts.First(x => x.Id == op.AccountId).Deduct(operation.Value);
+          _accounts.First(x => x.Id == op.AccountId).Deduct(operation.Value);
         }
         break;
       case Income op:
-        Accounts.First(x => x.Id == op.AccountId).Add(operation.Value);
+        _accounts.First(x => x.Id == op.AccountId).Add(operation.Value);
         break;
       default:
         throw new InvalidOperationException("Unhandled operation");
@@ -115,17 +115,17 @@ public class Budget
     switch (operation)
     {
       case Allocation op:
-        Funds.First(x => x.Id == op.FundId).Deduct(operation.Value);
+        _funds.First(x => x.Id == op.FundId).Deduct(operation.Value);
         break;
       case Expense op:
         if (op.Date <= DateOnly.FromDateTime(DateTime.Now) && op.IsConfirmed)
         {
-          (op.FundId is null ? SpendingFund : Funds.First(x => x.Id == op.FundId)).Add(operation.Value);
-          Accounts.First(x => x.Id == op.AccountId).Add(operation.Value);
+          (op.FundId is null ? SpendingFund : _funds.First(x => x.Id == op.FundId)).Add(operation.Value);
+          _accounts.First(x => x.Id == op.AccountId).Add(operation.Value);
         }
         break;
       case Income op:
-        Accounts.First(x => x.Id == op.AccountId).Deduct(operation.Value);
+        _accounts.First(x => x.Id == op.AccountId).Deduct(operation.Value);
         break;
       default:
         throw new InvalidOperationException("Unhandled operation");

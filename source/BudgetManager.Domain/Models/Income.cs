@@ -9,8 +9,9 @@ public class Income : MoneyOperation
     string title,
     Money value,
     DateOnly date,
-    string description
-    ) : base(id, title, value, date, description)
+    string description,
+    DateTime createdDate
+    ) : base(id, title, value, date, description, createdDate)
   {
     AccountId = accountId;
   }

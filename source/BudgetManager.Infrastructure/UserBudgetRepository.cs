@@ -11,7 +11,16 @@ internal class UserBudgetRepository : IUserBudgetRepository
 
   public async Task<string> Create(string userId)
   {
-    var doc = new BudgetEntity() { UserId = userId };
+    var doc = new BudgetEntity()
+    {
+      UserId = userId,
+      SpendingFund = new SpendingFundEntity()
+      {
+        Id = Guid.NewGuid().ToString(),
+        Name = "Spending Fund",
+        InitialBalance = new Dictionary<string, decimal>()
+      }
+    };
     return await _collection
       .InsertOneAsync(doc)
       .ContinueWith(t => t.IsCompletedSuccessfully ? doc.UserId : throw t.Exception ?? new Exception("Failed to create UserBudget"));

@@ -6,7 +6,7 @@ public record IncomeDto(
     string Id,
     string Title,
     Money Value,
-    DateOnly Date,
+    string Date,
     string AccountId,
     string Description
 );

@@ -2,9 +2,11 @@ namespace BudgetManager.Application.Requests;
 
 using AutoMapper;
 
-public record BalanceRequest(string UserId) : IBudgetRequest, IRequest<Dictionary<string, decimal>>;
+public record BalanceRequest(string UserId)
+  : IBudgetRequest, IRequest<Dictionary<string, decimal>>;
 
-public class BalanceRequestHandler : BudgetRequestHandler<BalanceRequest, Dictionary<string, decimal>>
+public class BalanceRequestHandler
+  : BudgetRequestHandler<BalanceRequest, Dictionary<string, decimal>>
 {
   public BalanceRequestHandler(IUserBudgetRepository repo, IMapper map)
    : base(repo, map)
@@ -28,5 +30,15 @@ public class BalanceRequestHandler : BudgetRequestHandler<BalanceRequest, Dictio
     }
 
     return balance;
+  }
+}
+
+public class BalanceRequestValidator : AbstractValidator<BalanceRequest>
+{
+  public BalanceRequestValidator(IUserBudgetRepository repository)
+  {
+    RuleFor(x => x.UserId)
+      .MustAsync(async (id, cancellation) => await repository.Exists(id))
+        .WithMessage("Budget does not exists");
   }
 }

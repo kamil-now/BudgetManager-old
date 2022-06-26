@@ -29,7 +29,8 @@ public class CreateIncomeCommandHandler : BudgetCommandHandler<CreateIncomeComma
         command.Title,
         command.Value,
         date,
-        command.Description ?? string.Empty
+        command.Description ?? string.Empty,
+        DateTime.Now
         )
       );
 

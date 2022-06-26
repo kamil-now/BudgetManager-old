@@ -14,10 +14,11 @@ public class Expense : MoneyOperation
     DateOnly date,
     string accountId,
     string description,
+    DateTime createdDate,
     bool isConfirmed = true,
     string? fundId = null,
     string? category = null
-    ) : base(id, title, value, date, description)
+    ) : base(id, title, value, date, description, createdDate)
   {
     AccountId = accountId;
     FundId = fundId;

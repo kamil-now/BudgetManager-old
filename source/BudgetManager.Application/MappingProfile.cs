@@ -8,32 +8,29 @@ public class MappingProfile : Profile
   public MappingProfile()
   {
     CreateMap<AccountEntity, Account>()
-      .IgnoreAllPropertiesWithAnInaccessibleSetter()
       .ConstructUsing(src =>
         new Account(
           src.Id!,
           src.Name!,
           new Money(src.InitialAmount, src.Currency!)
           )
-        );
+        ).ForAllMembers(opt => opt.Ignore());
 
     CreateMap<AllocationEntity, Allocation>()
-      .IgnoreAllPropertiesWithAnInaccessibleSetter()
       .ConstructUsing(src =>
         new Allocation(
           src.Id!,
           src.Title!,
           new Money(src.Amount, src.Currency!),
-          src.Date,
+          DateOnly.Parse(src.Date!),
           src.Description!,
+          src.CreatedDate,
           src.FundId,
           src.Category
           )
-        );
+        ).ForAllMembers(opt => opt.Ignore());
 
     CreateMap<BudgetEntity, Budget>()
-      .IgnoreAllPropertiesWithAnInaccessibleSetter()
-      .ForMember(x => x.Id, opt => opt.Ignore())
       .ConstructUsing((src, ctx) =>
       {
         var operations = new List<MoneyOperation>();
@@ -49,33 +46,32 @@ public class MappingProfile : Profile
           operations
         );
         return budget;
-      });
+      }).ForAllMembers(opt => opt.Ignore());
 
     CreateMap<ExpenseEntity, Expense>()
-      .IgnoreAllPropertiesWithAnInaccessibleSetter()
       .ConstructUsing(src =>
         new Expense(
           src.Id!,
           src.Title!,
           new Money(src.Amount, src.Currency!),
-          src.Date,
+          DateOnly.Parse(src.Date!),
           src.AccountId!,
           src.Description!,
+          src.CreatedDate,
           src.IsConfirmed,
           src.FundId,
           src.Category
           )
-        );
+        ).ForAllMembers(opt => opt.Ignore());
 
     CreateMap<FundEntity, Fund>()
-      .IgnoreAllPropertiesWithAnInaccessibleSetter()
       .ConstructUsing(src =>
         new Fund(
           src.Id!,
           src.Name!,
           new Balance(src.InitialBalance!)
           )
-        );
+        ).ForAllMembers(opt => opt.Ignore());
 
     CreateMap<FundTransferEntity, FundTransfer>()
       .IgnoreAllPropertiesWithAnInaccessibleSetter()
@@ -86,27 +82,27 @@ public class MappingProfile : Profile
           new Money(src.Amount, src.Currency!),
           src.SourceFundId!,
           src.TargetFundId!,
-          src.Date,
-          src.Description!
+          DateOnly.Parse(src.Date!),
+          src.Description!,
+          src.CreatedDate
           )
-        );
+        ).ForAllMembers(opt => opt.Ignore());
 
     CreateMap<IncomeEntity, Income>()
-      .IgnoreAllPropertiesWithAnInaccessibleSetter()
       .ConstructUsing(src =>
         new Income(
           src.Id!,
           src.AccountId!,
           src.Title!,
           new Money(src.Amount, src.Currency!),
-          src.Date,
-          src.Description!
+          DateOnly.Parse(src.Date!),
+          src.Description!,
+          src.CreatedDate
           )
-        );
+        ).ForAllMembers(opt => opt.Ignore());
 
 
     CreateMap<SpendingFundEntity, SpendingFund>()
-      .IgnoreAllPropertiesWithAnInaccessibleSetter()
       .ConstructUsing((src, ctx) =>
         new SpendingFund(
           ctx.Mapper.Map<Dictionary<string, Balance>>(src.Categories),
@@ -114,13 +110,14 @@ public class MappingProfile : Profile
           src.Name!,
           new Balance(src.InitialBalance!)
           )
-        );
+        ).ForAllMembers(opt => opt.Ignore());
 
     CreateMap<Account, AccountEntity>()
       .ForMember(x => x.InitialAmount, opt => opt.MapFrom(src => src.InitialBalance.Amount))
       .ForMember(x => x.Currency, opt => opt.MapFrom(src => src.InitialBalance.Currency));
 
     CreateMap<Allocation, AllocationEntity>()
+      .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString()))
       .ForMember(x => x.Amount, opt => opt.MapFrom(src => src.Value.Amount))
       .ForMember(x => x.Currency, opt => opt.MapFrom(src => src.Value.Currency));
 
@@ -139,33 +136,34 @@ public class MappingProfile : Profile
       .ForMember(x => x.Allocations, opt =>
         opt.MapFrom((src, _, __, ctx) =>
           ctx.Mapper.Map<IEnumerable<AllocationEntity>>(
-            src.Operations.Select(x => x is Allocation)
+            src.Operations.Where(x => x is Allocation)?.Select(x => x as Allocation).ToArray()
             )
           )
       )
       .ForMember(x => x.Expenses, opt =>
         opt.MapFrom((src, _, __, ctx) =>
           ctx.Mapper.Map<IEnumerable<ExpenseEntity>>(
-            src.Operations.Select(x => x is Expense)
+            src.Operations.Where(x => x is Expense)?.Select(x => x as Expense).ToArray()
             )
           )
       )
       .ForMember(x => x.Incomes, opt =>
         opt.MapFrom((src, _, __, ctx) =>
           ctx.Mapper.Map<IEnumerable<IncomeEntity>>(
-            src.Operations.Select(x => x is Income)
+            src.Operations.Where(x => x is Income)?.Select(x => x as Income).ToArray()
             )
           )
       )
       .ForMember(x => x.FundTransfers, opt =>
         opt.MapFrom((src, _, __, ctx) =>
           ctx.Mapper.Map<IEnumerable<FundTransferEntity>>(
-            src.Operations.Select(x => x is FundTransfer)
+            src.Operations.Where(x => x is FundTransfer)?.Select(x => x as FundTransfer).ToArray()
             )
           )
       );
 
     CreateMap<Expense, ExpenseEntity>()
+      .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString()))
       .ForMember(x => x.Amount, opt => opt.MapFrom(src => src.Value.Amount))
       .ForMember(x => x.Currency, opt => opt.MapFrom(src => src.Value.Currency));
 
@@ -173,23 +171,22 @@ public class MappingProfile : Profile
       .ForMember(x => x.InitialBalance, opt => opt.MapFrom(src => new Dictionary<string, decimal>(src.InitialBalance)));
 
     CreateMap<FundTransfer, FundTransferEntity>()
+      .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString()))
       .ForMember(x => x.Amount, opt => opt.MapFrom(src => src.Value.Amount))
       .ForMember(x => x.Currency, opt => opt.MapFrom(src => src.Value.Currency));
 
     CreateMap<Income, IncomeEntity>()
+      .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString()))
       .ForMember(x => x.Amount, opt => opt.MapFrom(src => src.Value.Amount))
       .ForMember(x => x.Currency, opt => opt.MapFrom(src => src.Value.Currency));
 
     CreateMap<SpendingFund, SpendingFundEntity>();
 
-    CreateMap<MoneyOperation, MoneyOperationEntity>()
-      .ForMember(x => x.Amount, opt => opt.MapFrom(src => src.Value.Amount))
-      .ForMember(x => x.Currency, opt => opt.MapFrom(src => src.Value.Currency));
-
     CreateMap<Account, AccountDto>();
     CreateMap<Fund, FundDto>();
     CreateMap<Expense, ExpenseDto>();
-    CreateMap<Income, IncomeDto>();
+    CreateMap<Income, IncomeDto>()
+      .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString()));
 
     CreateMap<SpendingFund, SpendingFundDto>();
   }

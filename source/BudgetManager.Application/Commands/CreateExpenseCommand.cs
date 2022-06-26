@@ -30,6 +30,7 @@ public class CreateExpenseCommandHandler : BudgetCommandHandler<CreateExpenseCom
         date,
         command.AccountId,
         command.Description ?? string.Empty,
+        DateTime.Now,
         date <= now,
         command.FundId,
         command.Category

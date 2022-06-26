@@ -10,9 +10,10 @@ public class Allocation : MoneyOperation
     Money value,
     DateOnly date,
     string description,
+    DateTime createdDate,
     string? fundId = null,
     string? category = null
-    ) : base(id, title, value, date, description)
+    ) : base(id, title, value, date, description, createdDate)
   {
     FundId = fundId;
     Category = category;

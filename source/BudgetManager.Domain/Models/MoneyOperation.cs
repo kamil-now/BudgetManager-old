@@ -14,7 +14,8 @@ public abstract class MoneyOperation
     string title,
     Money value,
     DateOnly date,
-    string description
+    string description,
+    DateTime createdDate
     )
   {
     Id = id;
@@ -22,8 +23,7 @@ public abstract class MoneyOperation
     Value = value;
     Date = date;
     Description = description;
-
-    CreatedDate = DateTime.Now;
+    CreatedDate = createdDate;
   }
 
   protected void Update(

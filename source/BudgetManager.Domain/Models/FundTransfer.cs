@@ -11,8 +11,9 @@ public class FundTransfer : MoneyOperation
     string sourceFundId,
     string targetFundId,
     DateOnly date,
-    string description
-    ) : base(id, title, value, date, description)
+    string description,
+    DateTime createdDate
+    ) : base(id, title, value, date, description, createdDate)
   {
     SourceFundId = sourceFundId;
     TargetFundId = targetFundId;

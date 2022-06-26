@@ -11,7 +11,7 @@ public record ExpenseDto(
     string Description,
     bool IsConfirmed,
     string? FundId,
-    string? CategoryId
+    string? Category
 );
 public record ExpenseRequest(string UserId, string ExpenseId) : IBudgetRequest, IRequest<ExpenseDto>;
 
