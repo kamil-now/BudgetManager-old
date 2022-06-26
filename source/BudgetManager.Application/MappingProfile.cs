@@ -84,7 +84,8 @@ public class MappingProfile : Profile
           src.TargetFundId!,
           DateOnly.Parse(src.Date!),
           src.Description!,
-          src.CreatedDate
+          src.CreatedDate,
+          src.Category
           )
         ).ForAllMembers(opt => opt.Ignore());
 
@@ -183,11 +184,21 @@ public class MappingProfile : Profile
     CreateMap<SpendingFund, SpendingFundEntity>();
 
     CreateMap<Account, AccountDto>();
+
     CreateMap<Fund, FundDto>();
-    CreateMap<Expense, ExpenseDto>();
+
+    CreateMap<Expense, ExpenseDto>()
+      .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString()));
+
     CreateMap<Income, IncomeDto>()
       .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString()));
 
     CreateMap<SpendingFund, SpendingFundDto>();
+
+    CreateMap<Allocation, AllocationDto>()
+      .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString()));
+
+    CreateMap<FundTransfer, FundTransferDto>()
+      .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString()));
   }
 }

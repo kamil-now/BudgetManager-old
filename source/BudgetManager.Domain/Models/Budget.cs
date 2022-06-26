@@ -88,6 +88,7 @@ public class Budget
     return balance;
   }
 
+  // TODO refactor
   private void ApplyOperation<T>(T operation) where T : MoneyOperation
   {
     switch (operation)
@@ -98,8 +99,27 @@ public class Budget
       case Expense op:
         if (op.Date <= DateOnly.FromDateTime(DateTime.Now) && op.IsConfirmed)
         {
-          (op.FundId is null ? SpendingFund : Funds.First(x => x.Id == op.FundId)).Deduct(operation.Value);
-          _accounts.First(x => x.Id == op.AccountId).Deduct(operation.Value);
+          if (op.FundId is null)
+          {
+            if (op.Category is null)
+            {
+              SpendingFund.Deduct(operation.Value);
+            }
+            else
+            {
+              if (!SpendingFund.Categories.ContainsKey(op.Category))
+              {
+                SpendingFund.Categories.Add(op.Category, new Balance());
+              }
+
+              SpendingFund.Categories[op.Category].Deduct(op.Value);
+            }
+          }
+          else
+          {
+            _funds.First(x => x.Id == op.FundId).Deduct(op.Value);
+          }
+          _accounts.First(x => x.Id == op.AccountId).Deduct(op.Value);
         }
         break;
       case Income op:
@@ -110,6 +130,7 @@ public class Budget
     }
   }
 
+  // TODO refactor
   private void UndoOperation<T>(T operation) where T : MoneyOperation
   {
     switch (operation)
@@ -120,8 +141,27 @@ public class Budget
       case Expense op:
         if (op.Date <= DateOnly.FromDateTime(DateTime.Now) && op.IsConfirmed)
         {
-          (op.FundId is null ? SpendingFund : _funds.First(x => x.Id == op.FundId)).Add(operation.Value);
-          _accounts.First(x => x.Id == op.AccountId).Add(operation.Value);
+          if (op.FundId is null)
+          {
+            if (op.Category is null)
+            {
+              SpendingFund.Add(operation.Value);
+            }
+            else
+            {
+              if (!SpendingFund.Categories.ContainsKey(op.Category))
+              {
+                SpendingFund.Categories.Add(op.Category, new Balance());
+              }
+
+              SpendingFund.Categories[op.Category].Add(op.Value);
+            }
+          }
+          else
+          {
+            _funds.First(x => x.Id == op.FundId).Add(op.Value);
+          }
+          _accounts.First(x => x.Id == op.AccountId).Add(op.Value);
         }
         break;
       case Income op:

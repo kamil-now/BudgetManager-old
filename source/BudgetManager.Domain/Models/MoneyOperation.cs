@@ -29,7 +29,7 @@ public abstract class MoneyOperation
   protected void Update(
     string? title,
     Money? value,
-    DateOnly? date,
+    string? date,
     string? description)
   {
     if (title is not null)
@@ -44,7 +44,7 @@ public abstract class MoneyOperation
 
     if (date is not null)
     {
-      Date = (DateOnly)date;
+      Date = DateOnly.Parse(date);
     }
 
     if (description is not null)

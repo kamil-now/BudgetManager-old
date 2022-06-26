@@ -18,4 +18,14 @@ public class Allocation : MoneyOperation
     FundId = fundId;
     Category = category;
   }
+
+  public void Update(string? fundId, string? title, Money? value, string? date, string? description)
+  {
+    base.Update(title, value, date, description);
+
+    if (fundId is not null)
+    {
+      FundId = fundId;
+    }
+  }
 }

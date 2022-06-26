@@ -153,10 +153,22 @@ async (
 ) => Results.Ok(await mediator.Send(command, cancellationToken)))
 .RequireAuthorization();
 
-// TODO CRUD category
+app.MapCRUD<AllocationDto, CreateAllocationCommand, AllocationRequest, UpdateAllocationCommand, DeleteOperationCommand<Allocation>>(
+  "allocation",
+  (ctx, create) => create with { UserId = ctx.GetUserId() },
+  (ctx, accountId) => new AllocationRequest(ctx.GetUserId(), accountId),
+  (ctx, update) => update with { UserId = ctx.GetUserId() },
+  (ctx, accountId) => new DeleteOperationCommand<Allocation>(ctx.GetUserId(), accountId)
+);
 
-// TODO CRUD allocation
-// TODO CRUD transfer
+app.MapCRUD<FundTransferDto, CreateFundTransferCommand, FundTransferRequest, UpdateFundTransferCommand, DeleteOperationCommand<FundTransfer>>(
+  "fundTransfer",
+  (ctx, create) => create with { UserId = ctx.GetUserId() },
+  (ctx, accountId) => new FundTransferRequest(ctx.GetUserId(), accountId),
+  (ctx, update) => update with { UserId = ctx.GetUserId() },
+  (ctx, accountId) => new DeleteOperationCommand<FundTransfer>(ctx.GetUserId(), accountId)
+);
+
 
 app.UseCors();
 app.UseMiddleware<ExceptionHandlingMiddleware>();

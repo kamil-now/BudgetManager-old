@@ -11,12 +11,13 @@ public record UpdateExpenseCommand(
   string OperationId,
   string? Title,
   Money? Value,
-  DateOnly? Date,
+  string? Date,
   string? AccountId,
   string? Description
   ) : IRequest<Unit>, IOperationCommand;
 
-public class UpdateExpenseCommandHandler : BudgetCommandHandler<UpdateExpenseCommand, Unit>
+public class UpdateExpenseCommandHandler
+  : BudgetCommandHandler<UpdateExpenseCommand, Unit>
 {
   public UpdateExpenseCommandHandler(IUserBudgetRepository repo, IMapper map)
   : base(repo, map)
@@ -34,7 +35,8 @@ public class UpdateExpenseCommandHandler : BudgetCommandHandler<UpdateExpenseCom
 }
 
 
-public class ExpenseCommandValidator<T> : BudgetCommandValidator<T> where T : IRequest<Unit>, IOperationCommand
+public class ExpenseCommandValidator<T>
+  : BudgetCommandValidator<T> where T : IRequest<Unit>, IOperationCommand
 {
   public ExpenseCommandValidator(IUserBudgetRepository repository) : base(repository)
   {
@@ -47,7 +49,8 @@ public class ExpenseCommandValidator<T> : BudgetCommandValidator<T> where T : IR
   }
 }
 
-public class UpdateExpenseCommandValidator : ExpenseCommandValidator<UpdateExpenseCommand>
+public class UpdateExpenseCommandValidator
+  : ExpenseCommandValidator<UpdateExpenseCommand>
 {
   public UpdateExpenseCommandValidator(IUserBudgetRepository repository) : base(repository)
   {

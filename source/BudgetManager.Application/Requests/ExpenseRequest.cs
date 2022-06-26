@@ -6,7 +6,7 @@ public record ExpenseDto(
     string Id,
     string Title,
     Money Value,
-    DateOnly Date,
+    string Date,
     string AccountId,
     string Description,
     bool IsConfirmed,
@@ -38,4 +38,17 @@ public class ExpensesRequestHandler : BudgetRequestHandler<BudgetRequest<Expense
 
   public override IEnumerable<ExpenseDto> Get(BudgetRequest<ExpenseDto> request, Budget budget)
    => budget.Operations.Where(x => x is Expense).Select(x => _mapper.Map<ExpenseDto>(x as Expense));
+}
+
+public class ExpenseRequestValidator : BudgetRequestValidator<ExpenseRequest>
+{
+  public ExpenseRequestValidator(IUserBudgetRepository repository) : base(repository)
+  {
+    RuleFor(x => x)
+      .MustAsync(async (request, cancellation) =>
+      {
+        var budget = await repository.Get(request.UserId);
+        return budget!.Expenses?.Any(x => x.Id == request.ExpenseId) ?? false;
+      }).WithMessage("Expense with a given id does not exist in the budget");
+  }
 }

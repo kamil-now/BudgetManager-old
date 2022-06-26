@@ -6,10 +6,16 @@ using BudgetManager.Domain.Models;
 using BudgetManager.Infrastructure;
 
 public record CreateIncomeCommand(
-  [property: JsonIgnore()] string UserId, string Title, Money Value, DateOnly? Date, string AccountId, string? Description)
-  : IRequest<string>, IBudgetCommand;
+  [property: JsonIgnore()] string UserId,
+  string Title,
+  Money Value,
+  string? Date,
+  string AccountId,
+  string? Description
+  ) : IRequest<string>, IBudgetCommand;
 
-public class CreateIncomeCommandHandler : BudgetCommandHandler<CreateIncomeCommand, string>
+public class CreateIncomeCommandHandler
+  : BudgetCommandHandler<CreateIncomeCommand, string>
 {
   public CreateIncomeCommandHandler(IUserBudgetRepository repo, IMapper map)
   : base(repo, map)
@@ -20,7 +26,7 @@ public class CreateIncomeCommandHandler : BudgetCommandHandler<CreateIncomeComma
   {
     var id = Guid.NewGuid().ToString();
     var now = DateOnly.FromDateTime(DateTime.Now);
-    var date = command.Date ?? now;
+    var date = command.Date is null ? now : DateOnly.Parse(command.Date);
 
     budget.AddOperation(
       new Income(
@@ -38,7 +44,8 @@ public class CreateIncomeCommandHandler : BudgetCommandHandler<CreateIncomeComma
   }
 }
 
-public class CreateIncomeCommandValidator : BudgetCommandValidator<CreateIncomeCommand>
+public class CreateIncomeCommandValidator
+  : BudgetCommandValidator<CreateIncomeCommand>
 {
   public CreateIncomeCommandValidator(IUserBudgetRepository repository) : base(repository)
   {

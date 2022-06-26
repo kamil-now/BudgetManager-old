@@ -29,3 +29,16 @@ public class AccountsRequestHandler : BudgetRequestHandler<BudgetRequest<Account
   public override IEnumerable<AccountDto> Get(BudgetRequest<AccountDto> request, Budget budget)
    => budget.Accounts.Select(x => _mapper.Map<AccountDto>(x));
 }
+
+public class AccountRequestValidator : BudgetRequestValidator<AccountRequest>
+{
+  public AccountRequestValidator(IUserBudgetRepository repository) : base(repository)
+  {
+    RuleFor(x => x)
+      .MustAsync(async (request, cancellation) =>
+      {
+        var budget = await repository.Get(request.UserId);
+        return budget!.Accounts?.Any(x => x.Id == request.AccountId) ?? false;
+      }).WithMessage("Account with a given id does not exist in the budget");
+  }
+}

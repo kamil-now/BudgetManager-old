@@ -15,3 +15,13 @@ public class SpendingFundRequestHandler : BudgetRequestHandler<SpendingFundReque
   public override SpendingFundDto Get(SpendingFundRequest request, Budget budget)
     => _mapper.Map<SpendingFundDto>(budget.SpendingFund);
 }
+
+public class SpendingFundRequestValidator : AbstractValidator<BalanceRequest>
+{
+  public SpendingFundRequestValidator(IUserBudgetRepository repository)
+  {
+    RuleFor(x => x.UserId)
+      .MustAsync(async (id, cancellation) => await repository.Exists(id))
+        .WithMessage("Budget does not exists");
+  }
+}
