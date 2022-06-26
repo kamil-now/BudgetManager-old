@@ -2,5 +2,5 @@ namespace BudgetManager.Infrastructure.Models;
 
 public class SpendingFundEntity : FundEntity
 {
-  public IEnumerable<SpendingCategoryEntity>? Categories { get; set; }
+  public Dictionary<string, Dictionary<string, decimal>>? Categories { get; set; }
 }

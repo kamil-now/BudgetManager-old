@@ -2,14 +2,14 @@ namespace BudgetManager.Domain.Models;
 
 public class SpendingFund : Fund
 {
-  public IEnumerable<SpendingCategory> Categories { get; }
+  public Dictionary<string, Balance> Categories { get; }
   public SpendingFund(
-    IEnumerable<SpendingCategory> categories,
-     string id,
-     string name,
-     Balance initialBalance
-     ) : base(id, name, initialBalance)
+    Dictionary<string, Balance> categories,
+    string id,
+    string name,
+    Balance initialBalance
+  ) : base(id, name, initialBalance)
   {
-    Categories = categories;
+    Categories = categories ?? new Dictionary<string, Balance>();
   }
 }

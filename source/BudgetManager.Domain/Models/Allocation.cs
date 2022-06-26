@@ -2,14 +2,19 @@ namespace BudgetManager.Domain.Models;
 
 public class Allocation : MoneyOperation
 {
-  public string? FundId { get; }
+  public string? FundId { get; private set; }
+  public string? Category { get; private set; }
   public Allocation(
-    string fundId,
+    string id,
     string title,
     Money value,
-    DateTime date
-    ) : base(title, value, date)
+    DateOnly date,
+    string description,
+    string? fundId = null,
+    string? category = null
+    ) : base(id, title, value, date, description)
   {
     FundId = fundId;
+    Category = category;
   }
 }

@@ -7,6 +7,8 @@ public interface IBudgetRequest
   string UserId { get; init; }
 }
 
+public record BudgetRequest<TDto>(string UserId) : IBudgetRequest, IRequest<IEnumerable<TDto>>;
+
 public abstract class BudgetRequestHandler<TRequest, TResult> : IRequestHandler<TRequest, TResult> where TRequest : IBudgetRequest, IRequest<TResult>
 {
   private IUserBudgetRepository _repository;

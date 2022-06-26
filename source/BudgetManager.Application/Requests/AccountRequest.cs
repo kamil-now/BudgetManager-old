@@ -18,3 +18,14 @@ public class AccountRequestHandler : BudgetRequestHandler<AccountRequest, Accoun
     return _mapper.Map<AccountDto>(account);
   }
 }
+
+public class AccountsRequestHandler : BudgetRequestHandler<BudgetRequest<AccountDto>, IEnumerable<AccountDto>>
+{
+  public AccountsRequestHandler(IUserBudgetRepository repo, IMapper map)
+   : base(repo, map)
+  {
+  }
+
+  public override IEnumerable<AccountDto> Get(BudgetRequest<AccountDto> request, Budget budget)
+   => budget.Accounts.Select(x => _mapper.Map<AccountDto>(x));
+}

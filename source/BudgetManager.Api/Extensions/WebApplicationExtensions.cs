@@ -1,5 +1,7 @@
 namespace BudgetManager.Api;
 
+using BudgetManager.Api.Extensions;
+using BudgetManager.Application.Requests;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,6 +18,17 @@ public static class WebApplicationExtensions
   {
     var url = $"/{resource}";
     var name = resource.ToUpper();
+
+    app.MapGet(url + "s",
+      async (
+        HttpContext context,
+        IMediator mediator,
+        CancellationToken cancellationToken
+      ) =>
+        Results.Ok(await mediator.Send(new BudgetRequest<TDto>(context.GetUserId()), cancellationToken))
+      )
+      .Produces<IEnumerable<TDto>>()
+      .RequireAuthorization();
 
     app.MapPost(url,
       async (

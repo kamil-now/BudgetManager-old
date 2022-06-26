@@ -21,15 +21,19 @@ public class MappingProfile : Profile
       .IgnoreAllPropertiesWithAnInaccessibleSetter()
       .ConstructUsing(src =>
         new Allocation(
-          src.FundId!,
+          src.Id!,
           src.Title!,
           new Money(src.Amount, src.Currency!),
-          src.Date
+          src.Date,
+          src.Description!,
+          src.FundId,
+          src.Category
           )
         );
 
     CreateMap<BudgetEntity, Budget>()
       .IgnoreAllPropertiesWithAnInaccessibleSetter()
+      .ForMember(x => x.Id, opt => opt.Ignore())
       .ConstructUsing((src, ctx) =>
       {
         var operations = new List<MoneyOperation>();
@@ -51,11 +55,15 @@ public class MappingProfile : Profile
       .IgnoreAllPropertiesWithAnInaccessibleSetter()
       .ConstructUsing(src =>
         new Expense(
-          src.FundId!,
-          src.AccountId!,
+          src.Id!,
           src.Title!,
           new Money(src.Amount, src.Currency!),
-          src.Date
+          src.Date,
+          src.AccountId!,
+          src.Description!,
+          src.IsConfirmed,
+          src.FundId,
+          src.Category
           )
         );
 
@@ -73,11 +81,13 @@ public class MappingProfile : Profile
       .IgnoreAllPropertiesWithAnInaccessibleSetter()
       .ConstructUsing(src =>
         new FundTransfer(
+          src.Id!,
           src.Title!,
           new Money(src.Amount, src.Currency!),
           src.SourceFundId!,
           src.TargetFundId!,
-          src.Date
+          src.Date,
+          src.Description!
           )
         );
 
@@ -85,22 +95,21 @@ public class MappingProfile : Profile
       .IgnoreAllPropertiesWithAnInaccessibleSetter()
       .ConstructUsing(src =>
         new Income(
+          src.Id!,
           src.AccountId!,
           src.Title!,
           new Money(src.Amount, src.Currency!),
-          src.Date
+          src.Date,
+          src.Description!
           )
         );
 
-    CreateMap<SpendingCategoryEntity, SpendingCategory>()
-      .IgnoreAllPropertiesWithAnInaccessibleSetter()
-      .ConstructUsing(src => new SpendingCategory(src.Id!, src.Name!));
 
-    CreateMap<SpendingFund, SpendingFund>()
+    CreateMap<SpendingFundEntity, SpendingFund>()
       .IgnoreAllPropertiesWithAnInaccessibleSetter()
       .ConstructUsing((src, ctx) =>
         new SpendingFund(
-          ctx.Mapper.Map<IEnumerable<SpendingCategory>>(src.Categories),
+          ctx.Mapper.Map<Dictionary<string, Balance>>(src.Categories),
           src.Id!,
           src.Name!,
           new Balance(src.InitialBalance!)
@@ -171,9 +180,7 @@ public class MappingProfile : Profile
       .ForMember(x => x.Amount, opt => opt.MapFrom(src => src.Value.Amount))
       .ForMember(x => x.Currency, opt => opt.MapFrom(src => src.Value.Currency));
 
-    CreateMap<SpendingCategory, SpendingCategoryEntity>();
-
-    CreateMap<SpendingFund, SpendingFund>();
+    CreateMap<SpendingFund, SpendingFundEntity>();
 
     CreateMap<MoneyOperation, MoneyOperationEntity>()
       .ForMember(x => x.Amount, opt => opt.MapFrom(src => src.Value.Amount))
@@ -181,5 +188,9 @@ public class MappingProfile : Profile
 
     CreateMap<Account, AccountDto>();
     CreateMap<Fund, FundDto>();
+    CreateMap<Expense, ExpenseDto>();
+    CreateMap<Income, IncomeDto>();
+
+    CreateMap<SpendingFund, SpendingFundDto>();
   }
 }

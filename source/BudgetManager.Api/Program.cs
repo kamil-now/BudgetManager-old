@@ -4,7 +4,9 @@ using BudgetManager.Api.Extensions;
 using BudgetManager.Application.Commands;
 using BudgetManager.Application.DependencyInjection;
 using BudgetManager.Application.Requests;
+using BudgetManager.Domain.Models;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Identity.Web;
 using Microsoft.OpenApi.Models;
@@ -88,6 +90,16 @@ async (
 .Produces((int)HttpStatusCode.Created)
 .RequireAuthorization();
 
+app.MapGet("/spending-fund",
+async (
+  HttpContext context,
+  IMediator mediator,
+  CancellationToken cancellationToken
+) => Results.Ok(await mediator.Send(new SpendingFundRequest(context.GetUserId()), cancellationToken)))
+.Produces<SpendingFundDto>()
+.RequireAuthorization();
+
+
 app.MapGet("/balance",
   [SwaggerOperation(Summary = "Gets user overall balance in a form of a dictionary with currency codes as keys")]
 async (
@@ -115,14 +127,36 @@ app.MapCRUD<FundDto, CreateFundCommand, FundRequest, UpdateFundCommand, DeleteFu
   (ctx, accountId) => new DeleteFundCommand(ctx.GetUserId(), accountId)
 );
 
+app.MapCRUD<IncomeDto, CreateIncomeCommand, IncomeRequest, UpdateIncomeCommand, DeleteOperationCommand<Income>>(
+  "income",
+  (ctx, create) => create with { UserId = ctx.GetUserId() },
+  (ctx, accountId) => new IncomeRequest(ctx.GetUserId(), accountId),
+  (ctx, update) => update with { UserId = ctx.GetUserId() },
+  (ctx, accountId) => new DeleteOperationCommand<Income>(ctx.GetUserId(), accountId)
+);
+
+app.MapCRUD<ExpenseDto, CreateExpenseCommand, ExpenseRequest, UpdateExpenseCommand, DeleteOperationCommand<Expense>>(
+  "expense",
+  (ctx, create) => create with { UserId = ctx.GetUserId() },
+  (ctx, accountId) => new ExpenseRequest(ctx.GetUserId(), accountId),
+  (ctx, update) => update with { UserId = ctx.GetUserId() },
+  (ctx, accountId) => new DeleteOperationCommand<Expense>(ctx.GetUserId(), accountId)
+);
+
+app.MapPut("/toggle-expense",
+  [SwaggerOperation(Summary = "Toggles IsConfirmed property of an expense - unconfirmed expenses will not affect overall balance")]
+async (
+  HttpContext context,
+  IMediator mediator,
+  [FromBody] ToggleExpenseCommand command,
+  CancellationToken cancellationToken
+) => Results.Ok(await mediator.Send(command, cancellationToken)))
+.RequireAuthorization();
+
 // TODO CRUD category
 
-// TODO CRUD expense
-// TODO CRUD income
 // TODO CRUD allocation
 // TODO CRUD transfer
-
-// TODO spending fund
 
 app.UseCors();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
