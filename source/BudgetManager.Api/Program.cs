@@ -80,6 +80,8 @@ app.UseSwaggerUI(c =>
 
 app.UseHttpsRedirection();
 
+app.MapGet("/", (HttpContext context) => context.Response.Redirect("/swagger", true));
+
 app.MapPost("/budget",
   [SwaggerOperation(Summary = "Creates budget for the authenticated user")]
 async (
