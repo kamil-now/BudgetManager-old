@@ -12,6 +12,8 @@ using Microsoft.Identity.Web;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Annotations;
 
+const string API_TITLE = "| Budget Manager API";
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddMicrosoftIdentityWebApiAuthentication(builder.Configuration);
@@ -80,7 +82,7 @@ app.UseSwaggerUI(c =>
 
 app.UseHttpsRedirection();
 
-app.MapGet("/", (HttpContext context) => context.Response.Redirect("/swagger", true));
+app.MapGet("/", (HttpContext context) => context.Response.Redirect("/swagger", true)).ExcludeFromDescription();
 
 app.MapPost("/budget",
   [SwaggerOperation(Summary = "Creates budget for the authenticated user")]
@@ -90,6 +92,7 @@ async (
   CancellationToken cancellationToken
   ) => Results.Created(await mediator.Send(new CreateBudgetCommand(context.GetUserId()), cancellationToken), context.GetUserId()))
 .Produces((int)HttpStatusCode.Created)
+.WithTags(API_TITLE)
 .RequireAuthorization();
 
 app.MapGet("/spending-fund",
@@ -99,6 +102,7 @@ async (
   CancellationToken cancellationToken
 ) => Results.Ok(await mediator.Send(new SpendingFundRequest(context.GetUserId()), cancellationToken)))
 .Produces<SpendingFundDto>()
+.WithTags(API_TITLE)
 .RequireAuthorization();
 
 
@@ -111,6 +115,7 @@ async (
   )
   => Results.Ok(await mediator.Send(new BalanceRequest(context.GetUserId()), cancellationToken)))
 .Produces<Dictionary<string, decimal>>()
+.WithTags(API_TITLE)
 .RequireAuthorization();
 
 app.MapCRUD<AccountDto, CreateAccountCommand, AccountRequest, UpdateAccountCommand, DeleteAccountCommand>(
@@ -153,6 +158,7 @@ async (
   [FromBody] ToggleExpenseCommand command,
   CancellationToken cancellationToken
 ) => Results.Ok(await mediator.Send(command, cancellationToken)))
+.WithTags("Expense")
 .RequireAuthorization();
 
 app.MapCRUD<AllocationDto, CreateAllocationCommand, AllocationRequest, UpdateAllocationCommand, DeleteOperationCommand<Allocation>>(
