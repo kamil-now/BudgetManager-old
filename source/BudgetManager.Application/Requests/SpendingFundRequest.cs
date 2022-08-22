@@ -13,15 +13,23 @@ public class SpendingFundRequestHandler : BudgetRequestHandler<SpendingFundReque
   }
 
   public override SpendingFundDto Get(SpendingFundRequest request, Budget budget)
-    => _mapper.Map<SpendingFundDto>(budget.SpendingFund);
+  {
+    var unallocatedFunds = budget.GetUnallocatedFunds(false);
+    var spendingFund = _mapper.Map<SpendingFundDto>(budget.SpendingFund);
+    foreach (var category in spendingFund.Categories)
+    {
+      foreach (var (currency, amount) in category.Value)
+      {
+        unallocatedFunds.Deduct(new Money(amount, currency));
+      }
+    }
+    return spendingFund with { Balance = unallocatedFunds };
+  }
 }
 
-public class SpendingFundRequestValidator : AbstractValidator<BalanceRequest>
+public class SpendingFundRequestValidator : BudgetRequestValidator<SpendingFundRequest>
 {
-  public SpendingFundRequestValidator(IUserBudgetRepository repository)
+  public SpendingFundRequestValidator(IUserBudgetRepository repository) : base(repository)
   {
-    RuleFor(x => x.UserId)
-      .MustAsync(async (id, cancellation) => await repository.Exists(id))
-        .WithMessage("Budget does not exists");
   }
 }
