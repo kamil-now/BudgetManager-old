@@ -9,8 +9,7 @@ public record FundTransferDto(
     string Date,
     string Description,
     string? SourceFundId,
-    string? TargetFundId,
-    string? Category
+    string? TargetFundId
 );
 public record FundTransferRequest(string UserId, string FundTransferId) : IBudgetRequest, IRequest<FundTransferDto>;
 

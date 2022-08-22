@@ -12,8 +12,7 @@ public record CreateFundTransferCommand(
   string? Date,
   string? Description,
   string SourceFundId,
-  string? TargetFundId,
-  string? Category
+  string? TargetFundId
   ) : IRequest<string>, IBudgetCommand;
 
 public class CreateFundTransferCommandHandler
@@ -39,8 +38,7 @@ public class CreateFundTransferCommandHandler
         command.TargetFundId,
         date,
         command.Description ?? string.Empty,
-        DateTime.Now,
-        command.Category
+        DateTime.Now
         )
       );
 
@@ -55,9 +53,6 @@ public class CreateFundTransferCommandValidator
   {
     RuleFor(x => x.Title)
       .NotEmpty()
-      .MaximumLength(50);
-
-    RuleFor(x => x.Category)
       .MaximumLength(50);
 
     RuleFor(x => x)

@@ -84,8 +84,7 @@ public class MappingProfile : Profile
           src.TargetFundId!,
           DateOnly.Parse(src.Date!),
           src.Description!,
-          src.CreatedDate,
-          src.Category
+          src.CreatedDate
           )
         ).ForAllMembers(opt => opt.Ignore());
 

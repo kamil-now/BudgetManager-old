@@ -4,7 +4,6 @@ public class FundTransfer : MoneyOperation
 {
   public string SourceFundId { get; private set; }
   public string? TargetFundId { get; private set; }
-  public string? Category { get; private set; }
 
   public FundTransfer(
     string id,
@@ -14,13 +13,11 @@ public class FundTransfer : MoneyOperation
     string? targetFundId,
     DateOnly date,
     string description,
-    DateTime createdDate,
-    string? category
+    DateTime createdDate
     ) : base(id, title, value, date, description, createdDate)
   {
     SourceFundId = sourceFundId;
     TargetFundId = targetFundId;
-    Category = category;
   }
 
   public void Update(string? sourceFundId, string? targetFundId, string? category, string? title, Money? value, string? date, string? description)
@@ -34,12 +31,6 @@ public class FundTransfer : MoneyOperation
     if (targetFundId is not null)
     {
       TargetFundId = targetFundId;
-      Category = null;
-    }
-    if (category is not null)
-    {
-      TargetFundId = null;
-      Category = category;
     }
   }
 }
