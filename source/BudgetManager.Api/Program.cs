@@ -171,6 +171,14 @@ app.MapCRUD<FundTransferDto, CreateFundTransferCommand, FundTransferRequest, Upd
   (ctx, accountId) => new DeleteOperationCommand<FundTransfer>(ctx.GetUserId(), accountId)
 );
 
+app.MapCRUD<Dictionary<string, decimal>, CreateSpendingCategoryCommand, SpendingFundCategoryRequest, UpdateSpendingFundCategoryCommand, DeleteSpendingFundCategoryCommand>(
+  "spendingFundCategory",
+  (ctx, create) => create with { UserId = ctx.GetUserId() },
+  (ctx, categoryName) => new SpendingFundCategoryRequest(ctx.GetUserId(), categoryName),
+  (ctx, update) => update with { UserId = ctx.GetUserId() },
+  (ctx, categoryName) => new DeleteSpendingFundCategoryCommand(ctx.GetUserId(), categoryName)
+);
+
 
 app.UseCors();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
