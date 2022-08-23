@@ -10,12 +10,13 @@ public static class DependencyInjection
   private static readonly string USER_BUDGETS_COLLECTION = "UserBudgets";
   public static IServiceCollection UseMongoDB(this IServiceCollection services, string connectionString)
   {
-    services.AddSingleton<IUserBudgetRepository>(_ =>
+    services.AddSingleton<IUserBudgetRepository>(s =>
       new UserBudgetRepository(
         new MongoClient(connectionString)
           .GetDatabase(DATABASE_NAME)
-          .GetCollection<BudgetEntity>(USER_BUDGETS_COLLECTION)
-        )
+          .GetCollection<BudgetEntity>(USER_BUDGETS_COLLECTION),
+        s.GetRequiredService<IBudgetFactory>()
+      )
     );
     return services;
   }
