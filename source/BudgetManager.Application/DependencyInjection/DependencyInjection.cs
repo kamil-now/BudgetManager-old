@@ -10,7 +10,8 @@ public static class DependencyInjection
    => services.AddAutoMapper(Assembly.GetExecutingAssembly())
     .AddMediatR(Assembly.GetExecutingAssembly())
     .AddValidatorsFromAssembly(Assembly.GetExecutingAssembly())
-    .AddScoped(typeof(IPipelineBehavior<,>), typeof(RequestValidationBehavior<,>));
+    .AddScoped(typeof(IPipelineBehavior<,>), typeof(RequestValidationBehavior<,>))
+    .AddSingleton<IBudgetFactory, BudgetFactory>();
 
   public static IServiceCollection AddDatabaseConnection(this IServiceCollection services, string connectionString)
    => services.UseMongoDB(connectionString);

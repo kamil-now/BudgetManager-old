@@ -90,7 +90,7 @@ async (
   HttpContext context,
   IMediator mediator,
   CancellationToken cancellationToken
-  ) => Results.Created(await mediator.Send(new CreateBudgetCommand(context.GetUserId()), cancellationToken), context.GetUserId()))
+  ) => Results.Created(await mediator.Send(new CreateBudgetCommand(context.GetUserId()), cancellationToken).ContinueWith(t => context.GetUserId()), context.GetUserId()))
 .Produces((int)HttpStatusCode.Created)
 .WithTags(API_TITLE)
 .RequireAuthorization();
