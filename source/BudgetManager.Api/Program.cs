@@ -50,7 +50,7 @@ builder.Services.AddSwaggerGen(options =>
   options.OperationFilter<AuthenticationOperationFilter>();
 });
 
-builder.Services.AddApplicationServices();
+builder.Services.AddApplicationServices(builder.Configuration.GetSection("AppConfig").Get<AppConfig>());
 builder.Services.AddDatabaseConnection(builder.Configuration.GetConnectionString("Database"));
 
 builder.Services.AddCors();
