@@ -47,17 +47,28 @@ public class CreateIncomeCommandHandler
 public class CreateIncomeCommandValidator
   : BudgetCommandValidator<CreateIncomeCommand>
 {
-  public CreateIncomeCommandValidator(IUserBudgetRepository repository) : base(repository)
+  public CreateIncomeCommandValidator(IUserBudgetRepository repository, AppConfig config) : base(repository)
   {
     RuleFor(x => x.Title)
       .NotEmpty()
-      .MaximumLength(50);
+      .MaximumLength(config.MaxTitleLength);
 
+    RuleFor(x => x.Value.Amount)
+      .GreaterThan(0);
+  }
+
+  protected override void RulesWhenBudgetExists()
+  {
     RuleFor(x => x)
-      .MustAsync(async (command, cancellation) =>
-      {
-        var budget = await repository.Get(command.UserId);
-        return budget!.Accounts?.Any(x => x.Id == command.AccountId) ?? false;
-      }).WithMessage("Account with a given id does not exist in the budget");
+      .MustAsync(async (command, cancellation)
+        => (await repository.Get(command.UserId)).Accounts?.Any(x => x.Id == command.AccountId) ?? false)
+      .WithMessage("Account does not exist")
+      .DependentRules(() =>
+        RuleFor(x => x)
+        .MustAsync(async (command, cancellation)
+          => (await repository.Get(command.UserId)).Accounts!
+              .First(x => x.Id == command.AccountId).Currency == command.Value.Currency)
+        .WithMessage("Account currency does not match income currency")
+      );
   }
 }

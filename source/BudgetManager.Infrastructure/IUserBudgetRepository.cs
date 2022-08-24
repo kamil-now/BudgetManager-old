@@ -8,4 +8,5 @@ public interface IUserBudgetRepository
   Task<BudgetEntity> Get(string userId);
   Task<bool> Exists(string userId);
   Task Update(BudgetEntity budget);
+  Task Delete(string userId);
 }

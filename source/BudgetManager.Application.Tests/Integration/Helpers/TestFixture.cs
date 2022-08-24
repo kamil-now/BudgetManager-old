@@ -12,7 +12,7 @@ public class TestFixture : TestBedFixture
   protected override void AddServices(IServiceCollection services, IConfiguration? configuration)
   {
     services
-      .AddApplicationServices()
+      .AddApplicationServices(new AppConfig() { MaxTitleLength = 50 })
       .AddSingleton<IUserBudgetRepository, MockUserBudgetRepository>();
   }
 

@@ -1,3 +1,5 @@
+namespace BudgetManager.Application.Commands;
+
 public record CreateBudgetCommand(string UserId) : IRequest<Unit>;
 
 public class CreateBudgetCommandHandler : IRequestHandler<CreateBudgetCommand, Unit>

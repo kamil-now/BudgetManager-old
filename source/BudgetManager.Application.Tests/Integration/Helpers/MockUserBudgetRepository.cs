@@ -23,4 +23,12 @@ public class MockUserBudgetRepository : IUserBudgetRepository
     _db[budget.UserId!] = budget;
     return Task.CompletedTask;
   }
+
+  public async Task Delete(string userId)
+  {
+    if (await Exists(userId))
+    {
+      _db.Remove(userId);
+    }
+  }
 }

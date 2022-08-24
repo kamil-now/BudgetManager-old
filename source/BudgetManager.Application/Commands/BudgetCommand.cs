@@ -32,22 +32,27 @@ public abstract class BudgetCommandHandler<TCommand, TResult>
     var src = await _repository.Get(command.UserId);
     var budget = _mapper.Map<Budget>(src);
 
-    var accountId = ModifyBudget(command, budget);
+    var id = ModifyBudget(command, budget);
     var updatedBudget = _mapper.Map<BudgetEntity>(budget);
     updatedBudget.UserId = command.UserId;
 
     await _repository.Update(updatedBudget);
 
-    return accountId;
+    return id;
   }
 }
 
 public abstract class BudgetCommandValidator<T> : AbstractValidator<T> where T : IBudgetCommand
 {
+  protected IUserBudgetRepository repository;
   protected BudgetCommandValidator(IUserBudgetRepository repository)
   {
+    this.repository = repository;
     RuleFor(x => x.UserId)
       .MustAsync(async (id, cancellation) => await repository.Exists(id))
-        .WithMessage("Budget does not exists");
+      .WithMessage("Budget does not exist")
+      .DependentRules(() => RulesWhenBudgetExists());
   }
+
+  protected virtual void RulesWhenBudgetExists() { }
 }

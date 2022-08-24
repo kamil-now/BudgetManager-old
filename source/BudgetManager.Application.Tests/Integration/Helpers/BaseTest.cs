@@ -1,17 +1,57 @@
 using System;
+using System.Linq;
+using System.Threading.Tasks;
+using BudgetManager.Application.Commands;
+using BudgetManager.Domain.Models;
+using BudgetManager.Infrastructure;
+using FluentAssertions;
+using FluentValidation;
 using MediatR;
 using Xunit.Abstractions;
 using Xunit.Microsoft.DependencyInjection.Abstracts;
 
-public abstract class BaseTest : TestBed<TestFixture>
+public abstract class BaseTest : TestBed<TestFixture>, IAsyncLifetime
 {
   protected IMediator mediator;
+  protected AppConfig appConfig;
+  protected string userId = "mockUser";
+
+  private IUserBudgetRepository _repository;
 
   public BaseTest(
     ITestOutputHelper testOutputHelper,
     TestFixture fixture
     ) : base(testOutputHelper, fixture)
   {
-    mediator = fixture.GetService<IMediator>(testOutputHelper) ?? throw new ArgumentNullException("IMediator instance is not registered");
+    mediator = fixture.GetService<IMediator>(testOutputHelper)
+      ?? throw new ArgumentNullException("IMediator instance is not registered");
+
+    appConfig = fixture.GetService<AppConfig>(testOutputHelper)
+      ?? throw new ArgumentNullException("AppConfig instance is not registered");
+
+    _repository = fixture.GetService<IUserBudgetRepository>(testOutputHelper)
+      ?? throw new ArgumentNullException("AppConfig instance is not registered");
   }
+
+  protected string GetStringWithLength(int length)
+    => string.Join("", Enumerable.Repeat('x', length));
+
+  protected Task AssertFailsValidationAsync(IRequest<string> command, string expectedMessage)
+  {
+    var handle = () => mediator.Send(command);
+    return handle.Should().ThrowAsync<ValidationException>()
+      .WithMessage("One or more validation errors: " + expectedMessage);
+  }
+
+  protected async Task CreateBudget()
+    => await mediator.Send(new CreateBudgetCommand(userId));
+
+  protected async Task<string> CreateAccount(string currency)
+    => await mediator.Send(new CreateAccountCommand(userId, "mockAccount", 0, currency));
+
+  protected async Task<string> CreateIncome(Money income, string accountId)
+    => await mediator.Send(new CreateIncomeCommand(userId, "mockIncome", income, null, accountId, null));
+
+  public Task InitializeAsync() => _repository.Delete(userId);
+  Task IAsyncLifetime.DisposeAsync() => Task.CompletedTask;
 }

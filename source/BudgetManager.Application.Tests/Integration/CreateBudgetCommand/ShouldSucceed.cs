@@ -1,22 +1,24 @@
 namespace CreateBudgetCommandTests;
 
 using System.Collections.Generic;
+using BudgetManager.Application.Commands;
 using BudgetManager.Application.Requests;
 using BudgetManager.Domain.Models;
 using FluentAssertions;
 using Xunit.Abstractions;
 
-public class GivenBudgetDoesNotExist : BaseTest
+public class ShouldSucceed : BaseTest
 {
-  public GivenBudgetDoesNotExist(
+  public ShouldSucceed(
     ITestOutputHelper testOutputHelper,
     TestFixture fixture
     ) : base(testOutputHelper, fixture)
   {
+
   }
 
   [Fact]
-  public async void Should_Create_Budget_With_SpendingFund()
+  public async void And_Create_Empty_SpendingFund()
   {
     var mockUserId = "mockUserId";
     await mediator.Send(new CreateBudgetCommand(mockUserId));

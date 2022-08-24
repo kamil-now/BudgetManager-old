@@ -1,13 +1,13 @@
 namespace CreateBudgetCommandTests;
 
 using System;
-using BudgetManager.Application.Requests;
+using BudgetManager.Application.Commands;
 using FluentAssertions;
 using Xunit.Abstractions;
 
-public class GivenBudgetAlreadyExists : BaseTest
+public class ShouldFail : BaseTest
 {
-  public GivenBudgetAlreadyExists(
+  public ShouldFail(
     ITestOutputHelper testOutputHelper,
     TestFixture fixture
     ) : base(testOutputHelper, fixture)
@@ -15,7 +15,7 @@ public class GivenBudgetAlreadyExists : BaseTest
   }
 
   [Fact]
-  public async void Should_Throw_Exception()
+  public async void When_Budget_Already_Exists()
   {
     var mockUserId = "mockUserId";
     await mediator.Send(new CreateBudgetCommand(mockUserId));
