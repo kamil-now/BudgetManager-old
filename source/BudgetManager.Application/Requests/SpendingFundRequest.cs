@@ -13,18 +13,7 @@ public class SpendingFundRequestHandler : BudgetRequestHandler<SpendingFundReque
   }
 
   public override SpendingFundDto Get(SpendingFundRequest request, Budget budget)
-  {
-    var unallocatedFunds = budget.GetUnallocatedFunds(false);
-    var spendingFund = _mapper.Map<SpendingFundDto>(budget.SpendingFund);
-    foreach (var category in spendingFund.Categories)
-    {
-      foreach (var (currency, amount) in category.Value)
-      {
-        unallocatedFunds.Deduct(new Money(amount, currency));
-      }
-    }
-    return spendingFund with { Balance = unallocatedFunds };
-  }
+    => _mapper.Map<SpendingFundDto>(budget.SpendingFund);
 }
 
 public class SpendingFundRequestValidator : BudgetRequestValidator<SpendingFundRequest>

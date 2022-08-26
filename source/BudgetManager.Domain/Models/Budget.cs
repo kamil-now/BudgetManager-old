@@ -27,6 +27,8 @@ public class Budget
     {
       ApplyOperation(operation);
     }
+
+    AssignUnallocatedFundsToSpendingFund();
   }
 
   public void AddOperation<T>(T operation) where T : MoneyOperation
@@ -64,7 +66,24 @@ public class Budget
     }
   }
 
-  public Balance GetUnallocatedFunds(bool excludePlannedExpenses)
+  private void AssignUnallocatedFundsToSpendingFund()
+  {
+    var unallocatedFunds = GetUnallocatedFunds(false);
+
+    foreach (var category in SpendingFund.Categories)
+    {
+      foreach (var (currency, amount) in category.Value)
+      {
+        unallocatedFunds.Deduct(new Money(amount, currency));
+      }
+    }
+    foreach (var currency in unallocatedFunds.Keys)
+    {
+      SpendingFund.Add(new Money(unallocatedFunds[currency], currency));
+    }
+  }
+
+  private Balance GetUnallocatedFunds(bool excludePlannedExpenses)
   {
     var balance = new Balance();
 
