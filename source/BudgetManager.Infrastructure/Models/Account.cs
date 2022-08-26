@@ -6,4 +6,5 @@ public class AccountEntity
   public string? Name { get; set; }
   public decimal InitialAmount { get; set; }
   public string? Currency { get; set; }
+  public decimal Balance { get; set; }
 }

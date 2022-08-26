@@ -4,25 +4,25 @@ using AutoMapper;
 using BudgetManager.Domain.Models;
 using BudgetManager.Infrastructure;
 
-public record DeleteSpendingFundCategoryCommand(string UserId, string CategoryName) : IRequest<Unit>, IBudgetCommand;
+public record DeleteSpendingCategoryCommand(string UserId, string CategoryName) : IRequest<Unit>, IBudgetCommand;
 
-public class DeleteSpendingFundCategoryCommandHandler : BudgetCommandHandler<DeleteSpendingFundCategoryCommand, Unit>
+public class DeleteSpendingCategoryCommandHandler : BudgetCommandHandler<DeleteSpendingCategoryCommand, Unit>
 {
-  public DeleteSpendingFundCategoryCommandHandler(IUserBudgetRepository repo, IMapper map)
+  public DeleteSpendingCategoryCommandHandler(IUserBudgetRepository repo, IMapper map)
   : base(repo, map)
   {
   }
 
-  public override Unit ModifyBudget(DeleteSpendingFundCategoryCommand command, Budget budget)
+  public override Unit ModifyBudget(DeleteSpendingCategoryCommand command, Budget budget)
   {
-    budget.SpendingFund.Categories.Remove(command.CategoryName);
+    budget.RemoveSpendingCategory(command.CategoryName);
     return Unit.Value;
   }
 }
 
-public class DeleteSpendingFundCategoryCommandValidator : BudgetCommandValidator<DeleteSpendingFundCategoryCommand>
+public class DeleteSpendingCategoryCommandValidator : BudgetCommandValidator<DeleteSpendingCategoryCommand>
 {
-  public DeleteSpendingFundCategoryCommandValidator(IUserBudgetRepository repository) : base(repository)
+  public DeleteSpendingCategoryCommandValidator(IUserBudgetRepository repository) : base(repository)
   {
     RuleFor(x => x)
       .MustAsync(async (command, cancellation) =>

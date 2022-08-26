@@ -6,9 +6,8 @@ public class SpendingFund : Fund
   public SpendingFund(
     Dictionary<string, Balance> categories,
     string id,
-    string name,
-    Balance initialBalance
-  ) : base(id, name, initialBalance)
+    string name
+  ) : base(id, name)
   {
     Categories = categories ?? new Dictionary<string, Balance>();
   }

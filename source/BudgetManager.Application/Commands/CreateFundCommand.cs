@@ -5,7 +5,7 @@ using AutoMapper;
 using BudgetManager.Domain.Models;
 using BudgetManager.Infrastructure;
 
-public record CreateFundCommand([property: JsonIgnore()] string UserId, string Name, Dictionary<string, decimal> InitialBalance)
+public record CreateFundCommand([property: JsonIgnore()] string UserId, string Name)
   : IRequest<string>, IBudgetCommand;
 
 public class CreateFundCommandHandler : BudgetCommandHandler<CreateFundCommand, string>
@@ -15,14 +15,7 @@ public class CreateFundCommandHandler : BudgetCommandHandler<CreateFundCommand, 
   {
   }
 
-  public override string ModifyBudget(CreateFundCommand command, Budget budget)
-  {
-    var id = Guid.NewGuid().ToString();
-
-    budget.AddFund(new Fund(id, command.Name, new Balance(command.InitialBalance)));
-
-    return id;
-  }
+  public override string ModifyBudget(CreateFundCommand command, Budget budget) => budget.AddFund(command.Name);
 }
 
 public class CreateFundCommandValidator : BudgetCommandValidator<CreateFundCommand>

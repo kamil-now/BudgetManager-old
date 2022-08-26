@@ -1,5 +1,3 @@
-using System.Dynamic;
-
 namespace BudgetManager.Domain.Models;
 
 public class Account

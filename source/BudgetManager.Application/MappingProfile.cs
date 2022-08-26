@@ -7,14 +7,16 @@ public class MappingProfile : Profile
 {
   public MappingProfile()
   {
-    CreateMap<AccountEntity, Account>()
+    CreateMap<AccountEntity, Account>(MemberList.None)
       .ConstructUsing(src =>
         new Account(
           src.Id!,
           src.Name!,
           new Money(src.InitialAmount, src.Currency!)
           )
-        ).ForAllMembers(opt => opt.Ignore());
+        ).ForMember(x => x.Balance,
+          opt => opt.MapFrom(src => new Money(src.Balance, src.Currency!))
+        );
 
     CreateMap<AllocationEntity, Allocation>()
       .ConstructUsing(src =>
@@ -68,8 +70,7 @@ public class MappingProfile : Profile
       .ConstructUsing(src =>
         new Fund(
           src.Id!,
-          src.Name!,
-          new Balance(src.InitialBalance!)
+          src.Name!
           )
         ).ForAllMembers(opt => opt.Ignore());
 
@@ -101,20 +102,20 @@ public class MappingProfile : Profile
           )
         ).ForAllMembers(opt => opt.Ignore());
 
-
-    CreateMap<SpendingFundEntity, SpendingFund>()
+    CreateMap<SpendingFundEntity, SpendingFund>(MemberList.None)
       .ConstructUsing((src, ctx) =>
         new SpendingFund(
           ctx.Mapper.Map<Dictionary<string, Balance>>(src.Categories),
           src.Id!,
-          src.Name!,
-          new Balance(src.InitialBalance!)
+          src.Name!
           )
-        ).ForAllMembers(opt => opt.Ignore());
+        )
+      .ForMember(x => x.Balance, opt => opt.MapFrom(src => new Balance(src.Balance!)));
 
     CreateMap<Account, AccountEntity>()
       .ForMember(x => x.InitialAmount, opt => opt.MapFrom(src => src.InitialBalance.Amount))
-      .ForMember(x => x.Currency, opt => opt.MapFrom(src => src.InitialBalance.Currency));
+      .ForMember(x => x.Currency, opt => opt.MapFrom(src => src.InitialBalance.Currency))
+      .ForMember(x => x.Balance, opt => opt.MapFrom(src => src.Balance.Amount));
 
     CreateMap<Allocation, AllocationEntity>()
       .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString()))
@@ -123,6 +124,7 @@ public class MappingProfile : Profile
 
     CreateMap<Budget, BudgetEntity>()
       .ForMember(x => x.UserId, opt => opt.Ignore())
+      .ForMember(x => x.SpendingFund, opt => opt.MapFrom(src => src.SpendingFund))
       .ForMember(x => x.Accounts, opt =>
         opt.MapFrom((src, _, __, ctx) =>
           ctx.Mapper.Map<IEnumerable<AccountEntity>>(src.Accounts)
@@ -168,7 +170,7 @@ public class MappingProfile : Profile
       .ForMember(x => x.Currency, opt => opt.MapFrom(src => src.Value.Currency));
 
     CreateMap<Fund, FundEntity>()
-      .ForMember(x => x.InitialBalance, opt => opt.MapFrom(src => new Dictionary<string, decimal>(src.InitialBalance)));
+      .ForMember(x => x.Balance, opt => opt.MapFrom(src => new Dictionary<string, decimal>(src.Balance)));
 
     CreateMap<FundTransfer, FundTransferEntity>()
       .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString()))
@@ -180,7 +182,8 @@ public class MappingProfile : Profile
       .ForMember(x => x.Amount, opt => opt.MapFrom(src => src.Value.Amount))
       .ForMember(x => x.Currency, opt => opt.MapFrom(src => src.Value.Currency));
 
-    CreateMap<SpendingFund, SpendingFundEntity>();
+    CreateMap<SpendingFund, SpendingFundEntity>()
+      .ForMember(x => x.Balance, opt => opt.MapFrom(src => new Dictionary<string, decimal>(src.Balance)));
 
     CreateMap<Account, AccountDto>();
 

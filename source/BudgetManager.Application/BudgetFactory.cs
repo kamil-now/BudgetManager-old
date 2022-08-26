@@ -9,7 +9,7 @@ public class BudgetFactory : IBudgetFactory
       {
         Id = Guid.NewGuid().ToString(),
         Name = "Spending Fund",
-        InitialBalance = new Dictionary<string, decimal>()
+        Balance = new Dictionary<string, decimal>()
       }
     };
   }

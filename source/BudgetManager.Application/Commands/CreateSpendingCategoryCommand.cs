@@ -5,7 +5,7 @@ using AutoMapper;
 using BudgetManager.Domain.Models;
 using BudgetManager.Infrastructure;
 
-public record CreateSpendingCategoryCommand([property: JsonIgnore()] string UserId, string Name, Dictionary<string, decimal> InitialBalance)
+public record CreateSpendingCategoryCommand([property: JsonIgnore()] string UserId, string Name)
   : IRequest<string>, IBudgetCommand;
 
 public class CreateSpendingCategoryCommandHandler : BudgetCommandHandler<CreateSpendingCategoryCommand, string>
@@ -17,7 +17,7 @@ public class CreateSpendingCategoryCommandHandler : BudgetCommandHandler<CreateS
 
   public override string ModifyBudget(CreateSpendingCategoryCommand command, Budget budget)
   {
-    budget.SpendingFund.Categories.Add(command.Name, new Balance(command.InitialBalance));
+    budget.AddSpendingCategory(command.Name);
 
     return command.Name;
   }
