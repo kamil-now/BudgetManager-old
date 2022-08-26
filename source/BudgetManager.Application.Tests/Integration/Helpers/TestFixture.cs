@@ -12,8 +12,13 @@ public class TestFixture : TestBedFixture
   protected override void AddServices(IServiceCollection services, IConfiguration? configuration)
   {
     services
-      .AddApplicationServices(new AppConfig() { MaxTitleLength = 50 })
-      .AddSingleton<IUserBudgetRepository, MockUserBudgetRepository>();
+      .AddApplicationServices(
+        new AppConfig()
+        {
+          MaxTitleLength = 20,
+          MaxContentLength = 50
+        }
+      ).AddSingleton<IUserBudgetRepository, MockUserBudgetRepository>();
   }
 
   protected override ValueTask DisposeAsyncCore()

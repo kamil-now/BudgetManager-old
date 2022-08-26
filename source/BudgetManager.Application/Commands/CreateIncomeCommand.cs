@@ -53,6 +53,9 @@ public class CreateIncomeCommandValidator
       .NotEmpty()
       .MaximumLength(config.MaxTitleLength);
 
+    RuleFor(x => x.Description)
+      .MaximumLength(config.MaxContentLength);
+
     RuleFor(x => x.Value.Amount)
       .GreaterThan(0);
   }
@@ -62,13 +65,13 @@ public class CreateIncomeCommandValidator
     RuleFor(x => x)
       .MustAsync(async (command, cancellation)
         => (await repository.Get(command.UserId)).Accounts?.Any(x => x.Id == command.AccountId) ?? false)
-      .WithMessage("Account does not exist")
+      .WithMessage("Account does not exist.")
       .DependentRules(() =>
         RuleFor(x => x)
         .MustAsync(async (command, cancellation)
           => (await repository.Get(command.UserId)).Accounts!
               .First(x => x.Id == command.AccountId).Currency == command.Value.Currency)
-        .WithMessage("Account currency does not match income currency")
+        .WithMessage("Account currency does not match income currency.")
       );
   }
 }

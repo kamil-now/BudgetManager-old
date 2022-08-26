@@ -1,7 +1,6 @@
 namespace CreateBudgetCommandTests;
 
 using System.Collections.Generic;
-using BudgetManager.Application.Commands;
 using BudgetManager.Application.Requests;
 using BudgetManager.Domain.Models;
 using FluentAssertions;
@@ -20,10 +19,9 @@ public class ShouldSucceed : BaseTest
   [Fact]
   public async void And_Create_Empty_SpendingFund()
   {
-    var mockUserId = "mockUserId";
-    await mediator.Send(new CreateBudgetCommand(mockUserId));
+    await CreateBudget();
 
-    var result = await mediator.Send(new SpendingFundRequest(mockUserId));
+    var result = await mediator.Send(new SpendingFundRequest(userId));
 
     result.Name.Should().Be("Spending Fund");
     result.Categories.Should().BeEquivalentTo(new Dictionary<string, Balance>());

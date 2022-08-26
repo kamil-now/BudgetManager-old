@@ -18,6 +18,6 @@ internal sealed class RequestValidationBehavior<TRequest, TResponse> : IPipeline
         .SelectMany(x => x.Errors)
         .ToArray();
 
-    return validationErrors.Any() ? throw new ValidationException("One or more validation errors: " + string.Join("; ", validationErrors.Select(x => x.ErrorMessage).ToArray()), validationErrors) : next();
+    return validationErrors.Any() ? throw new ValidationException("One or more validation errors: " + string.Join(" ", validationErrors.Select(x => x.ErrorMessage).ToArray()), validationErrors) : next();
   }
 }

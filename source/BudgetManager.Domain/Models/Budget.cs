@@ -37,10 +37,12 @@ public class Budget
     _operations.RemoveAll(x => x.Id == operationId);
   }
 
-  public void AddAccount(Account account)
+  public string AddAccount(string accountName, Money initialBalance)
   {
-    _accounts.Add(account);
-    SpendingFund.Add(account.InitialBalance);
+    var id = Guid.NewGuid().ToString();
+    _accounts.Add(new Account(id, accountName, initialBalance));
+    SpendingFund.Add(initialBalance);
+    return id;
   }
   public void RenameAccount(string accountId, string newName) => _accounts.First(x => x.Id == accountId).Name = newName;
   public void RemoveAccount(string accountId)
@@ -88,7 +90,19 @@ public class Budget
     switch (operation)
     {
       case Allocation op:
-        _funds.First(x => x.Id == op.FundId).Add(operation.Value);
+        if (op.FundId is not null)
+        {
+          _funds.First(x => x.Id == op.FundId).Add(operation.Value);
+        }
+        else if (op.Category is not null)
+        {
+          if (!SpendingFund.Categories.ContainsKey(op.Category))
+          {
+            SpendingFund.Categories.Add(op.Category, new Balance());
+          }
+
+          SpendingFund.Categories[op.Category].Add(op.Value);
+        }
         SpendingFund.Deduct(operation.Value);
         break;
       case Expense op:

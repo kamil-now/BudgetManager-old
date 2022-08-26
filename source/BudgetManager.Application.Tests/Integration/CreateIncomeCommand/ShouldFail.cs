@@ -24,7 +24,7 @@ public class ShouldFail : BaseTest
         "",
         null
         ),
-      "Budget does not exist"
+      "Budget does not exist."
     );
 
   [Fact]
@@ -40,7 +40,7 @@ public class ShouldFail : BaseTest
         "",
         null
         ),
-        "Account does not exist"
+        "Account does not exist."
       );
   }
 
@@ -59,6 +59,24 @@ public class ShouldFail : BaseTest
         null
         ),
        $"The length of 'Title' must be {appConfig.MaxTitleLength} characters or fewer. You entered {appConfig.MaxTitleLength + 1} characters."
+     );
+  }
+
+  [Fact]
+  public async void When_Description_Is_Too_Long()
+  {
+    await CreateBudget();
+    var accountId = await CreateAccount("EUR");
+    await AssertFailsValidationAsync(
+      new CreateIncomeCommand(
+        userId,
+        "mockIncome",
+        new Money(1, "EUR"),
+        null,
+        accountId,
+        GetStringWithLength(appConfig.MaxContentLength + 1)
+        ),
+       $"The length of 'Description' must be {appConfig.MaxContentLength} characters or fewer. You entered {appConfig.MaxContentLength + 1} characters."
      );
   }
 
@@ -114,7 +132,7 @@ public class ShouldFail : BaseTest
         accountId,
         null
         ),
-        "Account currency does not match income currency"
+        "Account currency does not match income currency."
       );
   }
 }

@@ -17,25 +17,24 @@ public class CreateAccountCommandHandler : BudgetCommandHandler<CreateAccountCom
   }
 
   public override string ModifyBudget(CreateAccountCommand command, Budget budget)
-  {
-    var id = Guid.NewGuid().ToString();
-
-    budget.AddAccount(new Account(id, command.Name, new Money(command.InitialAmount, command.Currency)));
-
-    return id;
-  }
+    => budget.AddAccount(command.Name, new Money(command.InitialAmount, command.Currency));
 }
 
 public class CreateAccountCommandValidator : BudgetCommandValidator<CreateAccountCommand>
 {
-  public CreateAccountCommandValidator(IUserBudgetRepository repository) : base(repository)
+  public CreateAccountCommandValidator(IUserBudgetRepository repository, AppConfig config) : base(repository)
   {
     RuleFor(x => x.Currency)
       .NotEmpty()
-      .MaximumLength(3);
+      .Must(currency => ISO._4217.CurrencyCodesResolver.Codes
+      .Any(c => c.Code == currency))
+      .WithMessage("'Currency' must comply with ISO 4217.");
+
+    RuleFor(x => x.InitialAmount)
+      .GreaterThanOrEqualTo(0);
 
     RuleFor(x => x.Name)
       .NotEmpty()
-      .MaximumLength(50);
+      .MaximumLength(config.MaxTitleLength);
   }
 }

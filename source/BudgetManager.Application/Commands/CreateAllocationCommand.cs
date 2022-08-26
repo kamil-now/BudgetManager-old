@@ -49,19 +49,54 @@ public class CreateAllocationCommandHandler
 public class CreateAllocationCommandValidator
   : BudgetCommandValidator<CreateAllocationCommand>
 {
-  public CreateAllocationCommandValidator(IUserBudgetRepository repository) : base(repository)
+  private IMapper _mapper;
+  public CreateAllocationCommandValidator(IUserBudgetRepository repository, AppConfig config, IMapper mapper) : base(repository)
   {
+    _mapper = mapper;
+
     RuleFor(x => x.Title)
       .NotEmpty()
-      .MaximumLength(50);
+      .MaximumLength(config.MaxTitleLength);
+
+    RuleFor(x => x.Description)
+      .MaximumLength(config.MaxContentLength);
+
+    RuleFor(x => x.Value.Amount)
+      .GreaterThan(0);
+  }
+
+  protected override void RulesWhenBudgetExists()
+  {
+    RuleFor(x => x)
+      .Must((command, cancellation)
+        => !string.IsNullOrEmpty(command.Category) ^ !string.IsNullOrEmpty(command.FundId)
+      ).WithMessage("Either Fund id or Spending Fund category must be defined.").DependentRules(() =>
+      {
+        RuleFor(x => x)
+          .MustAsync(async (command, cancellation) =>
+          {
+            var budget = await repository.Get(command.UserId);
+            return budget!.Funds?.Any(x => x.Id == command.FundId) ?? false;
+          }).When(command => command.Category is null && command.FundId is not null)
+          .WithMessage("Fund does not exist.");
+
+        RuleFor(x => x)
+          .MustAsync(async (command, cancellation) =>
+          {
+            var budget = await repository.Get(command.UserId);
+            return budget!.SpendingFund?.Categories?.Keys.Any(x => x == command.Category) ?? false;
+          }).When(command => command.Category is not null && command.FundId is null)
+          .WithMessage(command => $"Category '{command.Category}' does not exist.");
+      });
 
     RuleFor(x => x)
       .MustAsync(async (command, cancellation) =>
       {
-        if (command.FundId is null)
-          return true;
-        var budget = await repository.Get(command.UserId);
-        return budget!.Funds?.Any(x => x.Id == command.FundId) ?? false;
-      }).WithMessage("Fund with a given id does not exist in the budget");
+        var budgetEntity = await repository.Get(command.UserId);
+        var budget = _mapper.Map<Budget>(budgetEntity);
+
+        var availableFunds = budget.SpendingFund.Balance.ContainsKey(command.Value.Currency) ? budget.SpendingFund.Balance[command.Value.Currency] : 0;
+        return availableFunds >= command.Value.Amount;
+      }).WithMessage($"Insufficient funds.");
   }
 }

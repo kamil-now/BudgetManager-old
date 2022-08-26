@@ -40,6 +40,6 @@ public abstract class BudgetRequestValidator<T> : AbstractValidator<T> where T :
   {
     RuleFor(x => x.UserId)
       .MustAsync(async (id, cancellation) => await repository.Exists(id))
-        .WithMessage("Budget does not exists");
+        .WithMessage("Budget does not exist.");
   }
 }

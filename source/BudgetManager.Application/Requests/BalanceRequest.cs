@@ -33,12 +33,9 @@ public class BalanceRequestHandler
   }
 }
 
-public class BalanceRequestValidator : AbstractValidator<BalanceRequest>
+public class BalanceRequestValidator : BudgetRequestValidator<BalanceRequest>
 {
-  public BalanceRequestValidator(IUserBudgetRepository repository)
+  public BalanceRequestValidator(IUserBudgetRepository repo) : base(repo)
   {
-    RuleFor(x => x.UserId)
-      .MustAsync(async (id, cancellation) => await repository.Exists(id))
-        .WithMessage("Budget does not exists");
   }
 }
