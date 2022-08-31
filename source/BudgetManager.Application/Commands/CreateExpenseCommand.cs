@@ -52,29 +52,49 @@ public class CreateExpenseCommandHandler
 public class CreateExpenseCommandValidator
   : BudgetCommandValidator<CreateExpenseCommand>
 {
-  public CreateExpenseCommandValidator(IUserBudgetRepository repository) : base(repository)
+  public CreateExpenseCommandValidator(IUserBudgetRepository repository, AppConfig appConfig) : base(repository)
   {
     RuleFor(x => x.Title)
       .NotEmpty()
-      .MaximumLength(50);
+      .MaximumLength(appConfig.MaxTitleLength);
 
-    RuleFor(x => x.Category)
-      .MaximumLength(50);
+    RuleFor(x => x.Description)
+      .MaximumLength(appConfig.MaxContentLength);
 
+    RuleFor(x => x.Value.Amount)
+      .GreaterThan(0);
+  }
+
+  protected override void RulesWhenBudgetExists()
+  {
     RuleFor(x => x)
-      .MustAsync(async (command, cancellation) =>
+    .MustAsync(async (command, cancellation) =>
+    {
+      var budget = await repository.Get(command.UserId);
+      return budget!.Accounts?.Any(x => x.Id == command.AccountId) ?? false;
+    }).WithMessage("Account does not exist.")
+      .DependentRules(() =>
       {
-        var budget = await repository.Get(command.UserId);
-        return budget!.Accounts?.Any(x => x.Id == command.AccountId) ?? false;
-      }).WithMessage("Account with a given id does not exist in the budget");
+        RuleFor(x => x)
+          .Must((command, cancellation)
+          => !string.IsNullOrEmpty(command.Category) ^ !string.IsNullOrEmpty(command.FundId)
+          ).WithMessage("Either Fund id or Spending Fund category must be defined.");
 
-    RuleFor(x => x)
-      .MustAsync(async (command, cancellation) =>
-      {
-        if (command.FundId is null)
-          return true;
-        var budget = await repository.Get(command.UserId);
-        return budget!.Funds?.Any(x => x.Id == command.FundId) ?? false;
-      }).WithMessage("Fund with a given id does not exist in the budget");
+        RuleFor(x => x)
+        .MustAsync(async (command, cancellation)
+          => (await repository.Get(command.UserId)).Accounts!
+              .First(x => x.Id == command.AccountId).Currency == command.Value.Currency)
+        .WithMessage("Account currency does not match expense currency.");
+
+        RuleFor(x => x)
+          .MustAsync(async (command, cancellation) =>
+          {
+            if (command.FundId is null)
+              return true;
+            var budget = await repository.Get(command.UserId);
+            return budget!.Funds?.Any(x => x.Id == command.FundId) ?? false;
+          }).WithMessage("Fund does not exist.");
+      });
+
   }
 }
