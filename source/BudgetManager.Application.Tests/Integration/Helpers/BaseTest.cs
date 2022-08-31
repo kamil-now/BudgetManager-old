@@ -68,10 +68,10 @@ public abstract class BaseTest : TestBed<TestFixture>, IAsyncLifetime
   protected async Task<string> CreateFund()
     => await mediator.Send(new CreateFundCommand(userId, "mockFund"));
 
-  protected async Task<string> CreateAllocation(Money allocation, string? fundId, string? categoryId = null)
-    => await mediator.Send(new CreateAllocationCommand(userId, "mockAllocation", allocation, null, null, fundId, categoryId));
+  protected async Task<string> CreateAllocation(Money allocation, string? fundId, string? categoryName = null)
+    => await mediator.Send(new CreateAllocationCommand(userId, "mockAllocation", allocation, null, null, fundId, categoryName));
 
-  protected async Task<string> CreateExpense(Money value, string? accountId, string? fundId, string? categoryName)
+  protected async Task<string> CreateExpense(Money value, string accountId, string? fundId, string? categoryName)
     => await mediator.Send(new CreateExpenseCommand(userId, "mockExpense", value, null, accountId, null, fundId, categoryName));
 
   public Task InitializeAsync() => _repository.Delete(userId);

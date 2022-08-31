@@ -1,5 +1,6 @@
 namespace CreateIncomeCommandTests;
 
+using System.Threading.Tasks;
 using BudgetManager.Application.Commands;
 using BudgetManager.Domain.Models;
 using Xunit.Abstractions;
@@ -47,8 +48,7 @@ public class ShouldFail : BaseTest
   [Fact]
   public async void When_Title_Is_Too_Long()
   {
-    await CreateBudget();
-    var accountId = await CreateAccount("EUR");
+    var accountId = await CreateBudgetWithAccount();
     await AssertFailsValidationAsync(
       new CreateIncomeCommand(
         userId,
@@ -65,8 +65,7 @@ public class ShouldFail : BaseTest
   [Fact]
   public async void When_Description_Is_Too_Long()
   {
-    await CreateBudget();
-    var accountId = await CreateAccount("EUR");
+    var accountId = await CreateBudgetWithAccount();
     await AssertFailsValidationAsync(
       new CreateIncomeCommand(
         userId,
@@ -83,8 +82,7 @@ public class ShouldFail : BaseTest
   [Fact]
   public async void When_Title_Is_Empty()
   {
-    await CreateBudget();
-    var accountId = await CreateAccount("EUR");
+    var accountId = await CreateBudgetWithAccount();
     await AssertFailsValidationAsync(
       new CreateIncomeCommand(
         userId,
@@ -103,8 +101,7 @@ public class ShouldFail : BaseTest
   [InlineData(-1)]
   public async void When_Income_Value_Is_Not_Positive(int value)
   {
-    await CreateBudget();
-    var accountId = await CreateAccount("EUR");
+    var accountId = await CreateBudgetWithAccount();
     await AssertFailsValidationAsync(
       new CreateIncomeCommand(
         userId,
@@ -121,8 +118,7 @@ public class ShouldFail : BaseTest
   [Fact]
   public async void When_Income_Currency_Does_Not_Match_Account_Currency()
   {
-    await CreateBudget();
-    var accountId = await CreateAccount("USD");
+    var accountId = await CreateBudgetWithAccount("USD");
     await AssertFailsValidationAsync(
       new CreateIncomeCommand(
         userId,
@@ -134,5 +130,11 @@ public class ShouldFail : BaseTest
         ),
         "Account currency does not match income currency."
       );
+  }
+
+  private async Task<string> CreateBudgetWithAccount(string currency = "EUR")
+  {
+    await CreateBudget();
+    return await CreateAccount(currency);
   }
 }

@@ -66,13 +66,14 @@ public class MappingProfile : Profile
           )
         ).ForAllMembers(opt => opt.Ignore());
 
-    CreateMap<FundEntity, Fund>()
+    CreateMap<FundEntity, Fund>(MemberList.None)
       .ConstructUsing(src =>
         new Fund(
           src.Id!,
           src.Name!
           )
-        ).ForAllMembers(opt => opt.Ignore());
+        )
+      .ForMember(x => x.Balance, opt => opt.MapFrom(src => new Balance(src.Balance!)));
 
     CreateMap<FundTransferEntity, FundTransfer>()
       .IgnoreAllPropertiesWithAnInaccessibleSetter()

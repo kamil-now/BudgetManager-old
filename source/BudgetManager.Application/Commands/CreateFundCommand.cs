@@ -20,10 +20,10 @@ public class CreateFundCommandHandler : BudgetCommandHandler<CreateFundCommand, 
 
 public class CreateFundCommandValidator : BudgetCommandValidator<CreateFundCommand>
 {
-  public CreateFundCommandValidator(IUserBudgetRepository repository) : base(repository)
+  public CreateFundCommandValidator(IUserBudgetRepository repository, AppConfig appConfig) : base(repository)
   {
     RuleFor(x => x.Name)
       .NotEmpty()
-      .MaximumLength(50);
+      .MaximumLength(appConfig.MaxTitleLength);
   }
 }

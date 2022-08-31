@@ -1,5 +1,6 @@
 namespace CreateExpenseCommandTests;
 
+using System.Threading.Tasks;
 using BudgetManager.Application.Commands;
 using BudgetManager.Domain.Models;
 using Xunit.Abstractions;
@@ -53,9 +54,7 @@ public class ShouldFail : BaseTest
   [InlineData(-1)]
   public async void When_Expense_Value_Is_Not_Positive(int value)
   {
-    await CreateBudget();
-    var accountId = await CreateAccount("EUR");
-    var fundId = await CreateFund();
+    var (accountId, fundId) = await CreateBudgetWithAccountAndFund();
     await AssertFailsValidationAsync(
       new CreateExpenseCommand(
         userId,
@@ -74,9 +73,7 @@ public class ShouldFail : BaseTest
   [Fact]
   public async void When_Title_Is_Too_Long()
   {
-    await CreateBudget();
-    var accountId = await CreateAccount("EUR");
-    var fundId = await CreateFund();
+    var (accountId, fundId) = await CreateBudgetWithAccountAndFund();
     await AssertFailsValidationAsync(
       new CreateExpenseCommand(
         userId,
@@ -95,9 +92,7 @@ public class ShouldFail : BaseTest
   [Fact]
   public async void When_Title_Is_Empty()
   {
-    await CreateBudget();
-    var accountId = await CreateAccount("EUR");
-    var categoryName = await CreateSpendingCategory();
+    var (accountId, categoryName) = await CreateBudgetWithAccountAndCategory();
     await AssertFailsValidationAsync(
       new CreateExpenseCommand(
         userId,
@@ -116,9 +111,7 @@ public class ShouldFail : BaseTest
   [Fact]
   public async void When_Description_Is_Too_Long()
   {
-    await CreateBudget();
-    var accountId = await CreateAccount("EUR");
-    var categoryName = await CreateSpendingCategory();
+    var (accountId, categoryName) = await CreateBudgetWithAccountAndCategory();
     await AssertFailsValidationAsync(
       new CreateExpenseCommand(
         userId,
@@ -137,9 +130,7 @@ public class ShouldFail : BaseTest
   [Fact]
   public async void When_Expense_Currency_Does_Not_Match_Account_Currency()
   {
-    await CreateBudget();
-    var accountId = await CreateAccount("USD");
-    var categoryName = await CreateSpendingCategory();
+    var (accountId, categoryName) = await CreateBudgetWithAccountAndCategory("USD");
     await AssertFailsValidationAsync(
       new CreateExpenseCommand(
         userId,
@@ -172,5 +163,17 @@ public class ShouldFail : BaseTest
         ),
         "Account currency does not match expense currency."
       );
+  }
+
+  private async Task<(string accountId, string fundId)> CreateBudgetWithAccountAndFund(string currency = "EUR")
+  {
+    await CreateBudget();
+    return (await CreateAccount(currency), await CreateFund());
+  }
+
+  private async Task<(string accountId, string categoryName)> CreateBudgetWithAccountAndCategory(string currency = "EUR")
+  {
+    await CreateBudget();
+    return (await CreateAccount(currency), await CreateSpendingCategory());
   }
 }

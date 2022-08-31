@@ -14,8 +14,9 @@ public class FundRequestHandler : BudgetRequestHandler<FundRequest, FundDto>
 
   public override FundDto Get(FundRequest request, Budget budget)
   {
-    var Fund = budget.Funds.First(x => x.Id == request.FundId);
-    return _mapper.Map<FundDto>(Fund);
+    var fund = budget.Funds.First(x => x.Id == request.FundId);
+    var x = _mapper.Map<FundDto>(fund);
+    return x;
   }
 }
 
