@@ -1,8 +1,6 @@
 namespace CreateFundCommandTests;
 
-using System.Threading.Tasks;
 using BudgetManager.Application.Commands;
-using BudgetManager.Domain.Models;
 using Xunit.Abstractions;
 
 public class ShouldFail : BaseTest

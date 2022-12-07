@@ -26,8 +26,8 @@ public class Budget
 
   public void AddOperation<T>(T operation) where T : MoneyOperation
   {
-    _operations.Add(operation);
     ApplyOperation(operation);
+    _operations.Add(operation);
   }
 
   public void RemoveOperation<T>(string operationId) where T : MoneyOperation
@@ -134,6 +134,10 @@ public class Budget
       case Income op:
         _accounts.First(x => x.Id == op.AccountId).Add(operation.Value);
         SpendingFund.Add(operation.Value);
+        break;
+      case FundTransfer op:
+        _funds.First(x => x.Id == op.SourceFundId).Deduct(op.Value);
+        _funds.First(x => x.Id == op.TargetFundId).Add(op.Value);
         break;
       default:
         throw new InvalidOperationException("Unhandled operation");
