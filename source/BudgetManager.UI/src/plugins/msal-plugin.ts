@@ -3,10 +3,10 @@ import {
   AuthenticationResult,
   PublicClientApplication,
   RedirectRequest,
-} from "@azure/msal-browser";
-import axios from "axios";
-import { App, Plugin } from "vue";
-import { Router } from "vue-router";
+} from '@azure/msal-browser';
+import axios from 'axios';
+import { App, Plugin } from 'vue';
+import { Router } from 'vue-router';
 
 export const MSAL = Symbol();
 
@@ -23,7 +23,7 @@ export const msal: Plugin = {
     app.provide(MSAL, service);
 
     router.push({
-      path: (await service.acquireTokenSilent()) ? "/home" : "/login",
+      path: (await service.acquireTokenSilent()) ? '/home' : '/login',
     });
 
     axios.interceptors.request.use(
@@ -31,9 +31,9 @@ export const msal: Plugin = {
         if (!config.headers) {
           config.headers = {};
         }
-        config.headers["Authorization"] = "Bearer " + service.accessToken;
-        config.headers["Access-Control-Allow-Origin"] = "http://localhost:8200";
-        config.headers["Content-Type"] = "application/json";
+        config.headers['Authorization'] = 'Bearer ' + service.accessToken;
+        config.headers['Access-Control-Allow-Origin'] = 'http://localhost:8200';
+        config.headers['Content-Type'] = 'application/json';
         return config;
       },
       (error) => Promise.reject(error)
@@ -70,7 +70,7 @@ export class MsalAuthService {
         postLogoutRedirectUri: config.redirectUri,
       },
       cache: {
-        cacheLocation: "localStorage",
+        cacheLocation: 'localStorage',
         storeAuthStateInCookie: true,
       },
     });
@@ -78,12 +78,12 @@ export class MsalAuthService {
     this.msal.initialize();
 
     router.beforeEach((to, _, next) => {
-      if (!to.path.includes("/login") && !this.isLoggedIn) {
+      if (!to.path.includes('/login') && !this.isLoggedIn) {
         console.warn(
           `Prevented unauthorized access to ${to.path}, redirecting to /login`
         );
-      } else if (to.path.includes("/login") && this.isLoggedIn) {
-        next({ path: "/home" });
+      } else if (to.path.includes('/login') && this.isLoggedIn) {
+        next({ path: '/home' });
       } else next();
     });
     this.redirectRequest = {
@@ -120,7 +120,7 @@ export class MsalAuthService {
             this.msal
               .acquireTokenSilent(request)
               .then((tokenResponse: AuthenticationResult) => {
-                console.warn("Logged in as", this.activeAccount?.username);
+                console.warn('Logged in as', this.activeAccount?.username);
                 this._accessToken = tokenResponse.accessToken;
                 resolve(true);
               })

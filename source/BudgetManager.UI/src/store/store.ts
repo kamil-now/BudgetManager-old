@@ -1,5 +1,5 @@
-import axios from "axios";
-import { defineStore, DefineStoreOptions, Store } from "pinia";
+import axios from 'axios';
+import { defineStore, DefineStoreOptions, Store } from 'pinia';
 
 export type AppState = {
   isLoading: boolean;
@@ -25,12 +25,12 @@ export const APP_STORE: DefineStoreOptions<
   AppGetters,
   AppActions
 > = {
-  id: "app",
+  id: 'app',
   state: () => getInitialAppState(),
   actions: {
     async save() {
       await Utils.runAsyncOperation(this, (state) =>
-        axios.patch("api/", { state })
+        axios.patch('api/', { state })
       );
     },
 
@@ -40,7 +40,7 @@ export const APP_STORE: DefineStoreOptions<
         action(this);
         this.save();
       } else {
-        console.error("Invalid undo operation");
+        console.error('Invalid undo operation');
       }
     },
   },

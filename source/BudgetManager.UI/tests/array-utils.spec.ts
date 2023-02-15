@@ -1,4 +1,4 @@
-import { ArrayUtils } from "@/helpers/array-utils";
+import { ArrayUtils } from '@/helpers/array-utils';
 
 describe(ArrayUtils.name, () => {
   describe(ArrayUtils.move.name, () => {
@@ -17,13 +17,13 @@ describe(ArrayUtils.name, () => {
       expectedTarget = [4, 5, 6, 7, 8, 9];
     });
 
-    it("should add to target source elements that match specified condition", () => {
+    it('should add to target source elements that match specified condition', () => {
       ArrayUtils.move(source, target, condition);
       expect(target)
         .toEqual(expectedTarget);
     });
 
-    it("should remove from source elements that match specified condition", () => {
+    it('should remove from source elements that match specified condition', () => {
       ArrayUtils.move(source, target, condition);
       expect(source)
         .toEqual(expectedSource);

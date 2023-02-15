@@ -1,7 +1,7 @@
-const { defineConfig } = require("@vue/cli-service");
+const { defineConfig } = require('@vue/cli-service');
 module.exports = defineConfig({
   configureWebpack: {
-    devtool: "source-map"
+    devtool: 'source-map'
   },
   transpileDependencies: true,
   css: {
@@ -16,11 +16,11 @@ module.exports = defineConfig({
   devServer: {
     port: 8200,
     proxy: {
-      "^/api": {
-        target: "http://localhost:3000",
+      '^/api': {
+        target: 'http://localhost:3000',
         changeOrigin: true,
         secure: false,
-        pathRewrite: { "^/api": "" },
+        pathRewrite: { '^/api': '' },
       },
     },
   },

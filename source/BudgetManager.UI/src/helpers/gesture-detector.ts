@@ -15,24 +15,24 @@ export class GestureDetector {
 
   constructor(private readonly element: HTMLElement) {
     element.addEventListener(
-      "touchstart",
+      'touchstart',
       this.touchStartHandler,
       false
     );
 
     element.addEventListener(
-      "touchend",
+      'touchend',
       this.touchEndHandler,
       false
     );
   }
   destroy() {
     this.element.removeEventListener(
-      "touchstart",
+      'touchstart',
       this.touchStartHandler
     );
     this.element.removeEventListener(
-      "touchend",
+      'touchend',
       this.touchEndHandler
     );
   }

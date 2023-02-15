@@ -1,4 +1,4 @@
-import { computed, WritableComputedRef } from "vue";
+import { computed, WritableComputedRef } from 'vue';
 
 // https://www.vuemastery.com/blog/vue-3-data-down-events-up/
 /** 
@@ -7,10 +7,10 @@ import { computed, WritableComputedRef } from "vue";
 
 export function vueModel<T>(
   props: Readonly<{ modelValue: T }>,
-  emit: (event: "update:modelValue", value: T) => void
+  emit: (event: 'update:modelValue', value: T) => void
 ): WritableComputedRef<T> {
   return computed({
     get: () => props.modelValue,
-    set: (value) => emit("update:modelValue", value)
+    set: (value) => emit('update:modelValue', value)
   });
 }
