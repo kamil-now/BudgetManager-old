@@ -10,9 +10,8 @@
 <script setup lang="ts">
 import SpendingFundCard from '@/components/SpendingFundCard.vue';
 import axios from 'axios';
-import { inject } from 'vue';
-import { MSAL, MsalAuthService } from '../plugins/msal-plugin';
-
+import { inject, onMounted } from 'vue';
+import { MSAL, MsalAuthService } from '../auth';
 
 const msal = inject<MsalAuthService>(MSAL);
 axios.post<void>('/budget');

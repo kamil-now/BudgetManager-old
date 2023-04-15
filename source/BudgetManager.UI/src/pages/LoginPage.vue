@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-import { MSAL, MsalAuthService } from '@/plugins/msal-plugin';
+import { MSAL, MsalAuthService } from '@/auth';
 import { inject } from 'vue';
 const msal = inject<MsalAuthService>(MSAL);
 
