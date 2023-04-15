@@ -19,7 +19,9 @@ const msalConfig: MsalConfiguration = {
   redirectUri: process.env.VUE_APP_AAD_REDIRECT,
   scopeNames: ['full'],
 };
-axios.defaults.baseURL = process.env.VUE_APP_API_URL;
+
+axios.defaults.headers.common['Access-Control-Allow-Origin'] = process.env.VUE_APP_AAD_REDIRECT;
+axios.defaults.headers.common['Content-Type'] = 'application/json';
 
 const app = createApp(App);
 app

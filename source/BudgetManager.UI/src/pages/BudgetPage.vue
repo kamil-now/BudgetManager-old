@@ -14,8 +14,15 @@ import { inject, onMounted } from 'vue';
 import { MSAL, MsalAuthService } from '../auth';
 
 const msal = inject<MsalAuthService>(MSAL);
-axios.post<void>('/budget');
 
+onMounted(() => {
+  axios.post<void>('/api/budget')
+    .then( 
+      () => console.warn('OK'),
+      error => console.error(error)
+    );
+    
+});
 async function logout() {
   await msal?.logout();
 }

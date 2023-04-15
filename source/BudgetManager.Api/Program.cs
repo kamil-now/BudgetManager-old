@@ -53,9 +53,15 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddApplicationServices(builder.Configuration.GetSection("AppConfig").Get<AppConfig>());
 builder.Services.AddDatabaseConnection(builder.Configuration.GetConnectionString("Database"));
 
-builder.Services.AddCors();
+builder.Services.AddCors(
+options => options.AddDefaultPolicy(
+build => build.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
 
 var app = builder.Build();
+
+app.UseHttpsRedirection();
+
+app.UseCors();
 
 app.UseStaticFiles(
   new StaticFileOptions
@@ -79,8 +85,6 @@ app.UseSwaggerUI(c =>
   c.InjectStylesheet("/assets/swagger-dark.css");
   c.OAuthClientId(builder.Configuration["AzureAd:ClientId"]);
 });
-
-app.UseHttpsRedirection();
 
 app.MapGet("/", (HttpContext context) => context.Response.Redirect("/swagger", true)).ExcludeFromDescription();
 
@@ -189,8 +193,6 @@ app.MapCRUD<Dictionary<string, decimal>, CreateSpendingCategoryCommand, Spending
   (ctx, categoryName) => new DeleteSpendingCategoryCommand(ctx.GetUserId(), categoryName)
 );
 
-
-app.UseCors();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.Run();
