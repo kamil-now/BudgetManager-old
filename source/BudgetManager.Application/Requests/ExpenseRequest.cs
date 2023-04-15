@@ -8,10 +8,9 @@ public record ExpenseDto(
     Money Value,
     string Date,
     string AccountId,
+    string FundId,
     string Description,
-    bool IsConfirmed,
-    string? FundId,
-    string? Category
+    bool IsConfirmed
 );
 public record ExpenseRequest(string UserId, string ExpenseId) : IBudgetRequest, IRequest<ExpenseDto>;
 

@@ -11,9 +11,8 @@ public record CreateExpenseCommand(
   Money Value,
   string? Date,
   string AccountId,
-  string? Description,
-  string? FundId,
-  string? Category
+  string FundId,
+  string? Description
   ) : IRequest<string>, IBudgetCommand;
 
 public class CreateExpenseCommandHandler
@@ -37,11 +36,10 @@ public class CreateExpenseCommandHandler
         command.Value,
         date,
         command.AccountId,
+        command.FundId,
         command.Description ?? string.Empty,
         DateTime.Now,
-        date <= now,
-        command.FundId,
-        command.Category
+        date <= now
         )
       );
 
@@ -76,25 +74,15 @@ public class CreateExpenseCommandValidator
       .DependentRules(() =>
       {
         RuleFor(x => x)
-          .Must((command, cancellation)
-          => !string.IsNullOrEmpty(command.Category) ^ !string.IsNullOrEmpty(command.FundId)
-          ).WithMessage("Either Fund id or Spending Fund category must be defined.");
-
-        RuleFor(x => x)
         .MustAsync(async (command, cancellation)
           => (await repository.Get(command.UserId)).Accounts!
               .First(x => x.Id == command.AccountId).Currency == command.Value.Currency)
         .WithMessage("Account currency does not match expense currency.");
-
-        RuleFor(x => x)
-          .MustAsync(async (command, cancellation) =>
-          {
-            if (command.FundId is null)
-              return true;
-            var budget = await repository.Get(command.UserId);
-            return budget!.Funds?.Any(x => x.Id == command.FundId) ?? false;
-          }).WithMessage("Fund does not exist.");
       });
 
+    RuleFor(x => x)
+    .MustAsync(async (command, cancellation)
+      => (await repository.Get(command.UserId)).Funds?.Any(x => x.Id == command.FundId) ?? false)
+    .WithMessage("Fund does not exist.");
   }
 }

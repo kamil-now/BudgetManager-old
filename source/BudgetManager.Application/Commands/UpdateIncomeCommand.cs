@@ -13,6 +13,7 @@ public record UpdateIncomeCommand(
   Money? Value,
   string? Date,
   string? AccountId,
+  string? FundId,
   string? Description
   ) : IRequest<Unit>, IOperationCommand;
 
@@ -28,7 +29,7 @@ public class UpdateIncomeCommandHandler
   {
     var Income = budget.Operations.First(x => x.Id == command.OperationId) as Income;
 
-    Income!.Update(command.AccountId, command.Title, command.Value, command.Date, command.Description);
+    Income!.Update(command.AccountId, command.FundId, command.Title, command.Value, command.Date, command.Description);
 
     return Unit.Value;
   }

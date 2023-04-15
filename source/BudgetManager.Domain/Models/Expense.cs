@@ -3,8 +3,7 @@ namespace BudgetManager.Domain.Models;
 public class Expense : MoneyOperation
 {
   public string AccountId { get; private set; }
-  public string? FundId { get; private set; }
-  public string? Category { get; private set; }
+  public string FundId { get; private set; }
   public bool IsConfirmed { get; internal set; }
 
   public Expense(
@@ -13,16 +12,14 @@ public class Expense : MoneyOperation
     Money value,
     DateOnly date,
     string accountId,
+    string fundId,
     string description,
     DateTime createdDate,
-    bool isConfirmed = true,
-    string? fundId = null,
-    string? category = null
+    bool isConfirmed = true
     ) : base(id, title, value, date, description, createdDate)
   {
     AccountId = accountId;
     FundId = fundId;
-    Category = category;
     IsConfirmed = isConfirmed;
   }
 

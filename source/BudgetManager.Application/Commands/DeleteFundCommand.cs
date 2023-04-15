@@ -37,8 +37,7 @@ public class DeleteFundCommandValidator : BudgetCommandValidator<DeleteFundComma
       {
         var budget = await repository.Get(command.UserId);
         return (budget!.Expenses is null || !budget!.Expenses.Any(x => x.FundId == command.FundId))
-        && (budget!.Allocations is null || !budget!.Allocations.Any(x => x.FundId == command.FundId))
         && (budget!.FundTransfers is null || !budget!.FundTransfers.Any(x => x.SourceFundId == command.FundId || x.TargetFundId == command.FundId));
-      }).WithMessage("Fund cannot be removed because there are budget operations referencing this account");
+      }).WithMessage("Fund cannot be removed because there are budget operations referencing this fund");
   }
 }

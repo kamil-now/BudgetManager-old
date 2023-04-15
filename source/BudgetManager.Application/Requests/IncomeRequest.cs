@@ -8,6 +8,7 @@ public record IncomeDto(
     Money Value,
     string Date,
     string AccountId,
+    string FundId,
     string Description
 );
 public record IncomeRequest(string UserId, string IncomeId) : IBudgetRequest, IRequest<IncomeDto>;

@@ -23,8 +23,7 @@ public class ShouldFail : BaseTest
         new Money(1, "EUR"),
         null,
         "",
-        null,
-        null,
+        "",
         null
         ),
       "Budget does not exist."
@@ -34,6 +33,7 @@ public class ShouldFail : BaseTest
   public async void When_Account_Does_Not_Exist()
   {
     await CreateBudget();
+    var fundId = await CreateFund();
     await AssertFailsValidationAsync(
       new CreateExpenseCommand(
         userId,
@@ -41,11 +41,29 @@ public class ShouldFail : BaseTest
         new Money(1, "EUR"),
         null,
         "",
-        null,
-        null,
+        fundId,
         null
         ),
       "Account does not exist."
+    );
+  }
+
+  [Fact]
+  public async void When_Fund_Does_Not_Exist()
+  {
+    await CreateBudget();
+    var accountId = await CreateAccount();
+    await AssertFailsValidationAsync(
+      new CreateExpenseCommand(
+        userId,
+        "mockExpense",
+        new Money(1, "EUR"),
+        null,
+        accountId,
+        "",
+        null
+        ),
+      "Fund does not exist."
     );
   }
 
@@ -62,7 +80,6 @@ public class ShouldFail : BaseTest
         new Money(value, "EUR"),
         null,
         accountId,
-        null,
         fundId,
         null
         ),
@@ -81,7 +98,6 @@ public class ShouldFail : BaseTest
         new Money(1, "EUR"),
         null,
         accountId,
-        null,
         fundId,
         null
         ),
@@ -92,7 +108,7 @@ public class ShouldFail : BaseTest
   [Fact]
   public async void When_Title_Is_Empty()
   {
-    var (accountId, categoryName) = await CreateBudgetWithAccountAndCategory();
+    var (accountId, fundId) = await CreateBudgetWithAccountAndFund();
     await AssertFailsValidationAsync(
       new CreateExpenseCommand(
         userId,
@@ -100,9 +116,8 @@ public class ShouldFail : BaseTest
         new Money(1, "EUR"),
         null,
         accountId,
-        null,
-        null,
-        categoryName
+        fundId,
+        null
         ),
       "'Title' must not be empty."
     );
@@ -111,7 +126,7 @@ public class ShouldFail : BaseTest
   [Fact]
   public async void When_Description_Is_Too_Long()
   {
-    var (accountId, categoryName) = await CreateBudgetWithAccountAndCategory();
+    var (accountId, fundId) = await CreateBudgetWithAccountAndFund();
     await AssertFailsValidationAsync(
       new CreateExpenseCommand(
         userId,
@@ -119,9 +134,8 @@ public class ShouldFail : BaseTest
         new Money(1, "EUR"),
         null,
         accountId,
-        GetStringWithLength(appConfig.MaxContentLength + 1),
-        null,
-        categoryName
+        fundId,
+        GetStringWithLength(appConfig.MaxContentLength + 1)
         ),
        $"The length of 'Description' must be {appConfig.MaxContentLength} characters or fewer. You entered {appConfig.MaxContentLength + 1} characters."
      );
@@ -130,7 +144,7 @@ public class ShouldFail : BaseTest
   [Fact]
   public async void When_Expense_Currency_Does_Not_Match_Account_Currency()
   {
-    var (accountId, categoryName) = await CreateBudgetWithAccountAndCategory("USD");
+    var (accountId, fundId) = await CreateBudgetWithAccountAndFund("USD");
     await AssertFailsValidationAsync(
       new CreateExpenseCommand(
         userId,
@@ -138,42 +152,10 @@ public class ShouldFail : BaseTest
         new Money(1, "EUR"),
         null,
         accountId,
-        null,
-        null,
-        categoryName
+        fundId,
+        null
         ),
         "Account currency does not match expense currency."
       );
-  }
-
-  public async void When_Both_Fund_Id_And_Category_Are_Not_Empty()
-  {
-    await CreateBudget();
-    var accountId = await CreateAccount("EUR");
-    await AssertFailsValidationAsync(
-      new CreateExpenseCommand(
-        userId,
-        "mockExpense",
-        new Money(1, "EUR"),
-        null,
-        accountId,
-        null,
-        "mockFundId",
-        "mockCategoryName"
-        ),
-        "Account currency does not match expense currency."
-      );
-  }
-
-  private async Task<(string accountId, string fundId)> CreateBudgetWithAccountAndFund(string currency = "EUR")
-  {
-    await CreateBudget();
-    return (await CreateAccount(currency), await CreateFund());
-  }
-
-  private async Task<(string accountId, string categoryName)> CreateBudgetWithAccountAndCategory(string currency = "EUR")
-  {
-    await CreateBudget();
-    return (await CreateAccount(currency), await CreateSpendingCategory());
   }
 }

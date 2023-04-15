@@ -103,16 +103,6 @@ async (
 .WithTags(API_TITLE)
 .RequireAuthorization();
 
-app.MapGet("/spending-fund",
-async (
-  HttpContext context,
-  IMediator mediator,
-  CancellationToken cancellationToken
-) => Results.Ok(await mediator.Send(new SpendingFundRequest(context.GetUserId()), cancellationToken)))
-.Produces<SpendingFundDto>()
-.WithTags(API_TITLE)
-.RequireAuthorization();
-
 
 app.MapGet("/balance",
   [SwaggerOperation(Summary = "Gets user overall balance in a form of a dictionary with currency codes as keys")]
@@ -169,28 +159,12 @@ async (
 .WithTags("Expense")
 .RequireAuthorization();
 
-app.MapCRUD<AllocationDto, CreateAllocationCommand, AllocationRequest, UpdateAllocationCommand, DeleteOperationCommand<Allocation>>(
-  "allocation",
-  (ctx, create) => create with { UserId = ctx.GetUserId() },
-  (ctx, accountId) => new AllocationRequest(ctx.GetUserId(), accountId),
-  (ctx, update) => update with { UserId = ctx.GetUserId() },
-  (ctx, accountId) => new DeleteOperationCommand<Allocation>(ctx.GetUserId(), accountId)
-);
-
 app.MapCRUD<FundTransferDto, CreateFundTransferCommand, FundTransferRequest, UpdateFundTransferCommand, DeleteOperationCommand<FundTransfer>>(
   "fundTransfer",
   (ctx, create) => create with { UserId = ctx.GetUserId() },
   (ctx, accountId) => new FundTransferRequest(ctx.GetUserId(), accountId),
   (ctx, update) => update with { UserId = ctx.GetUserId() },
   (ctx, accountId) => new DeleteOperationCommand<FundTransfer>(ctx.GetUserId(), accountId)
-);
-
-app.MapCRUD<Dictionary<string, decimal>, CreateSpendingCategoryCommand, SpendingCategoryRequest, UpdateSpendingCategoryCommand, DeleteSpendingCategoryCommand>(
-  "spendingCategory",
-  (ctx, create) => create with { UserId = ctx.GetUserId() },
-  (ctx, categoryName) => new SpendingCategoryRequest(ctx.GetUserId(), categoryName),
-  (ctx, update) => update with { UserId = ctx.GetUserId() },
-  (ctx, categoryName) => new DeleteSpendingCategoryCommand(ctx.GetUserId(), categoryName)
 );
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();

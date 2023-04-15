@@ -5,12 +5,11 @@ public class BudgetFactory : IBudgetFactory
     return new BudgetEntity()
     {
       UserId = userId,
-      SpendingFund = new SpendingFundEntity()
-      {
-        Id = Guid.NewGuid().ToString(),
-        Name = "Spending Fund",
-        Balance = new Dictionary<string, decimal>()
-      }
+      Accounts = new List<AccountEntity>(),
+      Funds = new List<FundEntity>(),
+      FundTransfers = new List<FundTransferEntity>(),
+      Incomes = new List<IncomeEntity>(),
+      Expenses = new List<ExpenseEntity>(),
     };
   }
 }

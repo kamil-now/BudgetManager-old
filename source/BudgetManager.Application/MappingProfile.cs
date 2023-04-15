@@ -18,31 +18,15 @@ public class MappingProfile : Profile
           opt => opt.MapFrom(src => new Money(src.Balance, src.Currency!))
         );
 
-    CreateMap<AllocationEntity, Allocation>()
-      .ConstructUsing(src =>
-        new Allocation(
-          src.Id!,
-          src.Title!,
-          new Money(src.Amount, src.Currency!),
-          DateOnly.Parse(src.Date!),
-          src.Description!,
-          src.CreatedDate,
-          src.FundId,
-          src.Category
-          )
-        ).ForAllMembers(opt => opt.Ignore());
-
     CreateMap<BudgetEntity, Budget>()
       .ConstructUsing((src, ctx) =>
       {
         var operations = new List<MoneyOperation>();
         operations.AddRange(ctx.Mapper.Map<IEnumerable<Income>>(src.Incomes));
         operations.AddRange(ctx.Mapper.Map<IEnumerable<Expense>>(src.Expenses));
-        operations.AddRange(ctx.Mapper.Map<IEnumerable<Allocation>>(src.Allocations));
         operations.AddRange(ctx.Mapper.Map<IEnumerable<FundTransfer>>(src.FundTransfers));
 
         var budget = new Budget(
-          ctx.Mapper.Map<SpendingFund>(src.SpendingFund),
           ctx.Mapper.Map<IEnumerable<Account>>(src.Accounts),
           ctx.Mapper.Map<IEnumerable<Fund>>(src.Funds),
           operations
@@ -57,12 +41,11 @@ public class MappingProfile : Profile
           src.Title!,
           new Money(src.Amount, src.Currency!),
           DateOnly.Parse(src.Date!),
-          src.AccountId!,
+          src.AccountId,
+          src.FundId,
           src.Description!,
           src.CreatedDate,
-          src.IsConfirmed,
-          src.FundId,
-          src.Category
+          src.IsConfirmed
           )
         ).ForAllMembers(opt => opt.Ignore());
 
@@ -95,6 +78,7 @@ public class MappingProfile : Profile
         new Income(
           src.Id!,
           src.AccountId!,
+          src.FundId!,
           src.Title!,
           new Money(src.Amount, src.Currency!),
           DateOnly.Parse(src.Date!),
@@ -103,29 +87,13 @@ public class MappingProfile : Profile
           )
         ).ForAllMembers(opt => opt.Ignore());
 
-    CreateMap<SpendingFundEntity, SpendingFund>(MemberList.None)
-      .ConstructUsing((src, ctx) =>
-        new SpendingFund(
-          ctx.Mapper.Map<Dictionary<string, Balance>>(src.Categories),
-          src.Id!,
-          src.Name!
-          )
-        )
-      .ForMember(x => x.Balance, opt => opt.MapFrom(src => new Balance(src.Balance!)));
-
     CreateMap<Account, AccountEntity>()
       .ForMember(x => x.InitialAmount, opt => opt.MapFrom(src => src.InitialBalance.Amount))
       .ForMember(x => x.Currency, opt => opt.MapFrom(src => src.InitialBalance.Currency))
       .ForMember(x => x.Balance, opt => opt.MapFrom(src => src.Balance.Amount));
 
-    CreateMap<Allocation, AllocationEntity>()
-      .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString()))
-      .ForMember(x => x.Amount, opt => opt.MapFrom(src => src.Value.Amount))
-      .ForMember(x => x.Currency, opt => opt.MapFrom(src => src.Value.Currency));
-
     CreateMap<Budget, BudgetEntity>()
       .ForMember(x => x.UserId, opt => opt.Ignore())
-      .ForMember(x => x.SpendingFund, opt => opt.MapFrom(src => src.SpendingFund))
       .ForMember(x => x.Accounts, opt =>
         opt.MapFrom((src, _, __, ctx) =>
           ctx.Mapper.Map<IEnumerable<AccountEntity>>(src.Accounts)
@@ -134,13 +102,6 @@ public class MappingProfile : Profile
       .ForMember(x => x.Funds, opt =>
         opt.MapFrom((src, _, __, ctx) =>
           ctx.Mapper.Map<IEnumerable<FundEntity>>(src.Funds)
-          )
-      )
-      .ForMember(x => x.Allocations, opt =>
-        opt.MapFrom((src, _, __, ctx) =>
-          ctx.Mapper.Map<IEnumerable<AllocationEntity>>(
-            src.Operations.Where(x => x is Allocation)?.Select(x => x as Allocation).ToArray()
-            )
           )
       )
       .ForMember(x => x.Expenses, opt =>
@@ -183,9 +144,6 @@ public class MappingProfile : Profile
       .ForMember(x => x.Amount, opt => opt.MapFrom(src => src.Value.Amount))
       .ForMember(x => x.Currency, opt => opt.MapFrom(src => src.Value.Currency));
 
-    CreateMap<SpendingFund, SpendingFundEntity>()
-      .ForMember(x => x.Balance, opt => opt.MapFrom(src => new Dictionary<string, decimal>(src.Balance)));
-
     CreateMap<Account, AccountDto>();
 
     CreateMap<Fund, FundDto>();
@@ -194,11 +152,6 @@ public class MappingProfile : Profile
       .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString()));
 
     CreateMap<Income, IncomeDto>()
-      .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString()));
-
-    CreateMap<SpendingFund, SpendingFundDto>();
-
-    CreateMap<Allocation, AllocationDto>()
       .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString()));
 
     CreateMap<FundTransfer, FundTransferDto>()

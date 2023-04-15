@@ -1,9 +1,7 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BudgetManager.Application.Commands;
-using BudgetManager.Application.Requests;
 using BudgetManager.Domain.Models;
 using BudgetManager.Infrastructure;
 using FluentAssertions;
@@ -45,34 +43,26 @@ public abstract class BaseTest : TestBed<TestFixture>, IAsyncLifetime
       .WithMessage("One or more validation errors: " + expectedMessage);
   }
 
-  protected async Task AssertSpendingFundBalanceEquals(Money expectedBalance)
-  {
-    var spendingFund = await mediator.Send(new SpendingFundRequest(userId));
-
-    spendingFund.Balance.Should()
-      .BeEquivalentTo(new Dictionary<string, decimal>() { [expectedBalance.Currency] = expectedBalance.Amount });
-  }
-
   protected async Task CreateBudget()
     => await mediator.Send(new CreateBudgetCommand(userId));
 
-  protected async Task<string> CreateAccount(string currency, decimal initialAmount = 0)
+  protected async Task<(string accountId, string fundId)> CreateBudgetWithAccountAndFund(string currency = "EUR")
+  {
+    await CreateBudget();
+    return (await CreateAccount(currency), await CreateFund());
+  }
+
+  protected async Task<string> CreateAccount(string currency = "EUR", decimal initialAmount = 0)
     => await mediator.Send(new CreateAccountCommand(userId, "mockAccount", initialAmount, currency));
 
-  protected async Task<string> CreateIncome(Money income, string accountId)
-    => await mediator.Send(new CreateIncomeCommand(userId, "mockIncome", income, null, accountId, null));
-
-  protected async Task<string> CreateSpendingCategory()
-    => await mediator.Send(new CreateSpendingCategoryCommand(userId, "mockCategory"));
+  protected async Task<string> CreateIncome(Money income, string accountId, string fundId)
+    => await mediator.Send(new CreateIncomeCommand(userId, "mockIncome", income, null, accountId, fundId, null));
 
   protected async Task<string> CreateFund()
     => await mediator.Send(new CreateFundCommand(userId, "mockFund"));
 
-  protected async Task<string> CreateAllocation(Money allocation, string? fundId, string? categoryName = null)
-    => await mediator.Send(new CreateAllocationCommand(userId, "mockAllocation", allocation, null, null, fundId, categoryName));
-
-  protected async Task<string> CreateExpense(Money value, string accountId, string? fundId, string? categoryName)
-    => await mediator.Send(new CreateExpenseCommand(userId, "mockExpense", value, null, accountId, null, fundId, categoryName));
+  protected async Task<string> CreateExpense(Money value, string accountId, string fundId)
+    => await mediator.Send(new CreateExpenseCommand(userId, "mockExpense", value, null, accountId, fundId, null));
 
   public Task InitializeAsync() => _repository.Delete(userId);
   Task IAsyncLifetime.DisposeAsync() => Task.CompletedTask;

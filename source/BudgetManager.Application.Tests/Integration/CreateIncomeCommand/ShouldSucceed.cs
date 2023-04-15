@@ -43,29 +43,16 @@ public class ShouldSucceed : BaseTest
     await CreateBudget();
     var incomeValue = new Money(420, "USD");
     var accountId = await CreateAccount(incomeValue.Currency);
+    var fundId = await CreateFund();
 
-    var incomeId = await CreateIncome(incomeValue, accountId);
+    var incomeId = await CreateIncome(incomeValue, accountId, fundId);
 
     var income = await mediator.Send(new IncomeRequest(userId, incomeId));
 
     income.AccountId.Should().Be(accountId);
+    income.FundId.Should().Be(fundId);
     income.Value.Should().Be(incomeValue);
     income.Date.Should().Be(DateTime.Now.ToShortDateString());
-  }
-
-  [Theory]
-  [MemberData(nameof(TestCases))]
-  public async void And_Increase_SpendingFund_Balance(decimal initial, Money[] incomes, Money expectedBalance)
-  {
-    await CreateBudget();
-    var accountId = await CreateAccount(expectedBalance.Currency, initial);
-
-    foreach (var income in incomes)
-    {
-      await CreateIncome(income, accountId);
-    }
-
-    await AssertSpendingFundBalanceEquals(expectedBalance);
   }
 
   [Theory]
@@ -74,10 +61,11 @@ public class ShouldSucceed : BaseTest
   {
     await CreateBudget();
     var accountId = await CreateAccount(expectedBalance.Currency, initial);
+    var fundId = await CreateFund();
 
     foreach (var income in incomes)
     {
-      await CreateIncome(income, accountId);
+      await CreateIncome(income, accountId, fundId);
     }
 
     var account = await mediator.Send(new AccountRequest(userId, accountId));
