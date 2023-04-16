@@ -3,9 +3,9 @@ name: Build & Deploy Frontend
 on:
   push:
     branches: ["main"]
-  pull_request:
-    branches: ["main"]
-
+    paths:
+      - 'source/BudgetManager.UI/**' 
+      - '.github/**'
 env:
   AZURE_WEBAPP_NAME: hajs-manager
   AZURE_WEBAPP_PACKAGE_PATH: "source/BudgetManager.UI"

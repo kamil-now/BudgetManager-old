@@ -3,8 +3,11 @@ name: Build & Deploy API
 on:
   push:
     branches: ["main"]
-  pull_request:
-    branches: ["main"]
+    paths:
+      - 'source/**'  
+      - '.github/**'
+    paths-ignore:
+      - 'source/BudgetManager.UI/**'
 
 env:
   AZURE_WEBAPP_NAME: hajs
