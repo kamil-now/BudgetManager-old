@@ -6,8 +6,7 @@ on:
     paths:
       - 'source/**'  
       - '.github/**'
-    paths-ignore:
-      - 'source/BudgetManager.UI/**'
+      - '!source/BudgetManager.UI/**'
 
 env:
   AZURE_WEBAPP_NAME: hajs
