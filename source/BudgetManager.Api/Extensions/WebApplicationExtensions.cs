@@ -1,5 +1,7 @@
 namespace BudgetManager.Api;
 
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 using BudgetManager.Api.Extensions;
 using BudgetManager.Application.Requests;
 using MediatR;
@@ -87,5 +89,34 @@ public static class WebApplicationExtensions
       )
       .WithTags(tag)
       .RequireAuthorization();
+  }
+
+  public static void RunDatabaseContainerProcess(this WebApplication app)
+  {
+    bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+    bool isLinux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
+
+    if (isWindows)
+    {
+      var process = new Process();
+      process.StartInfo.FileName = "cmd.exe";
+      process.StartInfo.Arguments = "/C docker ps -aqf \"name=budget-manager-db\" | findstr . && docker start budget-manager-db || docker run -d -p 27017:27017 --name budget-manager-db mongo:latest";
+      process.StartInfo.UseShellExecute = false;
+      process.StartInfo.RedirectStandardOutput = true;
+      process.Start();
+    }
+    else if (isLinux)
+    {
+      var process = new Process();
+      process.StartInfo.FileName = "/bin/bash";
+      process.StartInfo.Arguments = "-c \"docker ps -aqf 'name=budget-manager-db' | grep -q . && docker start budget-manager-db || docker run -d -p 27017:27017 --name budget-manager-db mongo:latest\"";
+      process.StartInfo.UseShellExecute = false;
+      process.StartInfo.RedirectStandardOutput = true;
+      process.Start();
+    }
+    else
+    {
+      throw new NotSupportedException("The operating system is not supported.");
+    }
   }
 }

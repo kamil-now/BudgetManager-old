@@ -6,9 +6,9 @@ using BudgetManager.Application.DependencyInjection;
 using BudgetManager.Application.Requests;
 using BudgetManager.Domain.Models;
 using MediatR;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.FileProviders;
-using Microsoft.Identity.Web;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -16,8 +16,14 @@ const string API_TITLE = "| Budget Manager API";
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddMicrosoftIdentityWebApiAuthentication(builder.Configuration);
+#if DEBUG
+  builder.Services.AddAuthentication("MockJwt")
+        .AddScheme<AuthenticationSchemeOptions, MockJwtAuthenticationHandler>("MockJwt", options => {});
 
+builder.Services.AddAuthorization();
+#else
+builder.Services.AddMicrosoftIdentityWebApiAuthentication(builder.Configuration);
+#endif
 var tenantIdUri = builder.Configuration["AzureAd:Instance"] + builder.Configuration["AzureAd:TenantId"];
 
 builder.Services.AddEndpointsApiExplorer();
@@ -34,6 +40,7 @@ builder.Services.AddSwaggerGen(options =>
     },
   });
   options.EnableAnnotations();
+#if RELEASE
   options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
   {
     Type = SecuritySchemeType.OAuth2,
@@ -48,6 +55,7 @@ builder.Services.AddSwaggerGen(options =>
     }
   });
   options.OperationFilter<AuthenticationOperationFilter>();
+#endif
 });
 
 builder.Services.AddApplicationServices(builder.Configuration.GetSection("AppConfig").Get<AppConfig>());
@@ -168,5 +176,7 @@ app.MapCRUD<FundTransferDto, CreateFundTransferCommand, FundTransferRequest, Upd
 );
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
-
+#if DEBUG
+  app.RunDatabaseContainerProcess();
+#endif
 app.Run();
