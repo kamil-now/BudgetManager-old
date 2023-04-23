@@ -8,9 +8,9 @@ public class MockUserBudgetRepository : IUserBudgetRepository
 {
   private Dictionary<string, BudgetEntity> _db = new Dictionary<string, BudgetEntity>();
   private BudgetFactory _budgetFactory = new BudgetFactory();
-  public Task Create(string userId)
+  public Task Create(string userId, string defaultFundName)
   {
-    _db[userId] = _budgetFactory.Create(userId);
+    _db[userId] = _budgetFactory.Create(userId, defaultFundName);
     return Task.CompletedTask;
   }
 

@@ -18,10 +18,20 @@ public class ShouldFail : BaseTest
   public async void When_Budget_Already_Exists()
   {
     var mockUserId = "mockUserId";
-    await mediator.Send(new CreateBudgetCommand(mockUserId));
+    await mediator.Send(new CreateBudgetCommand(mockUserId, "default"));
 
-    var handle = () => mediator.Send(new CreateBudgetCommand(mockUserId));
+    var handle = () => mediator.Send(new CreateBudgetCommand(mockUserId, "default"));
 
     await handle.Should().ThrowAsync<Exception>("Budget already exists");
+  }
+
+  [Fact]
+  public async void When_Default_Fund_Name_Is_Empty()
+  {
+    var mockUserId = "mockUserId";
+
+    var handle = () => mediator.Send(new CreateBudgetCommand(mockUserId, string.Empty));
+
+    await handle.Should().ThrowAsync<Exception>("'DefaultFundName' must not be empty.");
   }
 }

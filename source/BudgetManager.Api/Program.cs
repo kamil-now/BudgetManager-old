@@ -102,10 +102,11 @@ app.MapPost("/budget",
 async (
   HttpContext context,
   IMediator mediator,
+  [FromBody] CreateBudgetCommand command,
   CancellationToken cancellationToken
   ) =>
   {
-    await mediator.Send(new CreateBudgetCommand(context.GetUserId()));
+    await mediator.Send(command with { UserId = context.GetUserId() });
     return Results.Ok();
   })
 .Produces((int)HttpStatusCode.Created)

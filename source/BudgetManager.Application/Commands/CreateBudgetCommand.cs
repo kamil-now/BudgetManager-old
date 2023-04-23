@@ -1,6 +1,8 @@
 namespace BudgetManager.Application.Commands;
 
-public record CreateBudgetCommand(string UserId) : IRequest<Unit>;
+using System.Text.Json.Serialization;
+
+public record CreateBudgetCommand([property: JsonIgnore()] string UserId, string DefaultFundName) : IRequest<Unit>;
 
 public class CreateBudgetCommandHandler : IRequestHandler<CreateBudgetCommand, Unit>
 {
@@ -8,7 +10,7 @@ public class CreateBudgetCommandHandler : IRequestHandler<CreateBudgetCommand, U
   public CreateBudgetCommandHandler(IUserBudgetRepository repository) => _repository = repository;
 
   public async Task<Unit> Handle(CreateBudgetCommand command, CancellationToken cancellationToken)
-    => await _repository.Create(command.UserId).ContinueWith(_ => Unit.Value);
+    => await _repository.Create(command.UserId, command.DefaultFundName).ContinueWith(_ => Unit.Value);
 }
 
 public class CreateBudgetCommandValidator : AbstractValidator<CreateBudgetCommand>
@@ -20,6 +22,11 @@ public class CreateBudgetCommandValidator : AbstractValidator<CreateBudgetComman
 
     RuleFor(x => x.UserId)
       .MustAsync(async (id, cancellation) => !await repository.Exists(id))
-        .WithMessage("Budget already exists");
+        .WithMessage("Budget already exists")
+        .DependentRules(() =>
+        {
+          RuleFor(x => x.DefaultFundName)
+          .NotEmpty();
+        });
   }
 }

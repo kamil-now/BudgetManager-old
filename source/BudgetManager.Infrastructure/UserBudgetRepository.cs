@@ -13,9 +13,9 @@ internal class UserBudgetRepository : IUserBudgetRepository
     _budgetFactory = budgetFactory;
   }
 
-  public async Task Create(string userId)
+  public async Task Create(string userId, string defaultFundName)
   {
-    var doc = _budgetFactory.Create(userId);
+    var doc = _budgetFactory.Create(userId, defaultFundName);
 
     await _collection
       .InsertOneAsync(doc)

@@ -44,7 +44,7 @@ public abstract class BaseTest : TestBed<TestFixture>, IAsyncLifetime
   }
 
   protected async Task CreateBudget()
-    => await mediator.Send(new CreateBudgetCommand(userId));
+    => await mediator.Send(new CreateBudgetCommand(userId, "Default"));
 
   protected async Task<(string accountId, string fundId)> CreateBudgetWithAccountAndFund(string currency = "EUR")
   {

@@ -53,7 +53,8 @@ public class MappingProfile : Profile
       .ConstructUsing(src =>
         new Fund(
           src.Id!,
-          src.Name!
+          src.Name!,
+          src.IsDefault!
           )
         )
       .ForMember(x => x.Balance, opt => opt.MapFrom(src => new Balance(src.Balance!)));
