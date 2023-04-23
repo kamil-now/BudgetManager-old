@@ -6,7 +6,13 @@ import {
 } from '@azure/msal-browser';
 import { Router } from 'vue-router';
 
-export const MSAL = Symbol();
+export const AUTH = Symbol();
+
+export interface IAuthService {
+  isLoggedIn: boolean,
+  logout(): Promise<void>;
+  login(): Promise<void>;
+}
 
 export type MsalConfiguration = {
   tenantId: string;
@@ -15,7 +21,7 @@ export type MsalConfiguration = {
   scopeNames: string[];
 };
 
-export class MsalAuthService {
+export class MsalAuthService implements IAuthService {
   get activeAccount(): AccountInfo | null {
     return this.msal.getActiveAccount();
   }

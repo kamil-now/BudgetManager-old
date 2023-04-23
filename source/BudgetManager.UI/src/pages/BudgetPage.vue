@@ -9,22 +9,22 @@
 
 <script setup lang="ts">
 import SpendingFundCard from '@/components/SpendingFundCard.vue';
-import axios from 'axios';
+import axios, { AxiosError, AxiosResponse } from 'axios';
 import { inject, onMounted } from 'vue';
-import { MSAL, MsalAuthService } from '../auth';
+import { AUTH, IAuthService } from '../auth';
 
-const msal = inject<MsalAuthService>(MSAL);
+const auth = inject<IAuthService>(AUTH);
 
 onMounted(() => {
-  axios.post<void>('/api/budget')
+  axios.get<AxiosResponse<{[currency: string]: number}>>('/api/balance')
     .then( 
-      () => console.warn('OK'),
-      error => console.error(error)
+      res => console.warn(res.data),
+      (error: AxiosError) => console.error(error)
     );
     
 });
 async function logout() {
-  await msal?.logout();
+  await auth?.logout();
 }
 </script>
 

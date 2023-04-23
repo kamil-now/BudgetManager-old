@@ -5,12 +5,12 @@
 </template>
 
 <script setup lang="ts">
-import { MSAL, MsalAuthService } from '@/auth';
+import { AUTH, IAuthService } from '@/auth';
 import { inject } from 'vue';
-const msal = inject<MsalAuthService>(MSAL);
+const auth = inject<IAuthService>(AUTH);
 
 function login() {
-  msal?.login();
+  auth?.login();
 }
 </script>
 
