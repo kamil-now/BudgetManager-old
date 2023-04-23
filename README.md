@@ -16,6 +16,18 @@ Go to /source/BudgetManager.Api and run:
 
 If it doesn't redirect you automatically go to http://localhost:3000/swagger/index.html.
 
+### Run UI on localhost
+
+Go to /source/BudgetManager.UI and run:
+
+```npm i``` (when running for the first time)
+
+then
+
+```npm start```
+
+Go to http://localhost:8200
+
 ---
 
 ### Run tests
