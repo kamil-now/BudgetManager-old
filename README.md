@@ -12,7 +12,7 @@ For `#DEBUG` mode the authentication is mocked, user id defaults to "mock_user_i
 
 Go to /source/BudgetManager.Api and run:
 
-```dotnet run --urls=http://localhost:3000```
+```dotnet run```
 
 If it doesn't redirect you automatically go to http://localhost:3000/swagger/index.html.
 

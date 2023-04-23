@@ -18,8 +18,8 @@ const string API_TITLE = "| Budget Manager API";
 var builder = WebApplication.CreateBuilder(args);
 
 #if DEBUG
-  builder.Services.AddAuthentication("MockJwt")
-        .AddScheme<AuthenticationSchemeOptions, MockJwtAuthenticationHandler>("MockJwt", options => {});
+builder.Services.AddAuthentication("MockJwt")
+      .AddScheme<AuthenticationSchemeOptions, MockJwtAuthenticationHandler>("MockJwt", options => { });
 
 builder.Services.AddAuthorization();
 #else
@@ -178,6 +178,8 @@ app.MapCRUD<FundTransferDto, CreateFundTransferCommand, FundTransferRequest, Upd
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 #if DEBUG
-  app.RunDatabaseContainerProcess();
-#endif
+app.RunDatabaseContainerProcess();
+app.Run("http://localhost:3000");
+#else
 app.Run();
+#endif
