@@ -81,21 +81,7 @@ body {
 span {
   @extend .text;
 }
-input {
-  @extend .text;
-  border-radius: 5px;
-  order: none;
-  padding: 0;
-  margin: 0;
-  outline: none;
-  border: none;
-  &:focus {
-    font-style: italic;
-  }
-  &[readonly]:focus {
-    font-style: normal;
-  }
-}
+
 
 button {
   @extend .text;

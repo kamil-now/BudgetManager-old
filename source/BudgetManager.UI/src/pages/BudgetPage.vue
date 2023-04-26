@@ -1,6 +1,6 @@
 <template>
   <div class="budget-page">
-    <SpendingFundCard />
+    <InputField v-model="value" ref="input"/>
     <teleport to="#app">
       <button class="log-out-btn" @click="logout()">Log-out</button>
     </teleport>
@@ -8,14 +8,20 @@
 </template>
 
 <script setup lang="ts">
-import SpendingFundCard from '@/components/SpendingFundCard.vue';
+import InputField from '@/components/InputField.vue';
 import axios, { AxiosError, AxiosResponse } from 'axios';
-import { inject, onMounted } from 'vue';
+import { Ref, ref, inject, onMounted } from 'vue';
 import { AUTH, IAuthService } from '../auth';
 
 const auth = inject<IAuthService>(AUTH);
 
+const value = ref(42);
+const input: Ref<any> = ref(null);
+
+
 onMounted(() => {
+  console.warn(input.value);
+  input.value?.focus();
   axios.get<AxiosResponse<{[currency: string]: number}>>('/api/balance')
     .then( 
       res => console.warn(res.data),
