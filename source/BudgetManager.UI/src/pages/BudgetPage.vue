@@ -1,11 +1,7 @@
 <template>
   <div class="budget-page">
-    <InputField 
-      #input
-      v-model="value" 
-      ref="input" 
-      @hook:mounted="() => input?.focus()"/>
-    <InputField v-model="value" ref="input2"/>
+    <AccountInput :autofocus="true" class="account-input" v-model="account"/>
+    <AccountInput class="account-input" v-model="account"/>
     <teleport to="#app">
       <button class="log-out-btn" @click="logout()">Log-out</button>
     </teleport>
@@ -13,25 +9,36 @@
 </template>
 
 <script setup lang="ts">
-import InputField from '@/components/InputField.vue';
+import AccountInput from '@/components/AccountInput.vue';
+import { Account } from '@/models/account';
 // import axios, { AxiosError, AxiosResponse } from 'axios';
-import { ComponentPublicInstance, inject, onMounted, ref } from 'vue';
+import { inject, onMounted, ref } from 'vue';
 import { AUTH, IAuthService } from '../auth';
 
-type InputFieldComponent = ComponentPublicInstance<typeof InputField>;
 
 const auth = inject<IAuthService>(AUTH);
 
-const value = ref<number>(42);
-const input = ref<InputFieldComponent | null>(null);
+const account = ref<Account>({
+  name: 'Your account name',
+  balance: {
+    amount: 0,
+    currency: 'USD'
+  }
+});
+
 
 onMounted(() => {
   // axios.get<AxiosResponse<{[currency: string]: number}>>('/api/balance')
-  //   .then( 
+  //   .then(
   //     res => console.warn(res.data),
-  //     (error: AxiosError) => console.error(error)
+  //     (error: AxiosError<string[]>) => {
+  //       if (error.response?.data.some(x => x.includes('does not exist'))) {
+  //         // TODO
+  //       } else {
+  //         console.error(error);
+  //       }
+  //     }
   //   );
-    
 });
 async function logout() {
   await auth?.logout();
@@ -41,7 +48,14 @@ async function logout() {
 <style lang="scss">
 .budget-page {
   display: flex;
-  flex-direction: row;
+  gap: 8px;
+  flex-direction: column;
   flex-wrap: wrap;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+}
+.account-input {
+  margin: 8px;
 }
 </style>

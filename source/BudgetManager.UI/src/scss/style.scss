@@ -78,10 +78,20 @@ body {
   overflow: wrap;
   background-color: transparent;
 }
+.label-text {
+  font-size: 10px;
+  text-transform: uppercase;
+  color: var(--app-accent-color);
+}
 span {
   @extend .text;
 }
 
+label {
+  span {
+    @extend .label-text;
+  }
+}
 
 button {
   @extend .text;
