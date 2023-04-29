@@ -1,4 +1,27 @@
-$min-supported-width: 280px;
+$breakpoints: (
+  xs: 350px,
+  sm: 576px,
+  md: 768px,
+  lg: 992px,
+  xl: 1200px
+);
+
+@mixin media-breakpoint($size, $direction: up) {
+  $width: map-get($breakpoints, $size);
+  @if $width {
+    @if $direction == up {
+      @media (min-width: $width) {
+        @content;
+      }
+    } @else if $direction == down {
+      @media (max-width: $width) {
+        @content;
+      }
+    }
+  } @else {
+    @error "Invalid breakpoint: #{$size}";
+  }
+}
 
 body {
   font-family: Avenir, Helvetica, Arial, sans-serif;
@@ -45,11 +68,13 @@ body {
 .strikethorugh {
   text-decoration: line-through;
 }
+
 .spinner {
   display: inline-block;
   width: 32px;
   height: 32px;
 }
+
 .spinner:after {
   content: " ";
   display: block;
@@ -58,14 +83,15 @@ body {
   margin: 4px;
   border-radius: 50%;
   border: 4px solid var(--app-accent-color);
-  border-color: var(--app-accent-color) transparent var(--app-accent-color)
-    transparent;
+  border-color: var(--app-accent-color) transparent var(--app-accent-color) transparent;
   animation: spinner-animation 1.2s linear infinite;
 }
+
 @keyframes spinner-animation {
   0% {
     transform: rotate(0deg);
   }
+
   100% {
     transform: rotate(360deg);
   }
@@ -78,6 +104,7 @@ body {
   overflow: wrap;
   background-color: transparent;
 }
+
 .label-text {
   font-size: 10px;
   text-transform: uppercase;
@@ -98,13 +125,16 @@ button {
   border-radius: 5px;
   font-weight: 700;
   border: solid 1px #384047;
+
   &:hover {
     background-color: dimgray;
   }
+
   &:active {
     background-color: #384047;
     color: snow;
   }
+
   padding: 0;
   margin: 4px !important;
   width: 32px;
@@ -126,9 +156,11 @@ button {
   display: flex;
   flex-direction: column;
 }
+
 .card {
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
   transition: 0.3s;
+
   &:hover {
     box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
   }
