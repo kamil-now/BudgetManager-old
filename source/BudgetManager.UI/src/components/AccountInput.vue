@@ -8,6 +8,7 @@
       :autofocus="autofocus"
     />
     <InputField
+      :readonly="!isNew"
       class="balance-input"
       type="number"
       min="0"
@@ -27,38 +28,39 @@ import InputField from '@/components/InputField.vue';
 import { Account } from '@/models/account';
 import { computed } from 'vue';
 const props = defineProps<{
-  modelValue: Account,
-  autofocus?: boolean
+  account: Account,
+  autofocus?: boolean,
+  isNew?: boolean
 }>();
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits(['changed']);
 const accountName = computed({
-  get: () => props.modelValue.name,
+  get: () => props.account.name,
   set: (newValue) => {
-    emit('update:modelValue', {
-      ...props.modelValue, 
+    emit('changed', {
+      ...props.account, 
       name: newValue
     });
   }
 });
 const accountBalance = computed({
-  get: () => props.modelValue.balance.amount,
+  get: () => props.account.balance.amount,
   set: (newValue) => {
-    emit('update:modelValue', {
-      ...props.modelValue,
+    emit('changed', {
+      ...props.account,
       balance: {
-        ...props.modelValue.balance,
+        ...props.account.balance,
         amount: newValue
       }
     });
   }
 });
 const accountCurrency = computed({
-  get: () => props.modelValue.balance.currency,
+  get: () => props.account.balance.currency,
   set: (newValue) => {
-    emit('update:modelValue', {
-      ...props.modelValue,
+    emit('changed', {
+      ...props.account,
       balance: {
-        ...props.modelValue.balance,
+        ...props.account.balance,
         currency: newValue
       }
     });

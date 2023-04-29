@@ -1,7 +1,10 @@
 <template>
   <div class="budget-page">
-    <AccountInput :autofocus="true" class="account-input" v-model="account"/>
-    <AccountInput class="account-input" v-model="account"/>
+    <AccountsList 
+      :autofocus="true" 
+      :accounts="accounts"
+      :account-factory="() => createAccount()"
+    />
     <teleport to="#app">
       <button class="log-out-btn" @click="logout()">Log-out</button>
     </teleport>
@@ -9,7 +12,7 @@
 </template>
 
 <script setup lang="ts">
-import AccountInput from '@/components/AccountInput.vue';
+import AccountsList from '@/components/AccountsList.vue';
 import { Account } from '@/models/account';
 // import axios, { AxiosError, AxiosResponse } from 'axios';
 import { inject, onMounted, ref } from 'vue';
@@ -18,14 +21,17 @@ import { AUTH, IAuthService } from '../auth';
 
 const auth = inject<IAuthService>(AUTH);
 
-const account = ref<Account>({
-  name: 'Your account name',
-  balance: {
-    amount: 0,
-    currency: 'USD'
-  }
-});
+const accounts = ref<Account[]>([createAccount()]);
 
+function createAccount(): Account {
+  return {
+    name: 'Your account name',
+    balance: {
+      amount: 0,
+      currency: 'USD'
+    }
+  };
+}
 
 onMounted(() => {
   // axios.get<AxiosResponse<{[currency: string]: number}>>('/api/balance')
@@ -54,8 +60,5 @@ async function logout() {
   width: 100%;
   height: 100%;
   align-items: center;
-}
-.account-input {
-  margin: 8px;
 }
 </style>

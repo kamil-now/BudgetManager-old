@@ -52,9 +52,7 @@
   color: var(--app-accent-text-color);
   border-radius: 5px;
   font-weight: 500;
-  &:hover {
-    cursor: pointer;
-  }
+  font-size: 12px;
 }
 .log-out-btn {
   @extend .log-in-btn;
