@@ -1,5 +1,6 @@
 <template>
   <input
+    ref="input"
     :type="type" 
     :value="modelValue"
     @input="onInput"
@@ -8,9 +9,15 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps } from 'vue';
-
-defineProps(['type', 'modelValue']);
+withDefaults(
+  defineProps<{
+    type?: 'text' | 'number',
+    modelValue: number | string
+  }>(), 
+  {
+    type: 'text',
+    modelValue: '' 
+  });
 const emit = defineEmits(['update:modelValue']);
 
 function onInput(event: Event) {

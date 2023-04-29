@@ -1,6 +1,11 @@
 <template>
   <div class="budget-page">
-    <InputField v-model="value" ref="input"/>
+    <InputField 
+      #input
+      v-model="value" 
+      ref="input" 
+      @hook:mounted="() => input?.focus()"/>
+    <InputField v-model="value" ref="input2"/>
     <teleport to="#app">
       <button class="log-out-btn" @click="logout()">Log-out</button>
     </teleport>
@@ -9,24 +14,23 @@
 
 <script setup lang="ts">
 import InputField from '@/components/InputField.vue';
-import axios, { AxiosError, AxiosResponse } from 'axios';
-import { Ref, ref, inject, onMounted } from 'vue';
+// import axios, { AxiosError, AxiosResponse } from 'axios';
+import { ComponentPublicInstance, inject, onMounted, ref } from 'vue';
 import { AUTH, IAuthService } from '../auth';
+
+type InputFieldComponent = ComponentPublicInstance<typeof InputField>;
 
 const auth = inject<IAuthService>(AUTH);
 
-const value = ref(42);
-const input: Ref<any> = ref(null);
-
+const value = ref<number>(42);
+const input = ref<InputFieldComponent | null>(null);
 
 onMounted(() => {
-  console.warn(input.value);
-  input.value?.focus();
-  axios.get<AxiosResponse<{[currency: string]: number}>>('/api/balance')
-    .then( 
-      res => console.warn(res.data),
-      (error: AxiosError) => console.error(error)
-    );
+  // axios.get<AxiosResponse<{[currency: string]: number}>>('/api/balance')
+  //   .then( 
+  //     res => console.warn(res.data),
+  //     (error: AxiosError) => console.error(error)
+  //   );
     
 });
 async function logout() {
