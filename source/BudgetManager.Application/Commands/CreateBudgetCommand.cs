@@ -15,7 +15,7 @@ public class CreateBudgetCommandHandler : IRequestHandler<CreateBudgetCommand, U
 
 public class CreateBudgetCommandValidator : AbstractValidator<CreateBudgetCommand>
 {
-  public CreateBudgetCommandValidator(IUserBudgetRepository repository)
+  public CreateBudgetCommandValidator(IUserBudgetRepository repository, AppConfig config)
   {
     RuleFor(x => x.UserId)
       .NotEmpty();
@@ -26,7 +26,8 @@ public class CreateBudgetCommandValidator : AbstractValidator<CreateBudgetComman
         .DependentRules(() =>
         {
           RuleFor(x => x.DefaultFundName)
-          .NotEmpty();
+          .NotEmpty()
+          .MaximumLength(config.MaxTitleLength);
         });
   }
 }
