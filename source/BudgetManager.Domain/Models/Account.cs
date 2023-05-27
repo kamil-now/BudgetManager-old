@@ -5,13 +5,11 @@ public class Account
   public string? Id { get; }
   public string Name { get; internal set; }
   public Money Balance { get; private set; }
-  public Money InitialBalance { get; private set; }
-
-  public Account(string id, string name, Money initialBalance)
+  public Account(string id, string name, string currency)
   {
     Id = id;
     Name = name;
-    Balance = InitialBalance = initialBalance;
+    Balance = new Money(0, currency);
   }
 
   public void Add(Money money) => Balance = Balance with { Amount = Balance.Amount + money.Amount };

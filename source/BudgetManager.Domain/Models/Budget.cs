@@ -37,11 +37,8 @@ public class Budget
   public string AddAccount(string accountName, Money initialBalance)
   {
     var id = Guid.NewGuid().ToString();
-    _accounts.Add(new Account(id, accountName, initialBalance));
-
-    var defaultFund = _funds.First(x => x.IsDefault);
-    defaultFund.Add(initialBalance);
-
+    _accounts.Add(new Account(id, accountName, initialBalance.Currency));
+    _funds.First(x => x.IsDefault).Add(initialBalance);
     return id;
   }
   public void RenameAccount(string accountId, string newName) => _accounts.First(x => x.Id == accountId).Name = newName;

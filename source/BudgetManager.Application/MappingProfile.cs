@@ -12,7 +12,7 @@ public class MappingProfile : Profile
         new Account(
           src.Id!,
           src.Name!,
-          new Money(src.InitialAmount, src.Currency!)
+          src.Currency!
           )
         ).ForMember(x => x.Balance,
           opt => opt.MapFrom(src => new Money(src.Balance, src.Currency!))
@@ -89,8 +89,7 @@ public class MappingProfile : Profile
         ).ForAllMembers(opt => opt.Ignore());
 
     CreateMap<Account, AccountEntity>()
-      .ForMember(x => x.InitialAmount, opt => opt.MapFrom(src => src.InitialBalance.Amount))
-      .ForMember(x => x.Currency, opt => opt.MapFrom(src => src.InitialBalance.Currency))
+      .ForMember(x => x.Currency, opt => opt.MapFrom(src => src.Balance.Currency))
       .ForMember(x => x.Balance, opt => opt.MapFrom(src => src.Balance.Amount));
 
     CreateMap<Budget, BudgetEntity>()
