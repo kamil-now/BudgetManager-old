@@ -2,7 +2,8 @@
   <router-view />
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+</script>
 
 <style lang="scss">
 #app {
@@ -13,7 +14,6 @@
   }
 
   &::before {
-    @extend .label-text;
     display: none;
     content: "Your screen size is not supported";
     align-items: center;
@@ -59,5 +59,9 @@
   position: absolute;
   bottom: 50px;
   right: 50px;
+  @include media-breakpoint(md, down) {
+  bottom: 10px;
+  right: 10px;
+  }
 }
 </style>

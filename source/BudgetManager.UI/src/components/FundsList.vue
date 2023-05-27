@@ -1,20 +1,19 @@
 <template>
-  <div class="accounts-list">
+  <div class="funds-list">
     <div 
-      class="accounts-list_item"
-      v-for="(account, index) in accounts" :key="account.id" 
+      class="funds-list_item" 
+      v-for="(fund, index) in funds" :key="fund.id"
     >
-      <AccountInput 
-        :account="account" 
-        :isNew="!account.id"
+      <FundInput 
+        :fund="fund" 
         :display-label="index === 0"
         :autofocus="autofocus && index === 0"
-        @changed="onAccountChanged($event, index)"
+        @changed="onFundChanged($event, index)"
       />
-      <div class="accounts-list_item-actions">
+      <div class="funds-list_item-actions">
         <ConfirmPopup></ConfirmPopup>
         <Button 
-          v-if="accounts.length !== 1"
+          v-if="funds.length !== 1"
           icon="pi pi-times" 
           severity="danger" 
           text 
@@ -23,7 +22,7 @@
           @click="removeAt($event, index)" 
         />
         <Button 
-          v-if="index === accounts.length - 1"
+          v-if="index === funds.length - 1"
           icon="pi pi-plus" 
           text 
           rounded 
@@ -35,39 +34,40 @@
   </div>
 </template>
 <script setup lang="ts">
-import AccountInput from '@/components/AccountInput.vue';
-import { Account } from '@/models/account';
-import { computed } from 'vue';
+import { Fund } from '@/models/fund';
 import { useConfirm } from 'primevue/useconfirm';
+import { computed } from 'vue';
+import FundInput from './FundInput.vue';
 
 const props = defineProps<{
-  accounts: Account[],
+  funds: Fund[],
   autofocus?: boolean,
-  accountFactory:() => Account
+  fundFactory:() => Fund
 }>();
+
 const emit = defineEmits(['update']);
-
-const confirm = useConfirm();
-
-const accounts = computed({
-  get: () => props.accounts,
+const funds = computed({
+  get: () => props.funds,
   set: (newValue) => emit('update', newValue)
 });
 
-function onAccountChanged(account: Account, index: number) {
-  accounts.value[index] = account;
+
+const confirm = useConfirm();
+
+function onFundChanged(fund: Fund, index: number) {
+  funds.value[index] = fund;
 }
 
 function removeAt(event: MouseEvent, index: number) {
-  const accept = () => accounts.value.splice(index, 1);
-  const account = accounts.value[index];
-  if (!!account.id || !!account.name || account.balance.amount === 0) {
+  const accept = () => funds.value.splice(index, 1);
+  const fund = funds.value[index];
+  if (!!fund.id || !!fund.name) {
     accept();
     return;
   }
   confirm.require({
     target: event.target as HTMLElement,
-    message: 'Delete this account?',
+    message: 'Delete this fund?',
     icon: 'pi pi-exclamation-triangle',
     acceptClass: 'p-button-danger',
     rejectClass: 'p-button-secondary',
@@ -75,19 +75,18 @@ function removeAt(event: MouseEvent, index: number) {
   });
 }
 
-
 function addNew() {
-  if (accounts.value.length >= 100) {
-    alert('You cannot create more than 100 accounts');
+  if (funds.value.length >= 100) {
+    alert('You cannot create more than 100 funds');
     return;
   }
-  accounts.value.push(props.accountFactory());
+  funds.value.push(props.fundFactory());
 }
 
 </script>
 
 <style lang="scss">
-.accounts-list {
+.funds-list {
   display: flex;
   flex-direction: column;
   align-items: end;

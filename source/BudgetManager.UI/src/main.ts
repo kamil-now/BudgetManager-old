@@ -1,9 +1,22 @@
+/* eslint-disable vue/multi-word-component-names */
 import App from '@/App.vue';
 import { AUTH, IAuthService, MsalAuthService, MsalConfiguration } from '@/auth';
 import router from '@/router';
 import axios from 'axios';
 import { createPinia } from 'pinia';
 import { createApp } from 'vue';
+// PrimeVue
+import 'primeicons/primeicons.css';
+import Button from 'primevue/button';
+import PrimeVue from 'primevue/config';
+import ConfirmationService from 'primevue/confirmationservice';
+import ConfirmPopup from 'primevue/confirmpopup';
+import Dropdown from 'primevue/dropdown';
+import InputNumber from 'primevue/inputnumber';
+import InputText from 'primevue/inputtext';
+import 'primevue/resources/primevue.min.css';
+import 'primevue/resources/themes/lara-light-indigo/theme.css';
+// PrimeVue
 
 if (
   !process.env.VUE_APP_AAD_REDIRECT
@@ -17,8 +30,18 @@ axios.defaults.headers.common['Access-Control-Allow-Origin'] = process.env.VUE_A
 
 const app = createApp(App);
 app
+  .use(PrimeVue)
+  .use(ConfirmationService)
   .use(createPinia())
   .use(router);
+
+
+app
+  .component('ConfirmPopup', ConfirmPopup)
+  .component('Dropdown', Dropdown)
+  .component('Button', Button)
+  .component('InputText', InputText)
+  .component('InputNumber', InputNumber);
 
 if (process.env.VUE_APP_ENV === 'production') {
   if (!process.env.VUE_APP_AAD_CLIENT_ID

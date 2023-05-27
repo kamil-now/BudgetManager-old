@@ -1,38 +1,50 @@
 <template>
-  <div class="edit-account">
-    <InputField
-      class="name-input"
-      type="text"
-      v-model="accountName"
-      label="Account name"
-      :autofocus="autofocus"
-    />
-    <InputField
-      :readonly="!isNew"
-      class="balance-input"
-      type="number"
-      min="0"
-      v-model="accountBalance"
-      label="Balance"
-    />
-    <InputField
-      class="currency-input"
-      type="text"
-      v-model="accountCurrency"
-      label="Currency"
-    />
+  <div class="account-input">
+    <span class="p-float-label input-text">
+      <InputText
+        id="accountName" 
+        v-model="accountName" 
+      />
+      <label v-if="displayLabel" for="accountName">Account name</label>
+    </span>
+    <span class="p-float-label dropdown-currency-code">
+      <Dropdown 
+        id="accountCurrency" 
+        v-model="accountCurrency" 
+        :options="currencyCodeList" 
+      />
+      <label v-if="displayLabel" for="accountCurrency">Currency</label>
+    </span>
+    <span class="p-float-label input-number">
+      <InputNumber 
+        :readonly="!isNew"
+        id="accountBalance"
+        v-model="accountBalance" 
+        :min="0"
+        :maxFractionDigits="2"
+        :max="1000000000"
+      />
+      <label v-if="displayLabel" for="accountBalance">Balance</label>
+    </span>
   </div>
 </template>
 <script setup lang="ts">
-import InputField from '@/components/InputField.vue';
 import { Account } from '@/models/account';
 import { computed } from 'vue';
-const props = defineProps<{
+import currencies from '@/assets/currencies.json';
+
+const props = withDefaults(defineProps<{
   account: Account,
+  displayLabel?: boolean,
   autofocus?: boolean,
   isNew?: boolean
-}>();
+}>(),
+{
+  displayLabel: true
+});
 const emit = defineEmits(['changed']);
+
+const currencyCodeList = Object.keys(currencies);
 const accountName = computed({
   get: () => props.account.name,
   set: (newValue) => {
@@ -61,7 +73,7 @@ const accountCurrency = computed({
       ...props.account,
       balance: {
         ...props.account.balance,
-        currency: newValue
+        currency: newValue 
       }
     });
   }
@@ -69,18 +81,7 @@ const accountCurrency = computed({
 </script>
 
 <style lang="scss">
-.edit-account {
+.account-input {
   display: flex;
-  flex-direction: row;
-  gap: 16px;
-}
-.name-input {
-  width: 150px;
-}
-.balance-input {
-  width: 100px;
-}
-.currency-input {
-  width: 50px;
 }
 </style>

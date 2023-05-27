@@ -1,21 +1,26 @@
-import axios from 'axios';
+import { Account } from '@/models/account';
+import { Budget } from '@/models/budget';
+import { Fund } from '@/models/fund';
+import axios, { AxiosResponse } from 'axios';
 import { defineStore, DefineStoreOptions, Store } from 'pinia';
 
 export type AppState = {
   isLoading: boolean;
   undoStack: ((state: AppState) => void)[];
+  budget?: Budget
 };
 export type AppGetters = {
   // findIndexById: (state: AppState) => (id: string) => number;
 };
 export type AppActions = {
+  createBudget(defaultFundName: string, defaultCurrency: string, accounts: Account[], funds: Fund[]): void;
   save(): void;
   undo(): void;
 };
 export type AppStore = Store<string, AppState, AppGetters, AppActions>;
 
 export const getInitialAppState: () => AppState = () => ({
-  isLoading: false,
+  isLoading: true,
   undoStack: [],
 });
 
@@ -28,6 +33,38 @@ export const APP_STORE: DefineStoreOptions<
   id: 'app',
   state: () => getInitialAppState(),
   actions: {
+    async createBudget(
+      defaultFundName: string,
+      defaultCurrency: string,
+      accounts: Account[],
+      funds: Fund[]
+    ) {
+      const budget = { defaultFundName, defaultCurrency, accounts, funds };
+      await Utils.runAsyncOperation(this, () =>
+        axios.post<void>('api/budget', { defaultFundName })
+          .then(() => {
+            const createAccounts = accounts.length > 0
+              ? accounts
+                .map(account =>
+                  axios.post<string>('api/account', {
+                    name: account.name,
+                    initialAmount: account.balance.amount,
+                    currency: account.balance.currency
+                  }).then((response: AxiosResponse<string>) => account.id = response.data))
+              : [Promise.resolve()];
+
+            const createFunds = funds.length > 0
+              ? funds.map(fund =>
+                axios.post<string>('api/fund', {
+                  name: fund.name,
+                }).then((response: AxiosResponse<string>) => fund.id = response.data))
+              : [Promise.resolve()];
+
+            Promise.all([...createAccounts, ...createFunds])
+              .then(() => this.budget = budget);
+          })
+      );
+    },
     async save() {
       await Utils.runAsyncOperation(this, (state) =>
         axios.patch('api/', { state })
