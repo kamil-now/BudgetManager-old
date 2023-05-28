@@ -1,5 +1,6 @@
 
 import { Account } from '@/models/account';
+import { Balance } from '@/models/balance';
 import { Fund } from '@/models/fund';
 import axios, { AxiosResponse } from 'axios';
 
@@ -7,9 +8,9 @@ export async function createBudget(
   defaultFundName: string,
   accounts: Account[],
   funds: Fund[]
-): Promise<void> {
+): Promise<Balance> {
   return axios.post<void>('api/budget', { defaultFundName })
-    .then(async () => {
+    .then(() => {
       const createAccounts = accounts.length > 0
         ? accounts
           .map(account =>
@@ -33,6 +34,10 @@ export async function createBudget(
           }))
         : [Promise.resolve()];
 
-      await Promise.all([...createAccounts, ...createFunds]);
+      return Promise.all([...createAccounts, ...createFunds])
+        .then(() =>
+          axios.get<Balance>('/api/balance')
+            .then(response => response.data)
+        );
     });
 }

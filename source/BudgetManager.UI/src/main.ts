@@ -13,6 +13,12 @@ import 'primevue/resources/themes/lara-light-indigo/theme.css';
 import SpeedDial from 'primevue/speeddial';
 import Tag from 'primevue/tag';
 import Card from 'primevue/card';
+import ProgressSpinner from 'primevue/progressspinner';
+import Fieldset from 'primevue/fieldset';
+import Panel from 'primevue/panel';
+import Accordion from 'primevue/accordion';
+import AccordionTab from 'primevue/accordiontab';
+import Divider from 'primevue/divider';
 // PrimeVue
 import App from '@/App.vue';
 import { AUTH, IAuthService, MsalAuthService, MsalConfiguration } from '@/auth';
@@ -41,6 +47,12 @@ app
 
 
 app
+  .component('Divider', Divider)
+  .component('Accordion', Accordion)
+  .component('AccordionTab', AccordionTab)
+  .component('Panel', Panel)
+  .component('Fieldset', Fieldset)
+  .component('ProgressSpinner', ProgressSpinner)
   .component('Card', Card)
   .component('Tag', Tag)
   .component('SpeedDial', SpeedDial)

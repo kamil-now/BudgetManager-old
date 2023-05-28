@@ -1,5 +1,6 @@
 <template>
-  <router-view />
+  <ProgressSpinner v-if="isLoggedIn && isLoading"/>
+  <router-view v-else/>
   <SpeedDial 
     v-if="isLoggedIn"
     class="menu"
@@ -13,13 +14,14 @@
 
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
-import { inject, ref } from 'vue';
+import { inject, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { AUTH, IAuthService } from './auth';
 import { useAppStore } from './store/store';
 
 const auth = inject<IAuthService>(AUTH);
-const { isLoggedIn } = storeToRefs(useAppStore());
+const store = useAppStore();
+const { isLoggedIn, isLoading } = storeToRefs(store);
 const router = useRouter();
 if (!auth) {
   throw new Error('No provider for IAuthService');
@@ -31,7 +33,7 @@ const items = ref([
     command: () =>  auth.logout().then(() => router.push('/login'))
   },
 ]);
-
+onMounted(() => store.fetchBudget());
 </script>
 
 <style lang="scss">

@@ -1,21 +1,13 @@
 <template>
   <div class="account-input">
-    <span class="p-float-label input-text">
+    <span class="p-float-label">
       <InputText
         id="accountName" 
         v-model="accountName" 
       />
       <label v-if="displayLabel" for="accountName">Account name</label>
     </span>
-    <span class="p-float-label dropdown-currency-code">
-      <Dropdown 
-        id="accountCurrency" 
-        v-model="accountCurrency" 
-        :options="currencyCodeList" 
-      />
-      <label v-if="displayLabel" for="accountCurrency">Currency</label>
-    </span>
-    <span class="p-float-label input-number">
+    <span class="p-float-label">
       <InputNumber 
         :readonly="!isNew"
         id="accountBalance"
@@ -24,7 +16,15 @@
         :maxFractionDigits="2"
         :max="1000000000"
       />
-      <label v-if="displayLabel" for="accountBalance">Balance</label>
+      <label v-if="displayLabel" for="accountBalance">{{ isNew ? 'Initial Balance' : 'Balance' }}</label>
+    </span>
+    <span class="p-float-label">
+      <Dropdown 
+        id="accountCurrency" 
+        v-model="accountCurrency" 
+        :options="currencyCodeList" 
+      />
+      <label v-if="displayLabel" for="accountCurrency">Currency</label>
     </span>
   </div>
 </template>
@@ -33,15 +33,11 @@ import { Account } from '@/models/account';
 import { computed } from 'vue';
 import currencies from '@/assets/currencies.json';
 
-const props = withDefaults(defineProps<{
+const props = defineProps<{
   account: Account,
   displayLabel?: boolean,
-  autofocus?: boolean,
   isNew?: boolean
-}>(),
-{
-  displayLabel: true
-});
+}>();
 const emit = defineEmits(['changed']);
 
 const currencyCodeList = Object.keys(currencies);
@@ -83,5 +79,8 @@ const accountCurrency = computed({
 <style lang="scss">
 .account-input {
   display: flex;
+  max-width: 100%;
+  flex-wrap: wrap;
+  gap: 1rem;
 }
 </style>

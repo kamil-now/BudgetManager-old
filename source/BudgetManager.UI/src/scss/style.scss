@@ -1,5 +1,5 @@
 $breakpoints: (
-  xs: 450px,
+  xs: 350px,
   sm: 576px,
   md: 768px,
   lg: 992px,
@@ -44,7 +44,7 @@ body {
 .input-text {
   @extend .input;
   > input {
-    width: 160px;
+    //width: 160px;
   }
 }
 
@@ -53,12 +53,12 @@ body {
   
   > span {
     > input {
-      width: 80px;
+      //width: 80px;
     }
   }
 }
 
 .dropdown-currency-code {
   @extend .input;
-  width: 105px;
+  //width: 105px;
 }

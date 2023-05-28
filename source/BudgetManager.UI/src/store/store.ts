@@ -3,7 +3,8 @@ import { Budget } from '@/models/budget';
 import { Fund } from '@/models/fund';
 import axios from 'axios';
 import { defineStore, DefineStoreOptions, Store } from 'pinia';
-import { createBudget } from './create-budget';
+import { createBudget } from './create-budget-request';
+import { fetchBudget } from './fetch-budget-request';
 
 export type AppState = {
   isLoading: boolean;
@@ -12,10 +13,12 @@ export type AppState = {
   budget?: Budget
 };
 export type AppGetters = {
+  isNewUser: (state: AppState) => boolean
   // findIndexById: (state: AppState) => (id: string) => number;
 };
 export type AppActions = {
-  createBudget(defaultFundName: string, defaultCurrency: string, accounts: Account[], funds: Fund[]): void;setLoggedIn(value: boolean): void;
+  createBudget(defaultFundName: string, defaultCurrency: string, accounts: Account[], funds: Fund[]): void; setLoggedIn(value: boolean): void;
+  fetchBudget(): void;
   save(): void;
   undo(): void;
 };
@@ -35,9 +38,23 @@ export const APP_STORE: DefineStoreOptions<
 > = {
   id: 'app',
   state: () => getInitialAppState(),
+  getters: {
+    isNewUser: (state: AppState) => !state.budget
+  },
   actions: {
     setLoggedIn(value: boolean) {
       this.isLoggedIn = value;
+    },
+    async fetchBudget() {
+      await Utils.runAsyncOperation(this, () =>
+        fetchBudget()
+          .then(budget => {
+            if (budget !== null) {
+              this.budget = budget;
+            }
+            this.isLoading = false;
+          })
+      );
     },
     async createBudget(
       defaultFundName: string,
@@ -48,7 +65,7 @@ export const APP_STORE: DefineStoreOptions<
       const budget = { defaultFundName, defaultCurrency, accounts, funds };
       await Utils.runAsyncOperation(this, () =>
         createBudget(defaultFundName, accounts, funds)
-          .then(() => this.budget = budget)
+          .then(balance => this.budget = { ...budget, balance })
       );
     },
     async save() {
@@ -66,7 +83,7 @@ export const APP_STORE: DefineStoreOptions<
         console.error('Invalid undo operation');
       }
     },
-  },
+  }
 };
 
 export const useAppStore = defineStore<

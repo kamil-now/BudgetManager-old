@@ -18,20 +18,24 @@
         <label for="defaultCurrency">Default currency</label>
       </span>
     </div>
-    <div class="create-budget_section">
-      <AccountsList 
-        :autofocus="true" 
-        :accounts="accounts"
-        :account-factory="() => createAccount()"
-      />
-    </div>
-    <div class="create-budget_section">
-      <FundsList 
-        :autofocus="true" 
-        :funds="funds"
-        :fund-factory="() => createFund()"
-      />
-    </div>
+    
+    <Accordion :activeIndex="0">
+      <AccordionTab header="Accounts">
+        <AccountsList 
+          :autofocus="true" 
+          :accounts="accounts"
+          :account-factory="() => createAccount()"
+        />
+      </AccordionTab>
+      <AccordionTab header="Funds">
+        <FundsList 
+          :autofocus="true" 
+          :funds="funds"
+          :fund-factory="() => createFund()"
+        />
+      </AccordionTab>
+    </Accordion>
+    
     <Button class="submit-btn" type="submit" label="Submit" />
   </form>
 </template>
@@ -63,7 +67,7 @@ function submit(): void {
 
 function createAccount(): Account {
   return {
-    name: '',
+    name: 'New Account',
     balance: {
       amount: 0,
       currency: defaultCurrency.value
@@ -73,7 +77,7 @@ function createAccount(): Account {
     
 function  createFund(): Fund {
   return {
-    name: '',
+    name: 'New Fund',
   };
 }
 </script>
@@ -82,6 +86,8 @@ function  createFund(): Fund {
 .create-budget {
   padding: 0.5rem;
   width: 100%;
+  max-height: 100%;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -94,19 +100,17 @@ function  createFund(): Fund {
     width: 100%;
     display: flex;
     flex-direction: row; 
-    &:not(:first-of-type) {
-      margin-top: 1.5rem;
-    }
+    justify-content: space-between;
   }
   .submit-btn {
     align-self: flex-end;
   }
-
-  .accounts-list {
-    width: calc(100% - 2rem);
-  }
-  .funds-list {
-    width: calc(100% - 2rem);
+  .p-accordion {
+    width: 100%;
+    &-content {
+      max-height: 50vh;
+      overflow-y: auto;
+    }
   }
 }
 

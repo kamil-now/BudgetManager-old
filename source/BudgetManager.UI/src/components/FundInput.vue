@@ -3,8 +3,7 @@
     <span class="p-float-label input-text">
       <InputText
         id="fundName" 
-        v-model="fundName" 
-        :autofocus="autofocus"
+        v-model="fundName"
       />
       <label v-if="displayLabel" for="fundName">Fund</label>
     </span>
@@ -15,8 +14,7 @@ import { Fund } from '@/models/fund';
 import { computed } from 'vue';
 const props = defineProps<{
   fund: Fund,
-  displayLabel: boolean,
-  autofocus?: boolean
+  displayLabel?: boolean,
 }>();
 const emit = defineEmits(['changed']);
 const fundName = computed({
