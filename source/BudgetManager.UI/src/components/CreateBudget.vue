@@ -57,8 +57,8 @@ function submit(): void {
   createBudget(
     defaultFundName.value, 
     defaultCurrency.value, 
-    [], 
-    []);
+    accounts.value, 
+    funds.value);
 }
 
 function createAccount(): Account {
@@ -80,14 +80,14 @@ function  createFund(): Fund {
 
 <style lang="scss">
 .create-budget {
+  padding: 0.5rem;
   width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: start;
+  align-items: flex-start;
 
   > h2 {
-    margin: 3rem;
-    align-self: center;
+    margin: 0.5rem 0 2rem 0.5rem;
   }
 
   &_section {
@@ -99,8 +99,7 @@ function  createFund(): Fund {
     }
   }
   .submit-btn {
-    margin: 3rem;
-    align-self: center;
+    align-self: flex-end;
   }
 
   .accounts-list {

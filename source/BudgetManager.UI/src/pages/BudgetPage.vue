@@ -1,20 +1,14 @@
 <template>
   <div class="budget-page">
     <CreateBudget v-if="newUser"/>
-    <teleport to="#app">
-      <button class="log-out-btn" @click="logout()">Log-out</button>
-    </teleport>
   </div>
 </template>
 
 <script setup lang="ts">
-import axios, { AxiosError, AxiosResponse } from 'axios';
 import CreateBudget from '@/components/CreateBudget.vue';
-import { inject, onMounted, ref } from 'vue';
-import { AUTH, IAuthService } from '../auth';
+import axios, { AxiosError, AxiosResponse } from 'axios';
+import { onMounted, ref } from 'vue';
 
-
-const auth = inject<IAuthService>(AUTH);
 const newUser = ref<boolean>(true); // TODO
 
 onMounted(() => {
@@ -30,9 +24,6 @@ onMounted(() => {
       }
     );
 });
-async function logout() {
-  await auth?.logout();
-}
 </script>
 
 <style lang="scss">
@@ -41,8 +32,11 @@ async function logout() {
   gap: 8px;
   flex-direction: column;
   flex-wrap: wrap;
-  width: 400px;
-  height: 100%;
+  width: 450px;
+  height: auto;
   align-items: center;
+  background-color: var(--surface-section);
+  border-radius: 1rem;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 </style>

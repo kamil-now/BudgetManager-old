@@ -90,7 +90,7 @@ function addNew() {
 .accounts-list {
   display: flex;
   flex-direction: column;
-  align-items: end;
+  align-items: flex-end;
 
   &_item {
     width: 100%;

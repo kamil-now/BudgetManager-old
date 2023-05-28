@@ -1,10 +1,4 @@
 /* eslint-disable vue/multi-word-component-names */
-import App from '@/App.vue';
-import { AUTH, IAuthService, MsalAuthService, MsalConfiguration } from '@/auth';
-import router from '@/router';
-import axios from 'axios';
-import { createPinia } from 'pinia';
-import { createApp } from 'vue';
 // PrimeVue
 import 'primeicons/primeicons.css';
 import Button from 'primevue/button';
@@ -16,7 +10,17 @@ import InputNumber from 'primevue/inputnumber';
 import InputText from 'primevue/inputtext';
 import 'primevue/resources/primevue.min.css';
 import 'primevue/resources/themes/lara-light-indigo/theme.css';
+import SpeedDial from 'primevue/speeddial';
+import Tag from 'primevue/tag';
+import Card from 'primevue/card';
 // PrimeVue
+import App from '@/App.vue';
+import { AUTH, IAuthService, MsalAuthService, MsalConfiguration } from '@/auth';
+import router from '@/router';
+import axios from 'axios';
+import { createPinia } from 'pinia';
+import { createApp } from 'vue';
+import { useAppStore } from './store/store';
 
 if (
   !process.env.VUE_APP_AAD_REDIRECT
@@ -37,6 +41,9 @@ app
 
 
 app
+  .component('Card', Card)
+  .component('Tag', Tag)
+  .component('SpeedDial', SpeedDial)
   .component('ConfirmPopup', ConfirmPopup)
   .component('Dropdown', Dropdown)
   .component('Button', Button)
@@ -65,18 +72,19 @@ if (process.env.VUE_APP_ENV === 'production') {
       app.mount('#app');
     });
 } else {
+  const appStore = useAppStore();
+  appStore.setLoggedIn(['true', null].includes(window.localStorage.getItem('isLoggedIn')));
   const mockAuthService: IAuthService = {
-    get isLoggedIn(): boolean {
-      return true;
-    },
     login(): Promise<void> {
-      this.isLoggedIn = true;
+      window.localStorage.setItem('isLoggedIn', 'true');
+      appStore.setLoggedIn(true);
       return Promise.resolve();
     },
     logout(): Promise<void> {
-      this.isLoggedIn = true;
+      window.localStorage.setItem('isLoggedIn', 'false');
+      appStore.setLoggedIn(false);
       return Promise.resolve();
-    }
+    },
   };
   app.provide(AUTH, mockAuthService);
   router.push({ path: '/home' });

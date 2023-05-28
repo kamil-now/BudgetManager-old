@@ -5,11 +5,11 @@ import {
   RedirectRequest
 } from '@azure/msal-browser';
 import { Router } from 'vue-router';
+import { AppStore, useAppStore } from './store/store';
 
 export const AUTH = Symbol();
 
 export interface IAuthService {
-  isLoggedIn: boolean,
   logout(): Promise<void>;
   login(): Promise<void>;
 }
@@ -26,20 +26,18 @@ export class MsalAuthService implements IAuthService {
     return this.msal.getActiveAccount();
   }
 
-  get isLoggedIn(): boolean {
-    return this.activeAccount != null;
-  }
-
   get accessToken(): string | undefined {
     return this._accessToken;
   }
 
   private readonly msal: PublicClientApplication;
   private readonly redirectRequest: RedirectRequest;
+  private readonly appStore: AppStore;
 
   private _accessToken: string | undefined;
 
   constructor(config: MsalConfiguration, router: Router) {
+    this.appStore = useAppStore();
     this.msal = new PublicClientApplication({
       auth: {
         clientId: config.clientId,
@@ -58,11 +56,11 @@ export class MsalAuthService implements IAuthService {
     this.msal.initialize();
 
     router.beforeEach((to, _, next) => {
-      if (!to.path.includes('/login') && !this.isLoggedIn) {
+      if (!to.path.includes('/login') && !this.appStore.isLoggedIn) {
         console.warn(
           `Prevented unauthorized access to ${to.path}, redirecting to /login`
         );
-      } else if (to.path.includes('/login') && this.isLoggedIn) {
+      } else if (to.path.includes('/login') && this.appStore.isLoggedIn) {
         next({ path: '/home' });
       } else next();
     });
@@ -78,7 +76,12 @@ export class MsalAuthService implements IAuthService {
   }
 
   async login(): Promise<void> {
-    if (!(await this.acquireTokenSilent())) {
+    const loggedIn = await this.acquireTokenSilent()
+      .then(loggedIn => {
+        this.appStore.setLoggedIn(loggedIn);
+        return loggedIn;
+      });
+    if (!loggedIn) {
       this.msal.loginRedirect(this.redirectRequest);
     }
   }

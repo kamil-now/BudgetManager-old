@@ -61,7 +61,7 @@ function onFundChanged(fund: Fund, index: number) {
 function removeAt(event: MouseEvent, index: number) {
   const accept = () => funds.value.splice(index, 1);
   const fund = funds.value[index];
-  if (!!fund.id || !!fund.name) {
+  if (!!fund.id || fund.name.length === 0) {
     accept();
     return;
   }
@@ -89,7 +89,7 @@ function addNew() {
 .funds-list {
   display: flex;
   flex-direction: column;
-  align-items: end;
+  align-items: flex-end;
 
   &_item {
     width: 100%;

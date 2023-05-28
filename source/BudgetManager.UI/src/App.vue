@@ -1,8 +1,37 @@
 <template>
   <router-view />
+  <SpeedDial 
+    v-if="isLoggedIn"
+    class="menu"
+    :model="items" 
+    direction="up" 
+    :transitionDelay="80" 
+    showIcon="pi pi-bars" 
+    hideIcon="pi pi-times" 
+  />
 </template>
 
 <script setup lang="ts">
+import { storeToRefs } from 'pinia';
+import { inject, ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { AUTH, IAuthService } from './auth';
+import { useAppStore } from './store/store';
+
+const auth = inject<IAuthService>(AUTH);
+const { isLoggedIn } = storeToRefs(useAppStore());
+const router = useRouter();
+if (!auth) {
+  throw new Error('No provider for IAuthService');
+}
+const items = ref([
+  {
+    label: 'Sign-out',
+    icon: 'pi pi-sign-out',
+    command: () =>  auth.logout().then(() => router.push('/login'))
+  },
+]);
+
 </script>
 
 <style lang="scss">
@@ -53,6 +82,15 @@
   border-radius: 5px;
   font-weight: 500;
   font-size: 12px;
+}
+.menu {
+  position: absolute;
+  bottom: 50px;
+  right: 50px;
+  @include media-breakpoint(md, down) {
+    top: 10px;
+    right: 10px;
+  }
 }
 .log-out-btn {
   @extend .log-in-btn;
