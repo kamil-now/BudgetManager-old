@@ -5,6 +5,8 @@
       :items="funds"
       :createNew="fundFactory"
       :max="100"
+      :canBeRemovedWithoutConfirmation="fund => !fund.isDefault"
+      @removed="onRemoved($event)"
     >
       <FundInput 
         :fund="slotProps.item" 
@@ -31,7 +33,17 @@ const funds = computed({
 });
 
 function onFundChanged(fund: Fund, index: number) {
+  if (fund.isDefault) {
+    funds.value.forEach(fund => fund.isDefault = false);
+  } else {
+    funds.value[0].isDefault = true;
+  }
   funds.value[index] = fund;
+}
+function onRemoved(fund: Fund) {
+  if (fund.isDefault) {
+    funds.value[0].isDefault = true;
+  }
 }
 </script>
 

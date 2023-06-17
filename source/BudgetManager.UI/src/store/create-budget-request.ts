@@ -4,14 +4,25 @@ import { Balance } from '@/models/balance';
 import { Fund } from '@/models/fund';
 import axios, { AxiosResponse } from 'axios';
 
-export async function createBudget(
-  defaultFundName: string,
+export async function createBudgetRequest(
   accounts: Account[],
   funds: Fund[]
 ): Promise<Balance> {
-  return axios.post<void>('api/budget', { defaultFundName })
-    .then(() => {
-      const createAccounts = accounts.length > 0
+  // order is important
+  return axios.post<void>('api/budget')
+    .then(() =>
+      funds.length > 0
+        ? funds.map(fund =>
+          axios.post<string>('api/fund', {
+            name: fund.name,
+            isDefault: fund.isDefault,
+          }).then((response: AxiosResponse<string>) => {
+            fund.id = response.data;
+            return;
+          }))
+        : [Promise.resolve()])
+    .then(() =>
+      accounts.length > 0
         ? accounts
           .map(account =>
             axios.post<string>('api/account', {
@@ -22,22 +33,7 @@ export async function createBudget(
               account.id = response.data;
               return;
             }))
-        : [Promise.resolve()];
-
-      const createFunds = funds.length > 0
-        ? funds.map(fund =>
-          axios.post<string>('api/fund', {
-            name: fund.name,
-          }).then((response: AxiosResponse<string>) => {
-            fund.id = response.data;
-            return;
-          }))
-        : [Promise.resolve()];
-
-      return Promise.all([...createAccounts, ...createFunds])
-        .then(() =>
-          axios.get<Balance>('/api/balance')
-            .then(response => response.data)
-        );
-    });
+        : [Promise.resolve()])
+    .then(() => axios.get<Balance>('/api/balance'))
+    .then(res => res.data);
 }

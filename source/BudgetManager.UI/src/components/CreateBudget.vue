@@ -1,32 +1,7 @@
 <template>
-  <form @submit.prevent="submit" class="create-budget">
+  <form @submit.prevent class="create-budget">
     <h2>Create budget</h2>
-    <div class="create-budget_section">
-      <span class="p-float-label input-text">
-        <InputText
-          id="defaultFundName" 
-          v-model="defaultFundName" 
-        />
-        <label for="defaultFundName">Default fund</label>
-      </span>
-      <span class="p-float-label dropdown-currency-code">
-        <Dropdown 
-          id="defaultCurrency" 
-          v-model="defaultCurrency" 
-          :options="currencyCodeList" 
-        />
-        <label for="defaultCurrency">Default currency</label>
-      </span>
-    </div>
-    
     <Accordion :activeIndex="0">
-      <AccordionTab header="Accounts">
-        <AccountsList 
-          :autofocus="true" 
-          :accounts="accounts"
-          :account-factory="() => createAccount()"
-        />
-      </AccordionTab>
       <AccordionTab header="Funds">
         <FundsList 
           :autofocus="true" 
@@ -34,9 +9,19 @@
           :fund-factory="() => createFund()"
         />
       </AccordionTab>
+      <AccordionTab header="Accounts">
+        <AccountsList 
+          :autofocus="true" 
+          :accounts="accounts"
+          :account-factory="() => createAccount()"
+        />
+      </AccordionTab>
     </Accordion>
-    
-    <Button class="submit-btn" type="submit" label="Submit" />
+    <Button 
+      class="submit-btn" 
+      @click="submit()" 
+      label="Submit" 
+    />
   </form>
 </template>
 
@@ -50,35 +35,38 @@ import { Account } from '@/models/account';
 import { Fund } from '@/models/fund';
 
 const currencyCodeList = Object.keys(currencies);
-const defaultCurrency = ref<string>(currencyCodeList[0]);
-const defaultFundName = ref<string>('Unallocated funds');
-const accounts = ref<Account[]>([createAccount()]);
-const funds = ref<Fund[]>([createFund()]);
+const accounts = ref<Account[]>([createAccount(currencyCodeList[0])]);
+const funds = ref<Fund[]>([createFund(true)]);
 
 const { createBudget } = useAppStore();
 
 function submit(): void {
   createBudget(
-    defaultFundName.value, 
-    defaultCurrency.value, 
     accounts.value, 
     funds.value);
 }
 
-function createAccount(): Account {
+function createAccount(currency?: string): Account {
   return {
     name: 'New Account',
     balance: {
       amount: 0,
-      currency: defaultCurrency.value
+      currency: currency ?? getDefaultCurrency()
     }
   };
 }
     
-function  createFund(): Fund {
+function  createFund(isDefault = false): Fund {
   return {
     name: 'New Fund',
+    isDefault
   };
+}
+
+function getDefaultCurrency(): string {
+  return accounts?.value 
+    ? accounts.value[accounts.value.length - 1].balance.currency
+    : currencyCodeList[0];
 }
 </script>
 

@@ -7,8 +7,8 @@ public class Budget
   public IReadOnlyCollection<Fund> Funds => _funds.AsReadOnly();
   public IReadOnlyCollection<MoneyOperation> Operations => _operations.AsReadOnly();
   private List<MoneyOperation> _operations;
-  public List<Account> _accounts;
-  public List<Fund> _funds;
+  private List<Account> _accounts;
+  private List<Fund> _funds;
 
   public Budget(
     IEnumerable<Account> accounts,
@@ -48,10 +48,14 @@ public class Budget
     _accounts.RemoveAll(x => x.Id == accountId);
   }
 
-  public string AddFund(string name)
+  public string AddFund(string name, bool isDefault)
   {
     var id = Guid.NewGuid().ToString();
-    _funds.Add(new Fund(id, name));
+    if (isDefault)
+    {
+      _funds.ForEach(fund => fund.IsDefault = false);
+    }
+    _funds.Add(new Fund(id, name, isDefault));
     return id;
   }
   public void RenameFund(string fundId, string newName) => _funds.First(x => x.Id == fundId).Name = newName;

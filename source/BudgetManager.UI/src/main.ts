@@ -19,6 +19,7 @@ import Panel from 'primevue/panel';
 import Accordion from 'primevue/accordion';
 import AccordionTab from 'primevue/accordiontab';
 import Divider from 'primevue/divider';
+import Checkbox from 'primevue/checkbox';
 // PrimeVue
 import App from '@/App.vue';
 import { AUTH, IAuthService, MsalAuthService, MsalConfiguration } from '@/auth';
@@ -47,6 +48,7 @@ app
 
 
 app
+  .component('Checkbox', Checkbox)
   .component('Divider', Divider)
   .component('Accordion', Accordion)
   .component('AccordionTab', AccordionTab)

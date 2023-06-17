@@ -5,6 +5,7 @@
       :items="accounts"
       :createNew="accountFactory"
       :max="100"
+      :canBeRemovedWithoutConfirmation="account => account.balance.amount > 0"
     >
       <AccountInput 
         :account="slotProps.item" 

@@ -4,7 +4,7 @@ using BudgetManager.Infrastructure.Models;
 
 public interface IUserBudgetRepository
 {
-  Task Create(string userId, string defaultFundName);
+  Task Create(string userId);
   Task<BudgetEntity> Get(string userId);
   Task<bool> Exists(string userId);
   Task Update(BudgetEntity budget);

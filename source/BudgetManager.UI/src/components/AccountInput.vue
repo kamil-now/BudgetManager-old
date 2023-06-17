@@ -2,16 +2,23 @@
   <div class="account-input">
     <span class="p-float-label">
       <InputText
+        class="p-inputtext-sm"
         id="accountName" 
+        placeholder="Account name"
         v-model="accountName" 
       />
       <label v-if="displayLabel" for="accountName">Account name</label>
     </span>
     <span class="p-float-label">
       <InputNumber 
+        class="p-inputtext-sm"
         :readonly="!isNew"
         id="accountBalance"
         v-model="accountBalance" 
+        mode="currency"
+        currencyDisplay="code"
+        :allowEmpty="false"
+        :currency="accountCurrency" 
         :min="0"
         :maxFractionDigits="2"
         :max="1000000000"
@@ -20,6 +27,7 @@
     </span>
     <span class="p-float-label">
       <Dropdown 
+        class="p-inputtext-sm"
         id="accountCurrency" 
         v-model="accountCurrency" 
         :options="currencyCodeList" 
@@ -36,11 +44,11 @@ import currencies from '@/assets/currencies.json';
 const props = defineProps<{
   account: Account,
   displayLabel?: boolean,
-  isNew?: boolean
 }>();
 const emit = defineEmits(['changed']);
 
 const currencyCodeList = Object.keys(currencies);
+const isNew = computed(() => !props.account.id);
 const accountName = computed({
   get: () => props.account.name,
   set: (newValue) => {

@@ -3,8 +3,8 @@ import { Budget } from '@/models/budget';
 import { Fund } from '@/models/fund';
 import axios from 'axios';
 import { defineStore, DefineStoreOptions, Store } from 'pinia';
-import { createBudget } from './create-budget-request';
-import { fetchBudget } from './fetch-budget-request';
+import { createBudgetRequest } from './create-budget-request';
+import { fetchBudgetRequest } from './fetch-budget-request';
 
 export type AppState = {
   isLoading: boolean;
@@ -17,7 +17,8 @@ export type AppGetters = {
   // findIndexById: (state: AppState) => (id: string) => number;
 };
 export type AppActions = {
-  createBudget(defaultFundName: string, defaultCurrency: string, accounts: Account[], funds: Fund[]): void; setLoggedIn(value: boolean): void;
+  createBudget(accounts: Account[], funds: Fund[]): void; 
+  setLoggedIn(value: boolean): void;
   fetchBudget(): void;
   save(): void;
   undo(): void;
@@ -42,12 +43,13 @@ export const APP_STORE: DefineStoreOptions<
     isNewUser: (state: AppState) => !state.budget
   },
   actions: {
-    setLoggedIn(value: boolean) {
+    async setLoggedIn(value: boolean) {
       this.isLoggedIn = value;
+      this.fetchBudget();
     },
     async fetchBudget() {
       await Utils.runAsyncOperation(this, () =>
-        fetchBudget()
+        fetchBudgetRequest()
           .then(budget => {
             if (budget !== null) {
               this.budget = budget;
@@ -57,14 +59,12 @@ export const APP_STORE: DefineStoreOptions<
       );
     },
     async createBudget(
-      defaultFundName: string,
-      defaultCurrency: string,
       accounts: Account[],
       funds: Fund[]
     ) {
-      const budget = { defaultFundName, defaultCurrency, accounts, funds };
+      const budget = {  accounts, funds };
       await Utils.runAsyncOperation(this, () =>
-        createBudget(defaultFundName, accounts, funds)
+        createBudgetRequest(accounts, funds)
           .then(balance => this.budget = { ...budget, balance })
       );
     },

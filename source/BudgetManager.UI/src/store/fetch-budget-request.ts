@@ -5,7 +5,7 @@ import { Budget } from '@/models/budget';
 import { Fund } from '@/models/fund';
 import axios, { AxiosError } from 'axios';
 
-export function fetchBudget(): Promise<Budget | null> {
+export function fetchBudgetRequest(): Promise<Budget | null> {
   return axios.get<Balance>('/api/balance')
     .then(
       async response => {
