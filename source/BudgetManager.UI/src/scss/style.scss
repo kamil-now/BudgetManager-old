@@ -1,12 +1,12 @@
 $breakpoints: (
-  xs: 350px,
+  xs: 375px,
   sm: 576px,
   md: 768px,
   lg: 992px,
   xl: 1200px
 );
 
-$base-width: 576px;
+$base-width: map-get($breakpoints, 'xs');
 
 @mixin media-breakpoint($size, $direction: up) {
   $width: map-get($breakpoints, $size);
@@ -37,30 +37,4 @@ body {
   text-align: center;
   margin: 0;
   background-color: var(--surface-ground);
-}
-
-.input {
-  margin: 0.25rem;
-}
-
-.input-text {
-  @extend .input;
-  > input {
-    //width: 160px;
-  }
-}
-
-.input-number {
-  @extend .input;
-  
-  > span {
-    > input {
-      //width: 80px;
-    }
-  }
-}
-
-.dropdown-currency-code {
-  @extend .input;
-  //width: 105px;
 }

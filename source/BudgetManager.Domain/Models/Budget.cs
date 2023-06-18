@@ -47,11 +47,14 @@ public class Budget
   public string AddAccount(string accountName, Money initialBalance)
   {
     var id = Guid.NewGuid().ToString();
-    _accounts.Add(new Account(id, accountName, initialBalance.Currency));
+    var account = new Account(id, accountName, initialBalance.Currency);
+    account.Add(initialBalance);
+    _accounts.Add(account);
     _funds.First(x => x.IsDefault).Add(initialBalance);
     return id;
   }
-  public Account RenameAccount(string accountId, string newName) {
+  public Account RenameAccount(string accountId, string newName)
+  {
     var account = _accounts.First(x => x.Id == accountId);
     account.Name = newName;
     return account;
@@ -72,7 +75,12 @@ public class Budget
     _funds.Add(new Fund(id, name, isDefault));
     return id;
   }
-  public void RenameFund(string fundId, string newName) => _funds.First(x => x.Id == fundId).Name = newName;
+  public Fund RenameFund(string fundId, string newName)
+  {
+    var fund = _funds.First(x => x.Id == fundId);
+    fund.Name = newName;
+    return fund;
+  }
   public void RemoveFund(string fundId) => _funds.RemoveAll(x => x.Id == fundId);
 
   public void ToggleExpenseIsConfirmed(string expenseId)

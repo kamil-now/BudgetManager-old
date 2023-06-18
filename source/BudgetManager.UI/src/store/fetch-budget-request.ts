@@ -10,19 +10,21 @@ export function fetchBudgetRequest(): Promise<{
   balance: Balance,
 } | null> {
 
-  return Promise.all(
-    [
-      axios.get<Balance>('/api/balance').then(res => res.data),
-      axios.get<Account[]>('api/accounts').then(res => res.data),
-      axios.get<Fund[]>('api/funds').then(res => res.data),
-      axios.get<{ accountsOrder: string[], fundsOrder: string[] }>('api/user-settings')
-        .then(res => res.data, () => ({ accountsOrder: [], fundsOrder: [] }))
-    ])
-    .then(([balance, accounts, funds, settings]) => ({
-      balance,
-      accounts: sortAccounts(accounts, settings),
-      funds: sortFunds(funds, settings),
-    }),
+  return axios.get<Balance>('/api/balance')
+    .then(res => 
+      Promise.all(
+        [
+          axios.get<Account[]>('api/accounts').then(res => res.data),
+          axios.get<Fund[]>('api/funds').then(res => res.data),
+          axios.get<{ accountsOrder: string[], fundsOrder: string[] }>('api/user-settings')
+            .then(res => res.data, () => ({ accountsOrder: [], fundsOrder: [] }))
+        ])
+        .then(([accounts, funds, settings]) => ({
+          balance: res.data,
+          accounts: sortAccounts(accounts, settings),
+          funds: sortFunds(funds, settings),
+        }))
+    ,
     (error: AxiosError<string[]>) => {
       if (error.response?.data.some(x => x.includes('does not exist'))) {
         return null;
@@ -45,8 +47,7 @@ function sortFunds(
     }
   });
   const unsorted = funds.filter(fund => !settings.fundsOrder.find(x => x === fund.id));
-
-  return [...sorted, ...unsorted];
+  return [...unsorted, ...sorted];
 }
 
 function sortAccounts(
@@ -61,6 +62,5 @@ function sortAccounts(
     }
   });
   const unsorted = accounts.filter(account => !settings.accountsOrder.find(x => x === account.id));
-
-  return [...sorted, ...unsorted];
+  return [...unsorted, ...sorted];
 }

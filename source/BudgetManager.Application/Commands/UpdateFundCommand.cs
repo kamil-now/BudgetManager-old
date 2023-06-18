@@ -1,24 +1,21 @@
 namespace BudgetManager.Application.Commands;
 
 using AutoMapper;
+using BudgetManager.Application.Requests;
 using BudgetManager.Domain.Models;
 using BudgetManager.Infrastructure;
 
-public record UpdateFundCommand(string UserId, string FundId, string Name) : IRequest<Unit>, IBudgetCommand;
+public record UpdateFundCommand(string UserId, string FundId, string Name) : IRequest<FundDto>, IBudgetCommand;
 
-public class UpdateFundCommandHandler : BudgetCommandHandler<UpdateFundCommand, Unit>
+public class UpdateFundCommandHandler : BudgetCommandHandler<UpdateFundCommand, FundDto>
 {
   public UpdateFundCommandHandler(IUserBudgetRepository repo, IMapper map)
   : base(repo, map)
   {
   }
 
-  public override Unit ModifyBudget(UpdateFundCommand command, Budget budget)
-  {
-    budget.RenameFund(command.FundId, command.Name);
-
-    return Unit.Value;
-  }
+  public override FundDto ModifyBudget(UpdateFundCommand command, Budget budget)
+    => _mapper.Map<FundDto>(budget.RenameFund(command.FundId, command.Name));
 }
 
 public class UpdateFundCommandValidator : BudgetCommandValidator<UpdateFundCommand>

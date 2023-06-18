@@ -2,7 +2,6 @@ namespace BudgetManager.Application.Requests;
 
 using AutoMapper;
 
-public record AccountDto(string Id, string Name, Money Balance);
 public record AccountRequest(string UserId, string AccountId) : IBudgetRequest, IRequest<AccountDto>;
 
 public class AccountRequestHandler : BudgetRequestHandler<AccountRequest, AccountDto>

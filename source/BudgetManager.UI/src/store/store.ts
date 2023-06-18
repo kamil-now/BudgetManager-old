@@ -4,7 +4,7 @@ import { Fund } from '@/models/fund';
 import axios from 'axios';
 import { defineStore, DefineStoreOptions, Store } from 'pinia';
 import { createAccountRequest, deleteAccountRequest, updateAccountRequest } from './account-requests';
-import { createFundRequest } from './create-fund-request';
+import { createFundRequest, deleteFundRequest, updateFundRequest } from './fund-requests';
 import { fetchBudgetRequest } from './fetch-budget-request';
 
 export type AppState = {
@@ -24,7 +24,9 @@ export type AppActions = {
   createNewAccount(account: Account): void,
   updateAccount(account: Account): void;
   deleteAccount(account:Account): void;
-  createFund(fund: Fund): void,
+  createNewFund(fund: Fund): void,
+  updateFund(fund: Fund): void;
+  deleteFund(fund: Fund): void;
   setLoggedIn(value: boolean): void;
   fetchBudget(): void;
 };
@@ -82,13 +84,22 @@ export const APP_STORE: DefineStoreOptions<
               ? accounts
                 .map(account => createAccountRequest(account))
               : [Promise.resolve()])
+          .then(() => this.updateUserSettings())
           .then(() => this.fetchBudget())
       );
     },
     async createNewAccount(account: Account) {
       await Utils.runAsyncOperation(this, (state) => 
         createAccountRequest(account)
-          .then(id => state.accounts.push({ ...account, id }))
+          .then(id => {
+            const fromState = state.accounts.find(x => x.id === id);
+            if (!fromState) {
+              state.accounts.unshift({ ...account, id });
+            } else {
+              const index = state.accounts.indexOf(fromState);
+              state.accounts[index] = account; 
+            }
+          })
       );
     },
     async updateAccount(account: Account) {
@@ -110,19 +121,38 @@ export const APP_STORE: DefineStoreOptions<
           .then(() => state.accounts.splice(state.accounts.indexOf(account), 1))
       );
     },
-    async createFund(
+    async createNewFund(
       fund: Fund,
     ) {
       await Utils.runAsyncOperation(this, (state) => 
         createFundRequest(fund)
-          .then(id => state.funds.push({ ...fund, id }))
+          .then(id => state.funds.unshift({ ...fund, id }))
       );
     },
     async updateUserSettings() {
-      await  axios.put('api/user-settings', { 
+      await axios.put('api/user-settings', { 
         accountsOrder: this.accounts.map(x => x.id),
         fundsOrder: this.funds.map(x => x.id)
       });
+    },
+    async updateFund(fund: Fund) {
+      await Utils.runAsyncOperation(this, (state) => 
+        updateFundRequest(fund)
+          .then(fund => {
+            const fromState = state.funds.find(x => x.id === fund.id);
+            if (!fromState) {
+              throw new Error('Invalid operation - account does not exist');
+            }
+            const index = state.funds.indexOf(fromState);
+            state.funds[index] = fund; 
+          })
+      );
+    },
+    async deleteFund(fund: Fund) {
+      await Utils.runAsyncOperation(this, (state) => 
+        deleteFundRequest(fund)
+          .then(() => state.funds.splice(state.funds.indexOf(fund), 1))
+      );
     },
   }
 };

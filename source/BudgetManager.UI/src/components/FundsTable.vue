@@ -1,56 +1,52 @@
 <template>
-  <div class="accounts">
+  <div class="funds">
     <ConfirmPopup></ConfirmPopup>
     <DataTable 
       v-model:editingRows="editingRows"
-      :value="accounts" 
+      :value="funds" 
       class="p-datatable-sm" 
       editMode="row" 
       dataKey="id"
-      tableClass="accounts_table"
+      tableClass="funds_table"
       columnResizeMode="expand"
       @row-edit-init="onRowEditInit"
       @row-edit-cancel="onRowEditCancel"
       @row-edit-save="onRowEditSave"
       @rowReorder="onRowReorder" 
     >
-      <Column rowReorder header-class="accounts_table_header-column" header="Accounts"/>
-      <Column field="name" class="accounts_name-column">
+      <Column rowReorder header-class="funds_table_header-column" header="Funds"/>
+      <Column field="name" class="funds_name-column">
         <template #editor="{ data }">
           <InputText
             :pt="{
-                root: { class: 'accounts_name-column_name-editor' }
+                root: { class: 'funds_name-column_name-editor' }
             }"
-            placeholder="Account name"
+            placeholder="Fund name"
             v-model="data.name" 
           />
         </template>
       </Column>
-      <Column field="balance" class="accounts_balance-column">
+      <Column field="balance" class="funds_balance-column">
         <template #body="slotProps">
-          <span>{{ DisplayFormat.money(slotProps.data.balance) }}</span>
+          <div class="funds_balance-column_cell">
+            <div class="funds_balance-column_cell_values">
+              <span v-for="(value, currency) in slotProps.data.balance" :key="currency">
+                {{ DisplayFormat.money({ amount: value, currency: currency.toString() }) }}
+              </span>
+            </div>
+            <label v-if="slotProps.data.isDefault" class="funds_balance-column_cell_label">default</label>
+          </div>
         </template>
         <template #editor="{ data, index }">
-          <div class="accounts_balance-column_cell">
-            <template v-if="data.id">
-              <span>{{ DisplayFormat.money(data.balance) }}</span>
-            </template>
-            <template v-else>
-              <Dropdown
-                v-model="data.balance.currency" 
-                :options="currencyCodeList" 
-              />
-              <InputNumber 
-                inputClass="accounts_balance-column_amount-editor"
-                v-model="data.balance.amount" 
-                :allowEmpty="false"
-                :min="0"
-                :maxFractionDigits="2"
-                :max="1000000000"
-              />
-            </template>
+          <div class="funds_balance-column_cell">
+            <div class="funds_balance-column_cell_values">
+              <span v-for="(value, currency) in data.balance" :key="currency">
+                {{ DisplayFormat.money({ amount: value, currency: currency.toString() }) }}
+              </span>
+            </div>
+            <label v-if="data.isDefault" class="funds_balance-column_cell_label">default</label>
             <Button 
-              v-if="data.id && accounts.length !== 1"
+              v-if="data.id && funds.length !== 1 && !data.isDefault"
               icon="pi pi-times" 
               severity="danger" 
               text 
@@ -64,7 +60,7 @@
       <Column 
         :rowEditor="true"
         bodyStyle="text-align:center"
-        class="accounts_action-column"
+        class="funds_action-column"
       >
         <template #header>
           <Button 
@@ -81,26 +77,24 @@
   </div>
 </template>
 <script setup lang="ts">
-import currencies from '@/assets/currencies.json';
 import { DisplayFormat } from '@/helpers/display-format';
-import { Account } from '@/models/account';
+import { Fund } from '@/models/fund';
 import { useAppStore } from '@/store/store';
 import { storeToRefs } from 'pinia';
 import { useConfirm } from 'primevue/useconfirm';
 import { Ref, ref } from 'vue';
 type RowEditEvent =  {
-  data: Account,
-  newData: Account,
+  data: Fund,
+  newData: Fund,
   index: number
 };
-const currencyCodeList = Object.keys(currencies);
 
 const confirm = useConfirm();
 const store = useAppStore();
-const { createNewAccount, updateAccount, deleteAccount, updateUserSettings } = store;
+const { createNewFund, updateFund, deleteFund, updateUserSettings } = store;
 
-const { accounts } = storeToRefs(store);
-const editingRows: Ref<Account[]> = ref([]);
+const { funds } = storeToRefs(store);
+const editingRows: Ref<Fund[]> = ref([]);
 
 function onRowEditInit(event: RowEditEvent) {
   editingRows.value = [event.data];
@@ -109,58 +103,47 @@ function onRowEditInit(event: RowEditEvent) {
 function onRowEditSave(event: RowEditEvent) {
   const { newData, index } = event;
   if (newData.id) {
-    updateAccount(newData);
+    updateFund(newData);
   } else {
-    accounts.value.splice(index, 1); // will be re-added after it's created
-    createNewAccount(newData);
+    funds.value.splice(index, 1); // will be re-added after it's created
+    createNewFund(newData);
   }
 }
 
 function onRowEditCancel(event: RowEditEvent) {
   if (!event.newData.id) {
-    accounts.value = accounts.value.filter(x => x.id);
+    funds.value = funds.value.filter(x => x.id);
     editingRows.value = [];
   }
 }
 
 function addNew() {
-  const account = {
-    balance: {
-      amount: 0,
-      currency: getDefaultCurrency()
-    }
+  const fund = {
+    name: 'New Fund',
   };
-  accounts.value.unshift(account);
-  editingRows.value = [account];
-}
-
-function getDefaultCurrency(): string {
-  return accounts.value 
-    ? accounts.value[accounts.value.length - 1].balance.currency
-    : Object.keys(currencies)[0];
+  funds.value.unshift(fund);
+  editingRows.value = [fund];
 }
 
 function removeAt(event: MouseEvent, index: number) {
-  const account = accounts.value[index];
+  const fund = funds.value[index];
   confirm.require({
     target: event.target as HTMLElement,
-    message: `Remove ${account.name}?`,
+    message: `Remove ${fund.name}?`,
     icon: 'pi pi-exclamation-triangle',
     acceptClass: 'p-button-danger',
     rejectClass: 'p-button-secondary',
-    accept: () => deleteAccount(account)
+    accept: () => deleteFund(fund)
   });
 }
 
 function onRowReorder(event: {dragIndex: number, dropIndex: number}) {
   const { dragIndex, dropIndex } = event;
-  const element = accounts.value[dragIndex];
-  accounts.value.splice(dragIndex, 1);
-  accounts.value.splice(dropIndex, 0, element);
+  const element = funds.value[dragIndex];
+  funds.value.splice(dragIndex, 1);
+  funds.value.splice(dropIndex, 0, element);
   updateUserSettings();
 }
-
-
 </script>
 
 <style lang="scss">
@@ -172,7 +155,7 @@ $cell-padding: 0.5rem;
 $content-width: calc($table-width - $action-column-width - $header-column-width);
 $balance-column-width: 94.47px;
 $name-column-width: calc($content-width - $balance-column-width - 4 * $cell-padding);
-.accounts {
+.funds {
   .p-inputtext {
     padding: 0.5rem;
   }
@@ -212,14 +195,15 @@ $name-column-width: calc($content-width - $balance-column-width - 4 * $cell-padd
       display: flex;
       align-items: center;
       justify-content: space-between;
-      flex-wrap: wrap;
-    }
-    &_amount-editor {
-      width: $balance-column-width;
-      //calc($content-width * 0.5);
-      // border-left: 0;
-      // border-top-left-radius: 0;
-      // border-bottom-left-radius: 0;
+      &_label {
+        margin: 0.25rem;
+        font-size: 0.75rem;
+      }
+      &_values {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
     }
   }
   &_action-column {
