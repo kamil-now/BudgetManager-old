@@ -1,13 +1,13 @@
 <template>
   <div class="budget-summary">
-    <FundsTable />
-    <AccountsTable/>
+    <FundsDataTable/>
+    <AccountsDataTable/>
   </div>
 </template>
 
 <script setup lang="ts">
-import AccountsTable from './AccountsTable.vue';
-import FundsTable from './FundsTable.vue';
+import AccountsDataTable from './AccountsDataTable.vue';
+import FundsDataTable from './FundsDataTable.vue';
 </script>
 
 <style lang="scss">

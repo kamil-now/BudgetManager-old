@@ -1,26 +1,21 @@
 <template>
   <div class="fund-input">
-    <span class="p-float-label input-text">
-      <InputText
-        class="p-inputtext-sm"
-        id="fundName" 
-        placeholder="Fund name"
-        v-model="fundName"
-      />
-      <label v-if="displayLabel" for="fundName">Fund</label>
-    </span>
-    
-    <Checkbox v-model="isDefault" inputId="isDefault" :binary="true"/>
-    <label class="fund-input_is-default-label" for="isDefault">default</label>
+    <InputText
+      class="p-inputtext-sm"
+      id="fundName" 
+      placeholder="Fund name"
+      v-model="fundName"
+    />
+    <div v-if="allowSetIsDefault">
+      <Checkbox v-model="isDefault" inputId="isDefault" :binary="true"/>
+      <label class="fund-input_is-default-label" for="isDefault">default</label>
+    </div>
   </div>
 </template>
 <script setup lang="ts">
 import { Fund } from '@/models/fund';
 import { computed } from 'vue';
-const props = defineProps<{
-  fund: Fund,
-  displayLabel?: boolean,
-}>();
+const props = defineProps<{ fund: Fund, allowSetIsDefault?: boolean }>();
 const emit = defineEmits(['changed']);
 const fundName = computed({
   get: () => props.fund.name,
@@ -45,7 +40,8 @@ const isDefault = computed({
 <style lang="scss">
 .fund-input {
   display: flex;
-  align-items: center;
+  flex-direction: row;
+  gap: 0.25rem;
   &_is-default-label{
     margin: 0.25rem;
     font-size: 0.75rem;

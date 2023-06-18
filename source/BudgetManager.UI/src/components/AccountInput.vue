@@ -1,39 +1,31 @@
 <template>
   <div class="account-input">
-    <span class="p-float-label">
-      <InputText
-        class="p-inputtext-sm"
-        id="accountName" 
-        placeholder="Account name"
-        v-model="accountName" 
-      />
-      <label v-if="displayLabel" for="accountName">Account name</label>
-    </span>
-    <span class="p-float-label">
-      <InputNumber 
-        class="p-inputtext-sm"
-        :readonly="!isNew"
-        id="accountBalance"
-        v-model="accountBalance" 
-        mode="currency"
-        currencyDisplay="code"
-        :allowEmpty="false"
-        :currency="accountCurrency" 
-        :min="0"
-        :maxFractionDigits="2"
-        :max="1000000000"
-      />
-      <label v-if="displayLabel" for="accountBalance">{{ isNew ? 'Initial Balance' : 'Balance' }}</label>
-    </span>
-    <span class="p-float-label">
-      <Dropdown 
-        class="p-inputtext-sm"
-        id="accountCurrency" 
-        v-model="accountCurrency" 
-        :options="currencyCodeList" 
-      />
-      <label v-if="displayLabel" for="accountCurrency">Currency</label>
-    </span>
+    <InputText
+      class="p-inputtext-sm"
+      id="accountName" 
+      placeholder="Account name"
+      v-model="accountName" 
+    />
+    <InputNumber 
+      class="p-inputtext-sm"
+      :disabled="!!account.id"
+      id="accountBalance"
+      v-model="accountBalance" 
+      mode="currency"
+      currencyDisplay="code"
+      :allowEmpty="false"
+      :currency="accountCurrency" 
+      :min="0"
+      :maxFractionDigits="2"
+      :max="1000000000"
+    />
+    <Dropdown 
+      :disabled="!!account.id"
+      class="p-inputtext-sm"
+      id="accountCurrency" 
+      v-model="accountCurrency" 
+      :options="currencyCodeList" 
+    />
   </div>
 </template>
 <script setup lang="ts">
@@ -41,14 +33,11 @@ import { Account } from '@/models/account';
 import { computed } from 'vue';
 import currencies from '@/assets/currencies.json';
 
-const props = defineProps<{
-  account: Account,
-  displayLabel?: boolean,
-}>();
+const props = defineProps<{ account : Account}>();
 const emit = defineEmits(['changed']);
 
 const currencyCodeList = Object.keys(currencies);
-const isNew = computed(() => !props.account.id);
+
 const accountName = computed({
   get: () => props.account.name,
   set: (newValue) => {

@@ -4,7 +4,7 @@ import { Fund } from '@/models/fund';
 import axios from 'axios';
 import { defineStore, DefineStoreOptions, Store } from 'pinia';
 import { createAccountRequest, deleteAccountRequest, updateAccountRequest } from './account-requests';
-import { createFundRequest, deleteFundRequest, updateFundRequest } from './fund-requests';
+import { createFundRequest, deleteFundRequest, getFundRequest, updateFundRequest } from './fund-requests';
 import { fetchBudgetRequest } from './fetch-budget-request';
 
 export type AppState = {
@@ -91,13 +91,18 @@ export const APP_STORE: DefineStoreOptions<
     async createNewAccount(account: Account) {
       await Utils.runAsyncOperation(this, (state) => 
         createAccountRequest(account)
-          .then(id => {
+          .then(async id => {
             const fromState = state.accounts.find(x => x.id === id);
             if (!fromState) {
               state.accounts.unshift({ ...account, id });
             } else {
               const index = state.accounts.indexOf(fromState);
               state.accounts[index] = account; 
+            }
+
+            const defaultFund = state.funds.find(x => x.isDefault);
+            if (defaultFund) {
+              state.funds[state.funds.indexOf(defaultFund)] = await getFundRequest(defaultFund);
             }
           })
       );

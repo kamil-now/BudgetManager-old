@@ -9,7 +9,8 @@
       @removed="onRemoved($event)"
     >
       <FundInput 
-        :fund="slotProps.item" 
+        :fund="slotProps.item"
+        :allowSetIsDefault="true"
         @changed="onFundChanged($event, slotProps.index)"
       />
     </DynamicList>

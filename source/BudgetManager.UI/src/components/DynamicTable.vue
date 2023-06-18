@@ -1,0 +1,159 @@
+<template>
+  <div class="data-table">
+    <DataTable 
+      v-model:editingRows="editingRows"
+      :value="items" 
+      class="p-datatable-sm" 
+      editMode="row" 
+      dataKey="id"
+      tableClass="data-table"
+      columnResizeMode="expand"
+      scrollable
+      scrollHeight="50vh"
+      @row-edit-init="onRowEditInit"
+      @row-edit-cancel="onRowEditCancel"
+      @row-edit-save="onRowEditSave"
+      @rowReorder="onRowReorder" 
+    >
+      <Column 
+        rowReorder 
+        header-class="data-table_header-column" 
+        :header="header"
+      />
+      <Column class="data-table_content-column">
+        <template #body="{ data, index }">
+          <div class="data-table_content-column_body">
+            <slot name="body" :item="data" :index="index"></slot>
+          </div>
+        </template>
+        <template #editor="{ data, index }">
+          <div class="data-table_content-column_editor">
+            <slot name="editor" :item="data" :index="index"></slot>
+          </div>
+        </template>
+      </Column>
+      <Column 
+        :rowEditor="true"
+        bodyStyle="text-align:center"
+        class="data-table_action-column"
+      >
+        <template #header>
+          <Button 
+            v-if="editingRows.length === 0"
+            icon="pi pi-plus" 
+            text 
+            rounded 
+            aria-label="Add" 
+            @click="addNew()" 
+          />
+        </template>
+      </Column>
+    </DataTable>
+  </div>
+</template>
+<script setup lang="ts">
+import { vueModel } from '@/helpers/vue-model';
+import { Ref, ref } from 'vue';
+type RowEditEvent =  {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data: any,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  newData: any,
+  index: number
+};
+
+type Props<T> = {
+  header: string,
+  modelValue: T[],
+  createNew: () => T,
+  saveNew: (item: T) => void,
+  update: (item: T) => void,
+  onReorder: () => void,
+}// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const props = defineProps<Props<any & {id?: string, name: string}>>();
+
+const emit = defineEmits(['update:modelValue']);
+const items = vueModel(props, emit);
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const editingRows: Ref<any[]> = ref([]);
+
+function onRowEditInit(event: RowEditEvent) {
+  editingRows.value = [event.data];
+}
+
+function onRowEditSave(event: RowEditEvent) {
+  const { newData, index } = event;
+  if (newData.id) {
+    items.value[index] = newData;
+    props.update(newData);
+  } else {
+    items.value.splice(index, 1); // should be re-added after it's created
+    props.saveNew(newData);
+  }
+  editingRows.value = [];
+}
+
+function onRowEditCancel(event: RowEditEvent) {
+  if (!event.newData.id) {
+    items.value = items.value.filter(x => x.id);
+    editingRows.value = [];
+  }
+}
+
+function addNew() {
+  const item = props.createNew();
+  items.value.unshift(item);
+  editingRows.value = [item];
+}
+
+function onRowReorder(event: {dragIndex: number, dropIndex: number}) {
+  const { dragIndex, dropIndex } = event;
+  const element = items.value[dragIndex];
+  items.value.splice(dragIndex, 1);
+  items.value.splice(dropIndex, 0, element);
+  props.onReorder();
+}
+</script>
+
+<style lang="scss">
+$padding: 0.25rem;
+$table-width: calc($base-width - 2 * $padding); 
+$action-column-width: 6rem;
+$header-column-width: 2rem;
+$cell-padding: 0.5rem;
+$content-column-width: calc($table-width - 6 * $cell-padding - $action-column-width - $header-column-width);
+.data-table {
+  width: $table-width;
+  &_header-column {
+    width: $header-column-width;
+    max-width: $header-column-width;
+  }
+  .p-datatable.p-datatable-sm .p-datatable-tbody > tr > td {
+    padding: $cell-padding;
+  }
+  .p-datatable-wrapper {
+    overflow-x: hidden;
+  }
+  &_content-column {
+    &_editor {
+      display: flex;
+      width: $content-column-width;
+      max-width: $content-column-width;
+    }
+    &_body {
+      display: flex;
+      width: $content-column-width;
+      max-width: $content-column-width;
+    }
+  }
+  &_action-column {
+    padding: 0 !important;
+    .p-column-header-content {
+      justify-content: center;
+    }
+    width: $action-column-width;
+    min-width: $action-column-width;
+  }
+}
+</style>
