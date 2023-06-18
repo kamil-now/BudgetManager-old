@@ -6,6 +6,7 @@ on:
     paths:
       - 'source/BudgetManager.UI/**' 
       - '.github/**'
+  workflow_dispatch:
 env:
   AZURE_WEBAPP_NAME: hajs-manager
   AZURE_WEBAPP_PACKAGE_PATH: "source/BudgetManager.UI"
