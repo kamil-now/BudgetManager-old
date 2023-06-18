@@ -20,6 +20,11 @@ import Accordion from 'primevue/accordion';
 import AccordionTab from 'primevue/accordiontab';
 import Divider from 'primevue/divider';
 import Checkbox from 'primevue/checkbox';
+import DataTable from 'primevue/datatable';
+import Column from 'primevue/column';
+import ColumnGroup from 'primevue/columngroup';   // optional
+import Row from 'primevue/row';
+import DataView from 'primevue/dataview';
 // PrimeVue
 import App from '@/App.vue';
 import { AUTH, IAuthService, MsalAuthService, MsalConfiguration } from '@/auth';
@@ -48,6 +53,11 @@ app
 
 
 app
+  .component('DataView', DataView)
+  .component('DataTable', DataTable)
+  .component('Column', Column)
+  .component('ColumnGroup', ColumnGroup)
+  .component('Row', Row)
   .component('Checkbox', Checkbox)
   .component('Divider', Divider)
   .component('Accordion', Accordion)

@@ -1,24 +1,21 @@
 namespace BudgetManager.Application.Commands;
 
 using AutoMapper;
+using BudgetManager.Application.Requests;
 using BudgetManager.Domain.Models;
 using BudgetManager.Infrastructure;
 
-public record UpdateAccountCommand(string UserId, string AccountId, string Name) : IRequest<Unit>, IBudgetCommand;
+public record UpdateAccountCommand(string UserId, string AccountId, string Name) : IRequest<AccountDto>, IBudgetCommand;
 
-public class UpdateAccountCommandHandler : BudgetCommandHandler<UpdateAccountCommand, Unit>
+public class UpdateAccountCommandHandler : BudgetCommandHandler<UpdateAccountCommand, AccountDto>
 {
   public UpdateAccountCommandHandler(IUserBudgetRepository repo, IMapper map)
   : base(repo, map)
   {
   }
 
-  public override Unit ModifyBudget(UpdateAccountCommand command, Budget budget)
-  {
-    budget.RenameAccount(command.AccountId, command.Name);
-
-    return Unit.Value;
-  }
+  public override AccountDto ModifyBudget(UpdateAccountCommand command, Budget budget)
+   => _mapper.Map<AccountDto>(budget.RenameAccount(command.AccountId, command.Name));
 }
 
 public class UpdateAccountCommandValidator : BudgetCommandValidator<UpdateAccountCommand>

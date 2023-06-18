@@ -3,22 +3,32 @@ namespace BudgetManager.Domain.Models;
 public class Budget
 {
   public string? Id { get; init; }
+  public UserSettings UserSettings => _userSettings;
   public IReadOnlyCollection<Account> Accounts => _accounts.AsReadOnly();
   public IReadOnlyCollection<Fund> Funds => _funds.AsReadOnly();
   public IReadOnlyCollection<MoneyOperation> Operations => _operations.AsReadOnly();
+
   private List<MoneyOperation> _operations;
   private List<Account> _accounts;
   private List<Fund> _funds;
+  private UserSettings _userSettings;
 
   public Budget(
+    UserSettings userSettings,
     IEnumerable<Account> accounts,
     IEnumerable<Fund> funds,
     IEnumerable<MoneyOperation> operations
     )
   {
+    _userSettings = userSettings;
     _accounts = accounts.ToList();
     _funds = funds.ToList();
     _operations = operations.ToList();
+  }
+
+  public void UpdateUserSettings(IEnumerable<string> accountsOrder, IEnumerable<string> fundsOrder)
+  {
+    _userSettings = new UserSettings(accountsOrder, fundsOrder);
   }
 
   public void AddOperation<T>(T operation) where T : MoneyOperation
@@ -41,7 +51,11 @@ public class Budget
     _funds.First(x => x.IsDefault).Add(initialBalance);
     return id;
   }
-  public void RenameAccount(string accountId, string newName) => _accounts.First(x => x.Id == accountId).Name = newName;
+  public Account RenameAccount(string accountId, string newName) {
+    var account = _accounts.First(x => x.Id == accountId);
+    account.Name = newName;
+    return account;
+  }
   public void RemoveAccount(string accountId)
   {
     var account = _accounts.First(x => x.Id == accountId);

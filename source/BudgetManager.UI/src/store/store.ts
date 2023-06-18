@@ -1,33 +1,41 @@
 import { Account } from '@/models/account';
-import { Budget } from '@/models/budget';
+import { Balance } from '@/models/balance';
 import { Fund } from '@/models/fund';
 import axios from 'axios';
 import { defineStore, DefineStoreOptions, Store } from 'pinia';
-import { createBudgetRequest } from './create-budget-request';
+import { createAccountRequest, deleteAccountRequest, updateAccountRequest } from './account-requests';
+import { createFundRequest } from './create-fund-request';
 import { fetchBudgetRequest } from './fetch-budget-request';
 
 export type AppState = {
   isLoading: boolean;
   isLoggedIn: boolean;
-  undoStack: ((state: AppState) => void)[];
-  budget?: Budget
+  isNewUser: boolean,
+  balance?: Balance,
+  accounts: Account[],
+  funds: Fund[]
 };
 export type AppGetters = {
-  isNewUser: (state: AppState) => boolean
   // findIndexById: (state: AppState) => (id: string) => number;
 };
 export type AppActions = {
-  createBudget(accounts: Account[], funds: Fund[]): void; 
+  createBudget(accounts: Account[], funds: Fund[]): void;
+  updateUserSettings(): void,
+  createNewAccount(account: Account): void,
+  updateAccount(account: Account): void;
+  deleteAccount(account:Account): void;
+  createFund(fund: Fund): void,
   setLoggedIn(value: boolean): void;
   fetchBudget(): void;
-  save(): void;
-  undo(): void;
 };
 export type AppStore = Store<string, AppState, AppGetters, AppActions>;
 
 export const getInitialAppState: () => AppState = () => ({
   isLoading: true,
   isLoggedIn: false,
+  isNewUser: true,
+  accounts: [],
+  funds: [],
   undoStack: [],
 });
 
@@ -39,9 +47,6 @@ export const APP_STORE: DefineStoreOptions<
 > = {
   id: 'app',
   state: () => getInitialAppState(),
-  getters: {
-    isNewUser: (state: AppState) => !state.budget
-  },
   actions: {
     async setLoggedIn(value: boolean) {
       this.isLoggedIn = value;
@@ -50,11 +55,15 @@ export const APP_STORE: DefineStoreOptions<
     async fetchBudget() {
       await Utils.runAsyncOperation(this, () =>
         fetchBudgetRequest()
-          .then(budget => {
-            if (budget !== null) {
-              this.budget = budget;
+          .then(res => {
+            if (res !== null) {
+              this.balance = res.balance;
+              this.accounts = res.accounts;
+              this.funds = res.funds;
+              this.isNewUser = false;
+            } else {
+              this.isNewUser = true;
             }
-            this.isLoading = false;
           })
       );
     },
@@ -62,26 +71,58 @@ export const APP_STORE: DefineStoreOptions<
       accounts: Account[],
       funds: Fund[]
     ) {
-      const budget = {  accounts, funds };
-      await Utils.runAsyncOperation(this, () =>
-        createBudgetRequest(accounts, funds)
-          .then(balance => this.budget = { ...budget, balance })
+      await Utils.runAsyncOperation(this, () => 
+        axios.post<void>('api/budget')
+          .then(() =>
+            funds.length > 0
+              ? funds.map(fund => createFundRequest(fund))
+              : [Promise.resolve()])
+          .then(() =>
+            accounts.length > 0
+              ? accounts
+                .map(account => createAccountRequest(account))
+              : [Promise.resolve()])
+          .then(() => this.fetchBudget())
       );
     },
-    async save() {
-      await Utils.runAsyncOperation(this, (state) =>
-        axios.patch('api/', { state })
+    async createNewAccount(account: Account) {
+      await Utils.runAsyncOperation(this, (state) => 
+        createAccountRequest(account)
+          .then(id => state.accounts.push({ ...account, id }))
       );
     },
-
-    undo() {
-      const action = this.undoStack.pop();
-      if (action) {
-        action(this);
-        this.save();
-      } else {
-        console.error('Invalid undo operation');
-      }
+    async updateAccount(account: Account) {
+      await Utils.runAsyncOperation(this, (state) => 
+        updateAccountRequest(account)
+          .then(account => {
+            const fromState = state.accounts.find(x => x.id === account.id);
+            if (!fromState) {
+              throw new Error('Invalid operation - account does not exist');
+            }
+            const index = state.accounts.indexOf(fromState);
+            state.accounts[index] = account; 
+          })
+      );
+    },
+    async deleteAccount(account:Account) {
+      await Utils.runAsyncOperation(this, (state) => 
+        deleteAccountRequest(account)
+          .then(() => state.accounts.splice(state.accounts.indexOf(account), 1))
+      );
+    },
+    async createFund(
+      fund: Fund,
+    ) {
+      await Utils.runAsyncOperation(this, (state) => 
+        createFundRequest(fund)
+          .then(id => state.funds.push({ ...fund, id }))
+      );
+    },
+    async updateUserSettings() {
+      await  axios.put('api/user-settings', { 
+        accountsOrder: this.accounts.map(x => x.id),
+        fundsOrder: this.funds.map(x => x.id)
+      });
     },
   }
 };

@@ -14,7 +14,7 @@ public abstract class BudgetCommandHandler<TCommand, TResult>
   : IRequestHandler<TCommand, TResult> where TCommand : IRequest<TResult>, IBudgetCommand
 {
   private IUserBudgetRepository _repository;
-  private IMapper _mapper;
+  protected IMapper _mapper;
 
   protected BudgetCommandHandler(
     IUserBudgetRepository repository,

@@ -102,14 +102,33 @@ app.MapPost("/budget",
 async (
   HttpContext context,
   IMediator mediator,
-  [FromBody] CreateBudgetCommand command,
   CancellationToken cancellationToken
   ) =>
   {
-    await mediator.Send(command with { UserId = context.GetUserId() });
+    await mediator.Send(new CreateBudgetCommand(context.GetUserId()));
     return Results.Ok();
   })
 .Produces((int)HttpStatusCode.Created)
+.WithTags(API_TITLE)
+.RequireAuthorization();
+
+app.MapGet("/user-settings",
+async (
+  HttpContext context,
+  IMediator mediator,
+  CancellationToken cancellationToken
+  ) => Results.Ok(await mediator.Send(new UserSettingsRequest(context.GetUserId()))))
+.WithTags(API_TITLE)
+.RequireAuthorization();
+
+app.MapPut("/user-settings",
+async (
+  HttpContext context,
+  IMediator mediator,
+  [FromBody] UpdateUserSettingsCommand command,
+  CancellationToken cancellationToken
+  )
+  => Results.Ok(await mediator.Send(command with { UserId = context.GetUserId() })))
 .WithTags(API_TITLE)
 .RequireAuthorization();
 

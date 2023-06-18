@@ -6,6 +6,8 @@ $breakpoints: (
   xl: 1200px
 );
 
+$base-width: 576px;
+
 @mixin media-breakpoint($size, $direction: up) {
   $width: map-get($breakpoints, $size);
 

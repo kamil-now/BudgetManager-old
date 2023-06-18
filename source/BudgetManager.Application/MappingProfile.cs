@@ -27,12 +27,15 @@ public class MappingProfile : Profile
         operations.AddRange(ctx.Mapper.Map<IEnumerable<FundTransfer>>(src.FundTransfers));
 
         var budget = new Budget(
+          ctx.Mapper.Map<UserSettings>(src.UserSettings),
           ctx.Mapper.Map<IEnumerable<Account>>(src.Accounts),
           ctx.Mapper.Map<IEnumerable<Fund>>(src.Funds),
           operations
         );
         return budget;
       }).ForAllMembers(opt => opt.Ignore());
+    
+    CreateMap<UserSettingsEntity, UserSettings>();
 
     CreateMap<ExpenseEntity, Expense>()
       .ConstructUsing(src =>
@@ -126,6 +129,8 @@ public class MappingProfile : Profile
           )
       );
 
+    CreateMap<UserSettings, UserSettingsEntity>();
+
     CreateMap<Expense, ExpenseEntity>()
       .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString()))
       .ForMember(x => x.Amount, opt => opt.MapFrom(src => src.Value.Amount))
@@ -156,5 +161,7 @@ public class MappingProfile : Profile
 
     CreateMap<FundTransfer, FundTransferDto>()
       .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString()));
+
+    CreateMap<UserSettings, UserSettingsDto>();
   }
 }

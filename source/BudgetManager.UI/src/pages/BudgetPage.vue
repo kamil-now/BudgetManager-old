@@ -20,7 +20,7 @@ const { isNewUser } = useAppStore();
   gap: 8px;
   flex-direction: column;
   flex-wrap: wrap;
-  width: map-get($breakpoints, xs);
+  width: $base-width;
   height: auto;
   max-height: 100%;
   overflow: hidden;

@@ -14,7 +14,7 @@
 
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
-import { inject, onMounted, ref } from 'vue';
+import { inject, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { AUTH, IAuthService } from './auth';
 import { useAppStore } from './store/store';
@@ -33,7 +33,6 @@ const items = ref([
     command: () =>  auth.logout().then(() => router.push('/login'))
   },
 ]);
-onMounted(() => store.fetchBudget());
 </script>
 
 <style lang="scss">
