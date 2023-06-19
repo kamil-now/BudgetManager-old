@@ -16,17 +16,26 @@ const { isNewUser } = useAppStore();
 
 <style lang="scss">
 .budget-page {
+  max-height: 100%;
   display: flex;
   gap: 8px;
   flex-direction: column;
   flex-wrap: wrap;
-  width: $base-width;
-  height: auto;
-  max-height: 100%;
+  
   overflow: hidden;
   align-items: center;
-  background-color: var(--surface-section);
-  border-radius: 1rem;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+
+  height: auto;
+  width: map-get($breakpoints, 'xs');
+  margin-top: 3rem;
+  @extend .card;
+  @include media-breakpoint('sm', 'down') {
+    margin: 0;
+    border-radius: 0;
+    box-shadow: 0;
+  }
+  @include media-breakpoint('lg') {
+    width: map-get($breakpoints, 'md')
+  }
 }
 </style>

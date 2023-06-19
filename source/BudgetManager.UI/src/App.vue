@@ -55,17 +55,11 @@ const items = ref([
     }
   }
   height: calc(100vh - 4rem);
-  padding-top: 1rem;
   margin: 0;
   display: flex;
   align-items: flex-start;
   justify-content: center;
   animation: fadein 1s;
-  
-  @include media-breakpoint(sm) {
-    padding: 3rem 0 1rem 0;
-    margin: 0 1rem;
-  }
 }
 
 @keyframes fadein {

@@ -2,12 +2,14 @@
   <div class="budget-summary">
     <FundsDataTable/>
     <AccountsDataTable/>
+    <IncomesDataTable/>
   </div>
 </template>
 
 <script setup lang="ts">
 import AccountsDataTable from './AccountsDataTable.vue';
 import FundsDataTable from './FundsDataTable.vue';
+import IncomesDataTable from './IncomesDataTable.vue';
 </script>
 
 <style lang="scss">
@@ -18,5 +20,8 @@ import FundsDataTable from './FundsDataTable.vue';
   display: flex;
   flex-direction: column;
   align-items: center;
+  @include media-breakpoint('md') {
+    justify-content: space-around;
+  }
 }
 </style>

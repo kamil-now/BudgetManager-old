@@ -14,29 +14,28 @@ public record UpdateExpenseCommand(
   string? Date,
   string? AccountId,
   string? Description
-  ) : IRequest<Unit>, IOperationCommand;
+  ) : IRequest<ExpenseDto>, IOperationCommand;
 
 public class UpdateExpenseCommandHandler
-  : BudgetCommandHandler<UpdateExpenseCommand, Unit>
+  : BudgetCommandHandler<UpdateExpenseCommand, ExpenseDto>
 {
   public UpdateExpenseCommandHandler(IUserBudgetRepository repo, IMapper map)
   : base(repo, map)
   {
   }
 
-  public override Unit ModifyBudget(UpdateExpenseCommand command, Budget budget)
+  public override ExpenseDto ModifyBudget(UpdateExpenseCommand command, Budget budget)
   {
     var expense = budget.Operations.First(x => x.Id == command.OperationId) as Expense;
 
     expense!.Update(command.AccountId, command.Title, command.Value, command.Date, command.Description);
 
-    return Unit.Value;
+    return _mapper.Map<ExpenseDto>(expense);
   }
 }
 
-
 public class ExpenseCommandValidator<T>
-  : BudgetCommandValidator<T> where T : IRequest<Unit>, IOperationCommand
+  : BudgetCommandValidator<T> where T : IOperationCommand
 {
   public ExpenseCommandValidator(IUserBudgetRepository repository) : base(repository)
   {

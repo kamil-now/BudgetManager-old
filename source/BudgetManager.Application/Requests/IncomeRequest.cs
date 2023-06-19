@@ -2,15 +2,6 @@ namespace BudgetManager.Application.Requests;
 
 using AutoMapper;
 
-public record IncomeDto(
-    string Id,
-    string Title,
-    Money Value,
-    string Date,
-    string AccountId,
-    string FundId,
-    string Description
-);
 public record IncomeRequest(string UserId, string IncomeId) : IBudgetRequest, IRequest<IncomeDto>;
 
 public class IncomeRequestHandler : BudgetRequestHandler<IncomeRequest, IncomeDto>

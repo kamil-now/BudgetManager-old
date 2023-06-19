@@ -4,6 +4,7 @@
     <DynamicTable
       header="Accounts"
       v-model="accounts"
+      :allowEdit="true"
       :createNew="createAccountObject"
       :saveNew="createNewAccount"
       :update="updateAccount"
@@ -89,23 +90,23 @@ function getDefaultCurrency(): string {
 
 <style lang="scss">
 .accounts-table {
+  width: 100%;
   &_body {
     display: flex;
     width: 100%;
-    * {
+    &_name {
+      width: 50%;
+      text-align: right;
+      padding-right: 1rem;
+      display: inline-block;
       text-overflow: ellipsis;
-      white-space: nowrap;
       overflow: hidden;
     }
-    &_name {
-      max-width: 50%;
-      width: 50%;
-      padding-right: 0.25rem;
-    }
     &_balance {
-      max-width: 50%;
       width: 50%;
-      padding: 0;
+      display: inline-block;
+      text-overflow: ellipsis;
+      overflow: hidden;
     }
   }
 }

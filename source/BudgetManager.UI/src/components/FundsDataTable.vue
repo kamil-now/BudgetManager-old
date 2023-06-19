@@ -4,6 +4,7 @@
     <DynamicTable
       header="Funds"
       v-model="funds"
+      :allowEdit="true"
       :createNew="createFundObject"
       :saveNew="createNewFund"
       :update="updateFund"
@@ -81,23 +82,21 @@ function removeAt(event: MouseEvent, index: number) {
 
 <style lang="scss">
 .funds-table {
+  width: 100%;
   &_body {
     display: flex;
     width: 100%;
-    justify-content: space-between;
     &_name {
-      min-width: 0;
-      max-width: 50%;
-      padding-right: 0.25rem;
+      width: 50%;
+      text-align: right;
+      padding-right: 1rem;
       display: inline-block;
       text-overflow: ellipsis;
       overflow: hidden;
     }
     &_balance {
+      width: 50%;
       display: inline-block;
-      padding: 0;
-      min-width: 0;
-      max-width: 50%;
       text-overflow: ellipsis;
       overflow: hidden;
     }

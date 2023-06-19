@@ -15,29 +15,28 @@ public record UpdateIncomeCommand(
   string? AccountId,
   string? FundId,
   string? Description
-  ) : IRequest<Unit>, IOperationCommand;
+  ) : IRequest<IncomeDto>, IOperationCommand;
 
 public class UpdateIncomeCommandHandler
-  : BudgetCommandHandler<UpdateIncomeCommand, Unit>
+  : BudgetCommandHandler<UpdateIncomeCommand, IncomeDto>
 {
   public UpdateIncomeCommandHandler(IUserBudgetRepository repo, IMapper map)
   : base(repo, map)
   {
   }
 
-  public override Unit ModifyBudget(UpdateIncomeCommand command, Budget budget)
+  public override IncomeDto ModifyBudget(UpdateIncomeCommand command, Budget budget)
   {
-    var Income = budget.Operations.First(x => x.Id == command.OperationId) as Income;
+    var income = budget.Operations.First(x => x.Id == command.OperationId) as Income;
 
-    Income!.Update(command.AccountId, command.FundId, command.Title, command.Value, command.Date, command.Description);
+    income!.Update(command.AccountId, command.FundId, command.Title, command.Value, command.Date, command.Description);
 
-    return Unit.Value;
+    return _mapper.Map<IncomeDto>(income);
   }
 }
 
-
 public class IncomeCommandValidator<T>
-  : BudgetCommandValidator<T> where T : IRequest<Unit>, IOperationCommand
+  : BudgetCommandValidator<T> where T : IOperationCommand
 {
   public IncomeCommandValidator(IUserBudgetRepository repository) : base(repository)
   {

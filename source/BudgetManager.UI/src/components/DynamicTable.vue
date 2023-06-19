@@ -1,12 +1,13 @@
 <template>
-  <div class="data-table">
+  <div class="data-table"
+    @mouseenter="hover = true"
+    @mouseleave="hover = false"
+  >
     <DataTable 
       v-model:editingRows="editingRows"
       :value="items" 
-      class="p-datatable-sm" 
-      editMode="row" 
+      :editMode="isEditing ? 'row' : undefined" 
       dataKey="id"
-      tableClass="data-table"
       columnResizeMode="expand"
       scrollable
       scrollHeight="50vh"
@@ -16,11 +17,11 @@
       @rowReorder="onRowReorder" 
     >
       <Column 
+        v-if="isEditing"
         rowReorder 
-        header-class="data-table_header-column" 
-        :header="header"
+        header-class="data-table_header-column"
       />
-      <Column class="data-table_content-column">
+      <Column class="data-table_content-column" :header="header">
         <template #body="{ data, index }">
           <div class="data-table_content-column_body">
             <slot name="body" :item="data" :index="index"></slot>
@@ -38,14 +39,35 @@
         class="data-table_action-column"
       >
         <template #header>
-          <Button 
-            v-if="editingRows.length === 0"
-            icon="pi pi-plus" 
-            text 
-            rounded 
-            aria-label="Add" 
-            @click="addNew()" 
-          />
+          <template v-if="isEditing"> 
+            <template v-if="editingRows.length === 0">
+              <Button
+                icon="pi pi-plus" 
+                text 
+                rounded 
+                aria-label="Add" 
+                @click="addNew()" 
+              />
+              <Button 
+                v-if="editingRows.length === 0"
+                icon="pi pi-check" 
+                text 
+                rounded 
+                aria-label="Finish" 
+                @click="isEditing = false" 
+              />
+            </template>
+          </template>
+          <template v-else> 
+            <Button 
+              v-if="allowEdit && hover"
+              icon="pi pi-pencil" 
+              text 
+              rounded 
+              aria-label="Edit" 
+              @click="isEditing = true" 
+            />
+          </template>
         </template>
       </Column>
     </DataTable>
@@ -65,6 +87,7 @@ type RowEditEvent =  {
 type Props<T> = {
   header: string,
   modelValue: T[],
+  allowEdit?: boolean,
   createNew: () => T,
   saveNew: (item: T) => void,
   update: (item: T) => void,
@@ -74,7 +97,8 @@ const props = defineProps<Props<any & {id?: string, name: string}>>();
 
 const emit = defineEmits(['update:modelValue']);
 const items = vueModel(props, emit);
-
+const hover = ref<boolean>(false); 
+const isEditing = ref<boolean>(false);
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const editingRows: Ref<any[]> = ref([]);
 
@@ -118,19 +142,13 @@ function onRowReorder(event: {dragIndex: number, dropIndex: number}) {
 
 <style lang="scss">
 $padding: 0.25rem;
-$table-width: calc($base-width - 2 * $padding); 
 $action-column-width: 6rem;
 $header-column-width: 2rem;
-$cell-padding: 0.5rem;
-$content-column-width: calc($table-width - 6 * $cell-padding - $action-column-width - $header-column-width);
 .data-table {
-  width: $table-width;
+  width: 100%;
   &_header-column {
     width: $header-column-width;
     max-width: $header-column-width;
-  }
-  .p-datatable.p-datatable-sm .p-datatable-tbody > tr > td {
-    padding: $cell-padding;
   }
   .p-datatable-wrapper {
     overflow-x: hidden;
@@ -138,13 +156,9 @@ $content-column-width: calc($table-width - 6 * $cell-padding - $action-column-wi
   &_content-column {
     &_editor {
       display: flex;
-      width: $content-column-width;
-      max-width: $content-column-width;
     }
     &_body {
       display: flex;
-      width: $content-column-width;
-      max-width: $content-column-width;
     }
   }
   &_action-column {

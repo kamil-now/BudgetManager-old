@@ -1,12 +1,10 @@
 $breakpoints: (
-  xs: 375px,
+  xs: 380px,
   sm: 576px,
   md: 768px,
   lg: 992px,
   xl: 1200px
 );
-
-$base-width: map-get($breakpoints, 'xs');
 
 @mixin media-breakpoint($size, $direction: up) {
   $width: map-get($breakpoints, $size);
@@ -37,4 +35,10 @@ body {
   text-align: center;
   margin: 0;
   background-color: var(--surface-ground);
+}
+
+.card {
+  background-color: var(--surface-section);
+  border-radius: 1rem;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
