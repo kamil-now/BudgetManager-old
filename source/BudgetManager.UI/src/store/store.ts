@@ -83,6 +83,7 @@ export const APP_STORE: DefineStoreOptions<
               this.accounts = res.accounts;
               this.funds = res.funds;
               this.incomes = res.incomes;
+              this.expenses = res.expenses;
               this.isNewUser = false;
             } else {
               this.isNewUser = true;

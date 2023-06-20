@@ -1,18 +1,18 @@
 <template>
-  <div class="incomes-table">
+  <div class="expenses-table">
     <ConfirmPopup></ConfirmPopup>
     <DynamicTable
-      header="Income"
-      v-model="incomes"
+      header="Expenses"
+      v-model="expenses"
       :allowEdit="true"
-      :createNew="createIncomeObject"
-      :saveNew="createNewIncome"
-      :update="updateIncome"
-      :remove="deleteIncome"
+      :createNew="createExpenseObject"
+      :saveNew="createNewExpense"
+      :update="updateExpense"
+      :remove="deleteExpense"
       :onReorder="updateUserSettings"
     >
       <template #body="{ item }">
-        <div class="incomes-table_body">
+        <div class="expenses-table_body">
           <span>{{ item.date }}</span>
           <span>{{ item.title }}</span>
           <span>{{ getFundName(item.fundId) }}</span>
@@ -21,13 +21,13 @@
         </div>
       </template>
       <template #editor="{ item, index }">
-        <div class="incomes-table_editor">
-          <IncomeInput 
-            :income="item" 
-            @changed="onIncomeChanged(item, $event)"
+        <div class="expenses-table_editor">
+          <ExpenseInput 
+            :expense="item" 
+            @changed="onExpenseChanged(item, $event)"
           />
           <Button 
-            v-if="item.id && incomes.length > 1"
+            v-if="item.id && expenses.length > 1"
             icon="pi pi-times" 
             severity="danger" 
             text 
@@ -42,9 +42,9 @@
 </template>
 <script setup lang="ts">
 import DynamicTable from '@/components/DynamicTable.vue';
-import IncomeInput from '@/components/IncomeInput.vue';
+import ExpenseInput from '@/components/ExpenseInput.vue';
 import { DisplayFormat } from '@/helpers/display-format';
-import { Income } from '@/models/income';
+import { Expense } from '@/models/expense';
 import { useAppStore } from '@/store/store';
 import { storeToRefs } from 'pinia';
 import { useConfirm } from 'primevue/useconfirm';
@@ -52,9 +52,9 @@ import { useConfirm } from 'primevue/useconfirm';
 const confirm = useConfirm();
 
 const store = useAppStore();
-const { createNewIncome, updateIncome, deleteIncome, updateUserSettings } = store;
+const { createNewExpense, updateExpense, deleteExpense, updateUserSettings } = store;
 
-const { incomes, accounts, funds } = storeToRefs(store);
+const { expenses, accounts, funds } = storeToRefs(store);
 // TODO extend DTO instead
 function getAccountName(accountId: string) {
   return accounts.value.find(x => x.id === accountId)?.name;
@@ -64,17 +64,17 @@ function getFundName(fundId: string) {
   return funds.value.find(x => x.id === fundId)?.name;
 }
 
-function onIncomeChanged(income: Income, newValue: Income) {
-  income.accountId = newValue.accountId;
-  income.fundId = newValue.fundId;
-  income.createdDate = newValue.createdDate;
-  income.title = newValue.title;
-  income.value = newValue.value;
-  income.date = newValue.date;
-  income.description = newValue.description;
+function onExpenseChanged(expense: Expense, newValue: Expense) {
+  expense.accountId = newValue.accountId;
+  expense.fundId = newValue.fundId;
+  expense.createdDate = newValue.createdDate;
+  expense.title = newValue.title;
+  expense.value = newValue.value;
+  expense.date = newValue.date;
+  expense.description = newValue.description;
 }
 
-function createIncomeObject() {
+function createExpenseObject() {
   const defaultAccount = store.accounts[0];
   const defaultFund = store.funds[0];
   return  {
@@ -88,14 +88,14 @@ function createIncomeObject() {
 }
 
 function removeAt(event: MouseEvent, index: number) {
-  const income = incomes.value[index];
+  const expense = expenses.value[index];
   confirm.require({
     target: event.target as HTMLElement,
-    message: `Remove ${income.title}?`,
+    message: `Remove ${expense.title}?`,
     icon: 'pi pi-exclamation-triangle',
     acceptClass: 'p-button-danger',
     rejectClass: 'p-button-secondary',
-    accept: () => deleteIncome(income)
+    accept: () => deleteExpense(expense)
   });
 }
 
@@ -103,7 +103,7 @@ function removeAt(event: MouseEvent, index: number) {
 </script>
 
 <style lang="scss">
-.incomes-table {
+.expenses-table {
   width: 100%;
   &_body {
     display: flex;

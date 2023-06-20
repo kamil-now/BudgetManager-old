@@ -5,6 +5,7 @@
       header="Funds"
       v-model="funds"
       :allowEdit="true"
+      :allowReorder="true"
       :createNew="createFundObject"
       :saveNew="createNewFund"
       :update="updateFund"
@@ -13,6 +14,12 @@
     >
       <template #body="{ item }">
         <div class="funds-table_body">
+            <i 
+              v-if="item.isDefault" 
+              class="pi pi-star" 
+              style="position: absolute; color: var(--primary-color)"
+            >
+            </i>
           <div class="funds-table_body_name">{{ item.name }}</div>
           <div class="funds-table_body_balance">
             <div v-for="(value, currency) in item.balance" :key="currency">

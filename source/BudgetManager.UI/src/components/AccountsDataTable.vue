@@ -5,6 +5,7 @@
       header="Accounts"
       v-model="accounts"
       :allowEdit="true"
+      :allowReorder="true"
       :createNew="createAccountObject"
       :saveNew="createNewAccount"
       :update="updateAccount"

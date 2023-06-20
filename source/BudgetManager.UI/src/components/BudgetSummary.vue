@@ -3,6 +3,7 @@
     <FundsDataTable/>
     <AccountsDataTable/>
     <IncomesDataTable/>
+    <ExpensesDataTable/>
   </div>
 </template>
 
@@ -10,6 +11,7 @@
 import AccountsDataTable from './AccountsDataTable.vue';
 import FundsDataTable from './FundsDataTable.vue';
 import IncomesDataTable from './IncomesDataTable.vue';
+import ExpensesDataTable from './ExpensesDataTable.vue';
 </script>
 
 <style lang="scss">

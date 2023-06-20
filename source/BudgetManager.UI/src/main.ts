@@ -25,6 +25,7 @@ import Column from 'primevue/column';
 import ColumnGroup from 'primevue/columngroup';   // optional
 import Row from 'primevue/row';
 import DataView from 'primevue/dataview';
+import Calendar from 'primevue/calendar';
 // PrimeVue
 import App from '@/App.vue';
 import { AUTH, IAuthService, MsalAuthService, MsalConfiguration } from '@/auth';
@@ -53,6 +54,7 @@ app
 
 
 app
+  .component('Calendar', Calendar)
   .component('DataView', DataView)
   .component('DataTable', DataTable)
   .component('Column', Column)

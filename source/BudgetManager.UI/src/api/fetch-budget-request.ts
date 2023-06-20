@@ -1,6 +1,7 @@
 
 import { Account } from '@/models/account';
 import { Balance } from '@/models/balance';
+import { Expense } from '@/models/expense';
 import { Fund } from '@/models/fund';
 import { Income } from '@/models/income';
 import axios, { AxiosError } from 'axios';
@@ -10,6 +11,7 @@ export function fetchBudgetRequest(): Promise<{
   funds: Fund[],
   balance: Balance,
   incomes: Income[],
+  expenses: Expense[],
 } | null> {
 
   return axios.get<Balance>('/api/balance')
@@ -19,12 +21,14 @@ export function fetchBudgetRequest(): Promise<{
           axios.get<Account[]>('api/accounts').then(res => res.data),
           axios.get<Fund[]>('api/funds').then(res => res.data),
           axios.get<Income[]>('api/incomes').then(res => res.data),
+          axios.get<Expense[]>('api/expenses').then(res => res.data),
           axios.get<{ accountsOrder: string[], fundsOrder: string[] }>('api/user-settings')
             .then(res => res.data, () => ({ accountsOrder: [], fundsOrder: [] }))
         ])
-        .then(([accounts, funds, incomes, settings]) => ({
+        .then(([accounts, funds, incomes, expenses, settings]) => ({
           balance: res.data,
           incomes: incomes.sort((a, b) => new Date(a.createdDate).valueOf() - new Date(b.createdDate).valueOf()),
+          expenses: expenses.sort((a, b) => new Date(a.createdDate).valueOf() - new Date(b.createdDate).valueOf()),
           accounts: sortAccounts(accounts, settings),
           funds: sortFunds(funds, settings),
         }))

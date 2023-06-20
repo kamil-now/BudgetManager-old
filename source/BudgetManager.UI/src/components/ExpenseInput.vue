@@ -1,10 +1,10 @@
 <template>
-  <div class="income-input">
-    <Calendar v-model="incomeDate" dateFormat="dd/mm/yy" />
+  <div class="expense-input">
+    <Calendar v-model="expenseDate" dateFormat="dd/mm/yy" />
     <InputText
       class="p-inputtext-sm"
-      placeholder="Income title"
-      v-model="incomeTitle"
+      placeholder="Expense title"
+      v-model="expenseTitle"
     />
     <Dropdown
       class="p-inputtext-sm"
@@ -34,7 +34,7 @@
       v-if="selectedAccount"
       class="p-inputtext-sm"
       id="accountBalance"
-      v-model="incomeValue" 
+      v-model="expenseValue" 
       mode="currency"
       currencyDisplay="code"
       :allowEmpty="false"
@@ -48,68 +48,67 @@
 <script setup lang="ts">
 import { Account } from '@/models/account';
 import { Fund } from '@/models/fund';
-import { Income } from '@/models/income';
+import { Expense } from '@/models/expense';
 import { useAppStore } from '@/store/store';
 import { computed, ref, watch } from 'vue';
-const props = defineProps<{ income: Income, allowSetIsDefault?: boolean }>();
+const props = defineProps<{ expense: Expense, allowSetIsDefault?: boolean }>();
 const emit = defineEmits(['changed']);
 const { accounts, funds }  = useAppStore();
 
 const selectedAccount = ref<Account | undefined>(
-  props.income.accountId 
-    ? accounts.find(x => x.id === props.income.accountId)
+  props.expense.accountId 
+    ? accounts.find(x => x.id === props.expense.accountId)
     : undefined
 );
 
 watch(selectedAccount, async (account) => {
   emit('changed', {
-    ...props.income, 
+    ...props.expense, 
     accountId: account?.id,
     value: {
-      ...props.income.value,
+      ...props.expense.value,
       currency: account?.balance.currency
     }
   });
 });
 
 const selectedFund = ref<Fund | undefined>(
-  props.income.fundId 
-    ? funds.find(x => x.id === props.income.fundId)
+  props.expense.fundId 
+    ? funds.find(x => x.id === props.expense.fundId)
     : undefined
 );
 
 watch(selectedFund, async (fund) => {
   emit('changed', {
-    ...props.income, 
+    ...props.expense, 
     fundId: fund?.id
   });
 });
-
-const incomeDate = computed({
-  get: () => props.income.date,
+const expenseDate = computed({
+  get: () => props.expense.date,
   set: (newValue) => {
     emit('changed', {
-      ...props.income, 
+      ...props.expense, 
       date: new Date(newValue).toLocaleDateString()
     });
   }
 });
-const incomeTitle = computed({
-  get: () => props.income.title,
+const expenseTitle = computed({
+  get: () => props.expense.title,
   set: (newValue) => {
     emit('changed', {
-      ...props.income, 
+      ...props.expense, 
       title: newValue
     });
   }
 });
-const incomeValue = computed({
-  get: () => props.income.value.amount,
+const expenseValue = computed({
+  get: () => props.expense.value.amount,
   set: (newValue) => {
     emit('changed', {
-      ...props.income, 
+      ...props.expense, 
       value: {
-        ...props.income.value,
+        ...props.expense.value,
         amount: newValue
       }
     });
@@ -119,7 +118,7 @@ const incomeValue = computed({
 </script>
 
 <style lang="scss">
-.income-input {
+.expense-input {
   display: flex;
   max-width: 100%;
   flex-wrap: wrap;

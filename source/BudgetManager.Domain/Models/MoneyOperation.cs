@@ -44,7 +44,7 @@ public abstract class MoneyOperation
 
     if (date is not null)
     {
-      Date = DateOnly.Parse(date);
+      Date = DateOnly.FromDateTime(DateTime.Parse(date));
     }
 
     if (description is not null)

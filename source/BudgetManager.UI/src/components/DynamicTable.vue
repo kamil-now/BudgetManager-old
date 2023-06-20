@@ -17,7 +17,7 @@
       @rowReorder="onRowReorder" 
     >
       <Column 
-        v-if="isEditing"
+        v-if="isEditing && allowReorder"
         rowReorder 
         header-class="data-table_header-column"
       />
@@ -88,6 +88,7 @@ type Props<T> = {
   header: string,
   modelValue: T[],
   allowEdit?: boolean,
+  allowReorder?: boolean,
   createNew: () => T,
   saveNew: (item: T) => void,
   update: (item: T) => void,
