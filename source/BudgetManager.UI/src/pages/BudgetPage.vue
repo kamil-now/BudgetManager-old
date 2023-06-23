@@ -2,7 +2,7 @@
   <div class="budget-page">
     <CreateBudget v-if="isNewUser"/>
     <template v-else>
-      <TabView :activeIndex="2">
+      <TabView :activeIndex="activeIndex">
         <TabPanel header="EXC">
         </TabPanel>
         <TabPanel header="INC">
@@ -36,8 +36,11 @@ import IncomesDataTable from '@/components/IncomesDataTable.vue';
 import BudgetSummary from '@/components/BudgetSummary.vue';
 import CreateBudget from '@/components/CreateBudget.vue';
 import { useAppStore } from '@/store/store';
+import { ref } from 'vue';
+import { storeToRefs } from 'pinia';
 
-const { isNewUser } = useAppStore();
+const { isNewUser } = storeToRefs(useAppStore());
+const activeIndex = ref(2);
 
 </script>
 

@@ -13,7 +13,7 @@ import 'primevue/resources/themes/lara-light-indigo/theme.css';
 import SpeedDial from 'primevue/speeddial';
 import Tag from 'primevue/tag';
 import Card from 'primevue/card';
-import ProgressSpinner from 'primevue/progressspinner';
+import ProgressBar from 'primevue/progressbar';
 import Fieldset from 'primevue/fieldset';
 import Panel from 'primevue/panel';
 import Accordion from 'primevue/accordion';
@@ -70,7 +70,7 @@ app
   .component('AccordionTab', AccordionTab)
   .component('Panel', Panel)
   .component('Fieldset', Fieldset)
-  .component('ProgressSpinner', ProgressSpinner)
+  .component('ProgressBar', ProgressBar)
   .component('Card', Card)
   .component('Tag', Tag)
   .component('SpeedDial', SpeedDial)

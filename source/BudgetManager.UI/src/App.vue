@@ -1,26 +1,20 @@
 <template>
-  <ProgressSpinner v-if="isLoggedIn && isLoading"/>
-  <router-view v-else/>
+  <ProgressBar 
+    v-if="isLoggedIn && isLoading"
+    class="loading-indicator"
+    mode="indeterminate"
+    >
+  </ProgressBar>
+  <router-view/>
 </template>
 
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
-import { inject, ref } from 'vue';
-import { useRouter } from 'vue-router';
-import { AUTH, IAuthService } from './auth';
 import { useAppStore } from './store/store';
 
-const auth = inject<IAuthService>(AUTH);
 const store = useAppStore();
 const { isLoggedIn, isLoading } = storeToRefs(store);
-const router = useRouter();
 
-function signOut() {
-  if (!auth) {
-    throw new Error('No provider for IAuthService');
-  }
-  auth.logout().then(() => router.push('/login'));
-}
 </script>
 
 <style lang="scss">
@@ -48,6 +42,13 @@ function signOut() {
   align-items: flex-start;
   justify-content: center;
   animation: fadein 1s;
+
+  .loading-indicator {
+    height: 0.25rem;
+    width: 100vw;
+    position: absolute;
+    top: 0;
+  }
 }
 
 @keyframes fadein {
