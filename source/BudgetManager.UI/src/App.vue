@@ -1,15 +1,6 @@
 <template>
   <ProgressSpinner v-if="isLoggedIn && isLoading"/>
   <router-view v-else/>
-  <SpeedDial 
-    v-if="isLoggedIn"
-    class="menu"
-    :model="items" 
-    direction="up" 
-    :transitionDelay="80" 
-    showIcon="pi pi-bars" 
-    hideIcon="pi pi-times" 
-  />
 </template>
 
 <script setup lang="ts">
@@ -23,16 +14,13 @@ const auth = inject<IAuthService>(AUTH);
 const store = useAppStore();
 const { isLoggedIn, isLoading } = storeToRefs(store);
 const router = useRouter();
-if (!auth) {
-  throw new Error('No provider for IAuthService');
+
+function signOut() {
+  if (!auth) {
+    throw new Error('No provider for IAuthService');
+  }
+  auth.logout().then(() => router.push('/login'));
 }
-const items = ref([
-  {
-    label: 'Sign-out',
-    icon: 'pi pi-sign-out',
-    command: () =>  auth.logout().then(() => router.push('/login'))
-  },
-]);
 </script>
 
 <style lang="scss">
@@ -70,31 +58,5 @@ const items = ref([
     opacity: 1;
   }
 }
-.log-in-btn {
-  min-width: 100px;
-  background-color: var(--app-accent-color);
-  color: var(--app-accent-text-color);
-  border-radius: 5px;
-  font-weight: 500;
-  font-size: 12px;
-}
-.menu {
-  position: absolute;
-  bottom: 50px;
-  right: 50px;
-  @include media-breakpoint(md, down) {
-    top: 10px;
-    right: 10px;
-  }
-}
-.log-out-btn {
-  @extend .log-in-btn;
-  position: absolute;
-  bottom: 50px;
-  right: 50px;
-  @include media-breakpoint(md, down) {
-  bottom: 10px;
-  right: 10px;
-  }
-}
+
 </style>
