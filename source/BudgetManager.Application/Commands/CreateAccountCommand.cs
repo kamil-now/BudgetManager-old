@@ -25,6 +25,7 @@ public class CreateAccountCommandValidator : BudgetCommandValidator<CreateAccoun
   public CreateAccountCommandValidator(IUserBudgetRepository repository, AppConfig config) : base(repository)
   {
     RuleFor(x => x.Currency)
+      .NotEmpty()
       .ISO_4217_Currency();
 
     RuleFor(x => x.InitialAmount)

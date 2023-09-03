@@ -147,6 +147,7 @@ $action-column-width: 6rem;
 $header-column-width: 2rem;
 .data-table {
   width: 100%;
+  height: 100%;
   &_header-column {
     width: $header-column-width;
     max-width: $header-column-width;

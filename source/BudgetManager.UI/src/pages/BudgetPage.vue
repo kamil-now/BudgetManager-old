@@ -12,29 +12,6 @@
       <div class="budget-page_panel">
         <AccountsDataTable/>
       </div>
-      <!-- <TabView>
-        <TabPanel header="EXC">
-        </TabPanel>
-        <TabPanel header="INC">
-          <IncomesDataTable />
-        </TabPanel>
-        <TabPanel>
-          <template #header>
-            <i class="pi pi-chart-bar"></i>
-          </template>
-          <BudgetSummary />
-        </TabPanel>
-        <TabPanel header="EXP">
-          <ExpensesDataTable />
-        </TabPanel><TabPanel header="TRF">
-        </TabPanel>
-        <TabPanel>
-            <template #header>
-              <i class="pi pi-cog"></i>
-            </template>
-            <SettingsView />
-        </TabPanel>
-      </TabView> -->
     </template>
   </div>
 </template>

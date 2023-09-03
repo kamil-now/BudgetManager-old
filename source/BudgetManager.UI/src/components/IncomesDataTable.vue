@@ -13,11 +13,15 @@
     >
       <template #body="{ item }">
         <div class="incomes-table_body">
-          <span>{{ item.date }}</span>
-          <span>{{ item.title }}</span>
-          <span>{{ getFundName(item.fundId) }}</span>
-          <span>{{ getAccountName(item.accountId) }}</span>
-          <span>{{ DisplayFormat.money(item.value) }}</span>
+          <span class="date">{{ item.date }}</span>
+          <div class="incomes-table_body-left">
+            <span class="money">{{ DisplayFormat.money(item.value) }}</span>
+            <span>{{ getAccountName(item.accountId) }}</span>
+          </div>
+          <div class="incomes-table_body-right">
+            <span class="operation-title">{{ item.title }}</span>
+            <span>{{ getFundName(item.fundId) }}</span>
+          </div>
         </div>
       </template>
       <template #editor="{ item, index }">
@@ -108,11 +112,29 @@ function removeAt(event: MouseEvent, index: number) {
   &_body {
     display: flex;
     width: 100%;
-    justify-content: space-between;
-    * {
+    span {
       display: inline-block;
       text-overflow: ellipsis;
       overflow: hidden;
+    }
+    &-left {
+      width: calc(50% - #{$date-width});
+      display: flex;
+      flex-direction: column;
+      align-items: end;
+      span {
+        text-align: right;
+      }
+    }
+    &-right {
+      width: calc(50% - #{$date-width});
+      display: flex;
+      flex-direction: column;
+      align-items: start;
+      span {
+        text-align: left;
+        padding-left: 1rem;
+      }
     }
   }
   &_editor {

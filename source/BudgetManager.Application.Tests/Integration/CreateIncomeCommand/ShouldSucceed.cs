@@ -72,6 +72,8 @@ public class ShouldSucceed : BaseTest
     var fund = await mediator.Send(new FundRequest(userId, fundId));
 
     account.Balance.Should().BeEquivalentTo(expectedBalance);
-    fund.Balance.Should().BeEquivalentTo(expectedBalance - new Money(initial, expectedBalance.Currency));
+    fund.Balance.Keys.Count.Should().Be(1);
+    fund.Balance.Keys.Should().Contain(expectedBalance.Currency);
+    fund.Balance[expectedBalance.Currency].Should().Be(expectedBalance.Amount - initial);
   }
 }

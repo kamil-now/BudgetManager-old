@@ -17,11 +17,11 @@
             <i 
               v-if="item.isDefault" 
               class="pi pi-star" 
-              style="position: absolute; color: var(--primary-color)"
+              style="position: absolute; color: var(--primary-color); right: 0;"
             >
             </i>
           <div class="funds-table_body_balance">
-            <div v-for="(value, currency) in item.balance" :key="currency">
+            <div class="money" v-for="(value, currency) in item.balance" :key="currency">
               {{ DisplayFormat.money({ amount: value, currency: currency.toString() }) }}
             </div>
           </div>
@@ -90,6 +90,7 @@ function removeAt(event: MouseEvent, index: number) {
 <style lang="scss">
 .funds-table {
   width: 100%;
+  max-height: 100%;
   &_body {
     display: flex;
     width: 100%;

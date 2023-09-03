@@ -14,8 +14,8 @@
     >
       <template #body="{ item }">
         <div class="accounts-table_body">
+          <div class="accounts-table_body_balance money">{{ DisplayFormat.money(item.balance) }}</div>
           <div class="accounts-table_body_name">{{ item.name }}</div>
-          <div class="accounts-table_body_balance">{{ DisplayFormat.money(item.balance) }}</div>
         </div>
       </template>
       <template #editor="{ item, index }">
@@ -92,20 +92,22 @@ function getDefaultCurrency(): string {
 <style lang="scss">
 .accounts-table {
   width: 100%;
+  max-height: 100%;
   &_body {
     display: flex;
     width: 100%;
     &_name {
       width: 50%;
-      text-align: right;
-      padding-right: 1rem;
+      text-align: left;
+      padding-left: 1rem;
       display: inline-block;
       text-overflow: ellipsis;
       overflow: hidden;
     }
     &_balance {
       width: 50%;
-      display: inline-block;
+      display: flex;
+      justify-content: end;
       text-overflow: ellipsis;
       overflow: hidden;
     }

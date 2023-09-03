@@ -119,8 +119,8 @@ public class ShouldFail : BaseTest
   [InlineData(-1)]
   public async void When_Value_Amount_Is_Not_Positive(int value)
   {
+    var (sourceFundId, targetFundId) = await CreateBudgetWithFunds(new Money(1, "EUR"));
     var money = new Money(value, "EUR");
-    var (sourceFundId, targetFundId) = await CreateBudgetWithFunds(money);
     await AssertFailsValidationAsync(
       new CreateFundTransferCommand(
         userId,
