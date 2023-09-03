@@ -89,11 +89,11 @@ function onRowEditInit(event: RowEditEvent) {
 
 function onRowEditSave(event: RowEditEvent) {
   const { newData, index } = event;
-  items.value.splice(index, 1);
   if (newData.id) {
     props.update();
   } else {
     props.save();
+    items.value.splice(index, 1);
   }
   editingRows.value = [];
 }

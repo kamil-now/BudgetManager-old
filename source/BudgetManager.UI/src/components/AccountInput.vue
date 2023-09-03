@@ -7,7 +7,7 @@
       placeholder="Account name"
       v-model="accountName" 
     />
-    <InputNumber 
+    <InputNumber
       class="p-inputtext-sm"
       :disabled="!!account.id"
       id="accountBalance"
@@ -85,7 +85,10 @@ const accountName = computed({
   }
 });
 const accountBalance = computed({
-  get: () => props.account.balance.amount,
+  get: () => {
+    console.warn('GET');
+    return props.account.balance.amount;
+  },
   set: (newValue) => {
     emit('changed', {
       ...props.account,

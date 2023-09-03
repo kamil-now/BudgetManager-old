@@ -81,7 +81,8 @@ function createIncomeObject() {
     accountId: defaultAccount.id,
     fundId: defaultFund.id,
     value: { 
-      currency: defaultAccount.balance.currency
+      currency: defaultAccount.balance.currency,
+      amount: 0
     }
   };
 }

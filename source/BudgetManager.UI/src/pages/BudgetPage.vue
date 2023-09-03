@@ -1,4 +1,5 @@
 <template>
+  <Toast />
   <div class="budget-page">
     <div class="budget-page_panel">
       <FundsDataTable/>
@@ -21,14 +22,26 @@ import IncomesDataTable from '@/components/IncomesDataTable.vue';
 import { useAppStore } from '@/store/store';
 import { storeToRefs } from 'pinia';
 import { onMounted } from 'vue';
+import { useToast } from 'primevue/usetoast';
+import axios, { AxiosError } from 'axios';
 
 const store = useAppStore();
 const { isNewUser } = storeToRefs(store);
-
+const toast = useToast();
 onMounted(() => {
   if (isNewUser) {
     store.createBudget();
   }
+  
+  axios.interceptors.response.use(
+    response => response,
+    (error: AxiosError) => toast.add({ 
+      severity: 'error',
+      summary: error.request.statusText, 
+      detail: (error.response?.data as string[]).join('\n'),
+      life: 3000 
+    })
+  );
 });
 
 </script>

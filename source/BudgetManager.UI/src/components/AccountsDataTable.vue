@@ -40,14 +40,14 @@
   </div>
 </template>
 <script setup lang="ts">
+import currencies from '@/assets/currencies.json';
 import AccountInput from '@/components/AccountInput.vue';
 import DynamicTable from '@/components/DynamicTable.vue';
+import { DisplayFormat } from '@/helpers/display-format';
+import { Account } from '@/models/account';
 import { useAppStore } from '@/store/store';
 import { storeToRefs } from 'pinia';
-import currencies from '@/assets/currencies.json';
-import { DisplayFormat } from '@/helpers/display-format';
 import { useConfirm } from 'primevue/useconfirm';
-import { Account } from '@/models/account';
 
 const confirm = useConfirm();
 

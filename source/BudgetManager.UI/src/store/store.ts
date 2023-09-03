@@ -148,10 +148,10 @@ export const APP_STORE: DefineStoreOptions<
     async updateFund(fund: Fund) {
       await Utils.runAsyncOperation(this, (state) => 
         updateFundRequest(fund)
-          .then(fund => {
+          .then(() => {
             const fromState = state.funds.find(x => x.id === fund.id);
             if (!fromState) {
-              throw new Error('Invalid operation - account does not exist');
+              throw new Error('Invalid operation - fund does not exist');
             }
             const index = state.funds.indexOf(fromState);
             state.funds[index] = fund; 

@@ -28,6 +28,8 @@ import DataView from 'primevue/dataview';
 import Calendar from 'primevue/calendar';
 import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';
+import Toast from 'primevue/toast';
+import ToastService from 'primevue/toastservice';
 // PrimeVue
 import App from '@/App.vue';
 import { AUTH, IAuthService, MsalAuthService, MsalConfiguration } from '@/auth';
@@ -52,11 +54,12 @@ const app = createApp(App);
 const pinia = createPinia();
 app
   .use(PrimeVue)
+  .use(ToastService)
   .use(ConfirmationService)
   .use(pinia)
   .use(router);
-pinia.use(PiniaColadaPlugin);
-app.use(Colada);
+// pinia.use(PiniaColadaPlugin);
+// app.use(Colada);
 
 app
   .component('TabView', TabView)
@@ -81,7 +84,8 @@ app
   .component('Dropdown', Dropdown)
   .component('Button', Button)
   .component('InputText', InputText)
-  .component('InputNumber', InputNumber);
+  .component('InputNumber', InputNumber)
+  .component('Toast', Toast);
 
 if (process.env.VUE_APP_ENV === 'production') {
   if (!process.env.VUE_APP_AAD_CLIENT_ID
