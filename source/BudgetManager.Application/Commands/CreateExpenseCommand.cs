@@ -68,8 +68,8 @@ public class CreateExpenseCommandValidator
     .MustAsync(async (command, cancellation) =>
     {
       var budget = await repository.Get(command.UserId);
-      return budget!.Accounts?.Any(x => x.Id == command.AccountId) ?? false;
-    }).WithMessage("Account does not exist.")
+      return budget!.Accounts?.Any(x => x.Id == command.AccountId && !x.IsDeleted) ?? false;
+    }).WithMessage("Account is deleted or does not exist.")
       .DependentRules(() =>
       {
         RuleFor(x => x)
@@ -81,7 +81,7 @@ public class CreateExpenseCommandValidator
 
     RuleFor(x => x)
     .MustAsync(async (command, cancellation)
-      => (await repository.Get(command.UserId)).Funds?.Any(x => x.Id == command.FundId) ?? false)
-    .WithMessage("Fund does not exist.");
+      => (await repository.Get(command.UserId)).Funds?.Any(x => x.Id == command.FundId && !x.IsDeleted) ?? false)
+    .WithMessage("Fund is deleted or does not exist.");
   }
 }

@@ -26,7 +26,7 @@ public class AccountsRequestHandler : BudgetRequestHandler<BudgetRequest<Account
   }
 
   public override IEnumerable<AccountDto> Get(BudgetRequest<AccountDto> request, Budget budget)
-   => budget.Accounts.Select(x => _mapper.Map<AccountDto>(x));
+   => budget.Accounts.Where(x => !x.IsDeleted).Select(x => _mapper.Map<AccountDto>(x));
 }
 
 public class AccountRequestValidator : BudgetRequestValidator<AccountRequest>

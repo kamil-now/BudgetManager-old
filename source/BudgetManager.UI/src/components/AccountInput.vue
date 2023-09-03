@@ -1,6 +1,7 @@
 <template>
   <div class="account-input">
     <InputText
+      ref="input"
       class="p-inputtext-sm"
       id="accountName" 
       placeholder="Account name"
@@ -26,18 +27,54 @@
       v-model="accountCurrency" 
       :options="currencyCodeList" 
     />
+    <Dropdown
+      v-if="!account.id && accountBalance > 0"
+      class="p-inputtext-sm"
+      v-model="selectedFund"
+      :options="funds" 
+    >
+      <template #value="{ value }">
+        <span>{{ value?.name }}</span>
+      </template>
+      <template #option="{ option }">
+        <span>{{ option?.name }}</span>
+      </template>
+    </Dropdown>
   </div>
 </template>
 <script setup lang="ts">
 import { Account } from '@/models/account';
-import { computed } from 'vue';
+import { computed, nextTick, onMounted, ref, watch } from 'vue';
 import currencies from '@/assets/currencies.json';
+import { Fund } from '@/models/fund';
+import { useAppStore } from '@/store/store';
 
-const props = defineProps<{ account : Account}>();
+const { funds }  = useAppStore();
+const props = defineProps<{ account : Account }>();
 const emit = defineEmits(['changed']);
+const input = ref();
 
 const currencyCodeList = Object.keys(currencies);
+const selectedFund = ref<Fund | undefined>(
+  props.account.initialFundId 
+    ? funds.find(x => x.id === props.account.initialFundId )
+    : funds[0]
+);
 
+onMounted(() => focusInput());
+
+function focusInput() {
+  nextTick(() => {
+    input.value.$el.focus();
+  });
+}
+
+watch(selectedFund, async (fund) => {
+  emit('changed', {
+    ...props.account, 
+    initialFundId: fund?.id
+  });
+});
 const accountName = computed({
   get: () => props.account.name,
   set: (newValue) => {

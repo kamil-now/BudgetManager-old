@@ -7,10 +7,11 @@
       :allowEdit="true"
       :allowReorder="true"
       :createNew="createAccountObject"
-      :saveNew="createNewAccount"
-      :update="updateAccount"
+      :save="() => createNewAccount(changed)"
+      :update="() => updateAccount(changed)"
       :remove="deleteAccount"
       :onReorder="updateUserSettings"
+      :allowAdd="funds.length > 0"
     >
       <template #body="{ item }">
         <div class="accounts-table_body">
@@ -22,7 +23,7 @@
         <div class="accounts-table_editor">
           <AccountInput 
             :account="item" 
-            @changed="onAccountChanged(item, $event)"
+            @changed="onAccountChanged($event)"
           />
           <Button 
             v-if="item.id && accounts.length > 1"
@@ -53,18 +54,18 @@ const confirm = useConfirm();
 const store = useAppStore();
 const { createNewAccount, updateAccount, deleteAccount, updateUserSettings } = store;
 
-const { accounts } = storeToRefs(store);
+const { accounts, funds } = storeToRefs(store);
+let changed: Account;
 
-function onAccountChanged(account: Account, newValue: Account) {
-  account.name = newValue.name;
-  account.balance = newValue.balance;
+function onAccountChanged(newValue: Account) {
+  changed = newValue;
 }
 
 function createAccountObject() {
   return  {
     balance: {
       amount: 0,
-      currency: getDefaultCurrency()
+      currency: getDefaultCurrency() 
     }
   };
 }
@@ -82,7 +83,7 @@ function removeAt(event: MouseEvent, index: number) {
 }
 
 function getDefaultCurrency(): string {
-  return accounts.value 
+  return accounts.value.length > 0
     ? accounts.value[accounts.value.length - 1].balance.currency
     : Object.keys(currencies)[0];
 }

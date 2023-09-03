@@ -1,6 +1,6 @@
 namespace DeleteFundCommandTests;
 
-using System.Collections.Generic;
+using BudgetManager.Application.Commands;
 using BudgetManager.Application.Requests;
 using FluentAssertions;
 using Xunit.Abstractions;
@@ -12,16 +12,16 @@ public class ShouldSucceed : BaseTest
     TestFixture fixture
     ) : base(testOutputHelper, fixture)
   {
-
   }
 
   [Fact]
-  public async void And_Delete_Fund()
+  public async void And_Mark_Fund_As_Deleted()
   {
-    await CreateBudget();
+    var fundId = await CreateBudgetWithFund();
 
-    var result = await mediator.Send(new BalanceRequest(userId));
+    await mediator.Send(new DeleteFundCommand(userId, fundId));
+    var fund = await mediator.Send(new FundRequest(userId, fundId));
 
-    result.Should().BeEquivalentTo(new Dictionary<string, decimal>());
+    fund.IsDeleted.Should().BeTrue();
   }
 }

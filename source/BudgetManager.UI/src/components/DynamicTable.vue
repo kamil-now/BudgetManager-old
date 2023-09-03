@@ -6,7 +6,7 @@
     <DataTable 
       v-model:editingRows="editingRows"
       :value="items" 
-      :editMode="isEditing ? 'row' : undefined" 
+      :editMode="'row'" 
       dataKey="id"
       columnResizeMode="expand"
       scrollable
@@ -17,7 +17,7 @@
       @rowReorder="onRowReorder" 
     >
       <Column 
-        v-if="isEditing && allowReorder"
+        v-if="allowReorder"
         rowReorder 
         header-class="data-table_header-column"
       />
@@ -39,33 +39,13 @@
         class="data-table_action-column"
       >
         <template #header>
-          <template v-if="isEditing"> 
-            <template v-if="editingRows.length === 0">
-              <Button
-                icon="pi pi-plus" 
-                text 
-                rounded 
-                aria-label="Add" 
-                @click="addNew()" 
-              />
-              <Button 
-                v-if="editingRows.length === 0"
-                icon="pi pi-check" 
-                text 
-                rounded 
-                aria-label="Finish" 
-                @click="isEditing = false" 
-              />
-            </template>
-          </template>
-          <template v-else> 
-            <Button 
-              v-if="allowEdit && hover"
-              icon="pi pi-pencil" 
+          <template v-if="allowAdd && hover && editingRows.length == 0">
+            <Button
+              icon="pi pi-plus" 
               text 
               rounded 
-              aria-label="Edit" 
-              @click="isEditing = true" 
+              aria-label="Add" 
+              @click="addNew()" 
             />
           </template>
         </template>
@@ -89,17 +69,17 @@ type Props<T> = {
   modelValue: T[],
   allowEdit?: boolean,
   allowReorder?: boolean,
+  allowAdd?: boolean,
   createNew: () => T,
-  saveNew: (item: T) => void,
-  update: (item: T) => void,
+  save: () => void,
+  update: () => void,
   onReorder: () => void,
 }// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const props = defineProps<Props<any & {id?: string, name: string}>>();
 
 const emit = defineEmits(['update:modelValue']);
 const items = vueModel(props, emit);
-const hover = ref<boolean>(false); 
-const isEditing = ref<boolean>(false);
+const hover = ref<boolean>(false);
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const editingRows: Ref<any[]> = ref([]);
 
@@ -109,19 +89,18 @@ function onRowEditInit(event: RowEditEvent) {
 
 function onRowEditSave(event: RowEditEvent) {
   const { newData, index } = event;
+  items.value.splice(index, 1);
   if (newData.id) {
-    items.value[index] = newData;
-    props.update(newData);
+    props.update();
   } else {
-    items.value.splice(index, 1); // should be re-added after it's created
-    props.saveNew(newData);
+    props.save();
   }
   editingRows.value = [];
 }
 
 function onRowEditCancel(event: RowEditEvent) {
   if (!event.newData.id) {
-    items.value = items.value.filter(x => x.id);
+    items.value = items.value.filter(x => !!x.id);
     editingRows.value = [];
   }
 }

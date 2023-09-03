@@ -1,2 +1,2 @@
 
-public record FundDto(string Id, string Name, Balance Balance);
+public record FundDto(string Id, string Name, Balance Balance, bool IsDeleted);

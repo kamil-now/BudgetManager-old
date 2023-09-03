@@ -36,7 +36,7 @@ public abstract class BaseTest : TestBed<TestFixture>, IAsyncLifetime
   protected string GetStringWithLength(int length)
     => string.Join("", Enumerable.Repeat('x', length));
 
-  protected Task AssertFailsValidationAsync(IRequest<string> command, string expectedMessage)
+  protected Task AssertFailsValidationAsync<T>(IRequest<T> command, string expectedMessage)
   {
     var handle = () => mediator.Send(command);
     return handle.Should().ThrowAsync<ValidationException>()

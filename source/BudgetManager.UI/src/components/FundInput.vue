@@ -1,6 +1,7 @@
 <template>
   <div class="fund-input">
     <InputText
+      ref="input"
       class="p-inputtext-sm"
       id="fundName" 
       placeholder="Fund name"
@@ -10,7 +11,8 @@
 </template>
 <script setup lang="ts">
 import { Fund } from '@/models/fund';
-import { computed } from 'vue';
+import InputText from 'primevue/inputtext';
+import { computed, nextTick, onMounted, ref } from 'vue';
 const props = defineProps<{ fund: Fund }>();
 const emit = defineEmits(['changed']);
 const fundName = computed({
@@ -22,6 +24,14 @@ const fundName = computed({
     });
   }
 });
+const input = ref();
+onMounted(() => focusInput());
+
+function focusInput() {
+  nextTick(() => {
+    input.value.$el.focus();
+  });
+}
 </script>
 
 <style lang="scss">

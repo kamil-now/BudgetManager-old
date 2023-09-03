@@ -6,10 +6,11 @@
       v-model="expenses"
       :allowEdit="true"
       :createNew="createExpenseObject"
-      :saveNew="createNewExpense"
-      :update="updateExpense"
+      :save="() => createNewExpense(changed)"
+      :update="() => updateExpense(changed)"
       :remove="deleteExpense"
       :onReorder="updateUserSettings"
+      :allowAdd="funds.length > 0 && accounts.length > 0"
     >
       <template #body="{ item }">
         <div class="expenses-table_body">
@@ -24,7 +25,7 @@
         <div class="expenses-table_editor">
           <ExpenseInput 
             :expense="item" 
-            @changed="onExpenseChanged(item, $event)"
+            @changed="onExpenseChanged($event)"
           />
           <Button 
             v-if="item.id && expenses.length > 1"
@@ -64,14 +65,9 @@ function getFundName(fundId: string) {
   return funds.value.find(x => x.id === fundId)?.name;
 }
 
-function onExpenseChanged(expense: Expense, newValue: Expense) {
-  expense.accountId = newValue.accountId;
-  expense.fundId = newValue.fundId;
-  expense.createdDate = newValue.createdDate;
-  expense.title = newValue.title;
-  expense.value = newValue.value;
-  expense.date = newValue.date;
-  expense.description = newValue.description;
+let changed: Expense;
+function onExpenseChanged(newValue: Expense) {
+  changed = newValue;
 }
 
 function createExpenseObject() {

@@ -6,9 +6,10 @@
       v-model="incomes"
       :allowEdit="true"
       :createNew="createIncomeObject"
-      :saveNew="createNewIncome"
-      :update="updateIncome"
+      :save="() => createNewIncome(changed)"
+      :update="() => updateIncome(changed)"
       :remove="deleteIncome"
+      :allowAdd="funds.length > 0 && accounts.length > 0"
       :onReorder="updateUserSettings"
     >
       <template #body="{ item }">
@@ -28,7 +29,7 @@
         <div class="incomes-table_editor">
           <IncomeInput 
             :income="item" 
-            @changed="onIncomeChanged(item, $event)"
+            @changed="onIncomeChanged($event)"
           />
           <Button 
             v-if="item.id && incomes.length > 1"
@@ -67,15 +68,9 @@ function getAccountName(accountId: string) {
 function getFundName(fundId: string) {
   return funds.value.find(x => x.id === fundId)?.name;
 }
-
-function onIncomeChanged(income: Income, newValue: Income) {
-  income.accountId = newValue.accountId;
-  income.fundId = newValue.fundId;
-  income.createdDate = newValue.createdDate;
-  income.title = newValue.title;
-  income.value = newValue.value;
-  income.date = newValue.date;
-  income.description = newValue.description;
+let changed: Income;
+function onIncomeChanged(newValue: Income) {
+  changed = newValue;
 }
 
 function createIncomeObject() {

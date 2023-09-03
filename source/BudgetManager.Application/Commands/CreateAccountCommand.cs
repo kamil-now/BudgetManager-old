@@ -38,15 +38,15 @@ public class CreateAccountCommandValidator : BudgetCommandValidator<CreateAccoun
 
   protected override void RulesWhenBudgetExists()
   {
+    RuleFor(x => x)
+    .Must(command => command.InitialAmount <= 0 || !string.IsNullOrEmpty(command.FundId))
+    .WithMessage("When initial amount is greater than 0, fund id must be defined.")
+    .DependentRules(() =>
+    {
       RuleFor(x => x)
-      .Must(command => command.InitialAmount <= 0 || !string.IsNullOrEmpty(command.FundId))
-      .WithMessage("When initial amount is greater than 0, fund id must be defined.")
-      .DependentRules(() =>
-      {
-        RuleFor(x => x)
-        .MustAsync(async (command, cancellation)
-          => string.IsNullOrEmpty(command.FundId) || ((await repository.Get(command.UserId)).Funds?.Any(x => x.Id == command.FundId) ?? false))
-        .WithMessage("Fund does not exist.");
-      });
+      .MustAsync(async (command, cancellation)
+        => string.IsNullOrEmpty(command.FundId) || ((await repository.Get(command.UserId)).Funds?.Any(x => x.Id == command.FundId && !x.IsDeleted) ?? false))
+      .WithMessage("Fund is deleted or does not exist.");
+    });
   }
 }

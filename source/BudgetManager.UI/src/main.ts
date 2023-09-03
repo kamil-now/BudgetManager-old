@@ -55,8 +55,8 @@ app
   .use(ConfirmationService)
   .use(pinia)
   .use(router);
-// pinia.use(PiniaColadaPlugin);
-// app.use(Colada);
+pinia.use(PiniaColadaPlugin);
+app.use(Colada);
 
 app
   .component('TabView', TabView)

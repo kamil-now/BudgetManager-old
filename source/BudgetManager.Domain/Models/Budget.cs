@@ -8,9 +8,9 @@ public class Budget
   public IReadOnlyCollection<Fund> Funds => _funds.AsReadOnly();
   public IReadOnlyCollection<MoneyOperation> Operations => _operations.AsReadOnly();
 
-  private List<MoneyOperation> _operations;
-  private List<Account> _accounts;
-  private List<Fund> _funds;
+  private readonly List<MoneyOperation> _operations;
+  private readonly List<Account> _accounts;
+  private readonly List<Fund> _funds;
   private UserSettings _userSettings;
 
   public Budget(

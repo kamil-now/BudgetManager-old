@@ -7,10 +7,11 @@
       :allowEdit="true"
       :allowReorder="true"
       :createNew="createFundObject"
-      :saveNew="createNewFund"
-      :update="updateFund"
+      :save="() => createNewFund(changed)"
+      :update="() => updateFund(changed)"
       :remove="deleteFund"
       :onReorder="updateUserSettings"
+      :allowAdd="true"
     >
       <template #body="{ item }">
         <div class="funds-table_body">
@@ -26,7 +27,7 @@
         <div class="funds-table_editor">
           <FundInput 
             :fund="item" 
-            @changed="onFundChanged(item, $event)"
+            @changed="onFundChanged($event)"
           />
           <Button 
             v-if="item.id && funds.length > 1"
@@ -58,8 +59,9 @@ const { createNewFund, updateFund, deleteFund, updateUserSettings } = store;
 
 const { funds } = storeToRefs(store);
 
-function onFundChanged(fund: Fund, newValue: Fund) {
-  fund.name = newValue.name;
+let changed: Fund;
+function onFundChanged(newValue: Fund) {
+  changed = newValue;
 }
 
 function createFundObject() {

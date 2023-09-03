@@ -28,7 +28,7 @@ public class FundsRequestHandler : BudgetRequestHandler<BudgetRequest<FundDto>, 
   }
 
   public override IEnumerable<FundDto> Get(BudgetRequest<FundDto> request, Budget budget)
-   => budget.Funds.Select(x => _mapper.Map<FundDto>(x));
+   => budget.Funds.Where(x => !x.IsDeleted).Select(x => _mapper.Map<FundDto>(x));
 }
 
 public class FundRequestValidator : BudgetRequestValidator<FundRequest>
@@ -40,6 +40,6 @@ public class FundRequestValidator : BudgetRequestValidator<FundRequest>
       {
         var budget = await repository.Get(request.UserId);
         return budget!.Funds?.Any(x => x.Id == request.FundId) ?? false;
-      }).WithMessage("Fund with a given id does not exist in the budget");
+      }).WithMessage("Fund with a given id does not exist in the budget.");
   }
 }

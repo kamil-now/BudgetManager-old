@@ -103,21 +103,15 @@ export const APP_STORE: DefineStoreOptions<
     
     async createNewAccount(account: Account) {
       await Utils.runAsyncOperation(this, async (state) => {
-        const fundId = state.funds[0].id;
-        const id = await createAccountRequest(account, fundId);
-        const fromState = state.accounts.find(x => x.id === id);
-        if (!fromState) {
-          state.accounts.unshift({ ...account, id });
-        } else {
-          const index = state.accounts.indexOf(fromState);
-          state.accounts[index] = account;
-        }
+        const id = await createAccountRequest(account, account.initialFundId);
+        state.accounts.unshift({ ...account, id });
         if (account.balance.amount > 0) {
-          const fund = state.funds.find(x_1 => x_1.id === fundId);
+          const fund = state.funds.find(x => x.id === account.initialFundId);
           if (fund) {
             state.funds[state.funds.indexOf(fund)] = await getFundRequest(fund);
           }
         }
+        this.updateUserSettings();
       });
     },
     async updateAccount(account: Account) {
@@ -145,7 +139,10 @@ export const APP_STORE: DefineStoreOptions<
     ) {
       await Utils.runAsyncOperation(this, (state) => 
         createFundRequest(fund)
-          .then(id => state.funds.unshift({ ...fund, id }))
+          .then(id => {
+            state.funds.unshift({ ...fund, id });
+            this.updateUserSettings();
+          })
       );
     },
     async updateFund(fund: Fund) {

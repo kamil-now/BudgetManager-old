@@ -43,8 +43,29 @@ public class ShouldFail : BaseTest
         fundId,
         null
         ),
-        "Account does not exist."
+        "Account is deleted or does not exist."
       );
+  }
+
+    [Fact]
+  public async void When_Account_Is_Deleted()
+  {
+    await CreateBudgetWithFund();
+    var fundId = await CreateFund();
+    var accountId = await CreateAccount();
+    await mediator.Send(new DeleteAccountCommand(userId, accountId));
+    await AssertFailsValidationAsync(
+      new CreateIncomeCommand(
+        userId,
+        "mockExpense",
+        new Money(1, "EUR"),
+        null,
+        accountId,
+        fundId,
+        null
+        ),
+      "Account is deleted or does not exist."
+    );
   }
 
   [Fact]
@@ -62,8 +83,29 @@ public class ShouldFail : BaseTest
         "",
         null
         ),
-        "Fund does not exist."
+        "Fund is deleted or does not exist."
       );
+  }
+
+    [Fact]
+  public async void When_Fund_Is_Deleted()
+  {
+    await CreateBudget();
+    var accountId = await CreateAccount();
+    var fundId = await CreateFund();
+    await mediator.Send(new DeleteFundCommand(userId, fundId));
+    await AssertFailsValidationAsync(
+      new CreateIncomeCommand(
+        userId,
+        "mockExpense",
+        new Money(1, "EUR"),
+        null,
+        accountId,
+        fundId,
+        null
+        ),
+      "Fund is deleted or does not exist."
+    );
   }
 
   [Fact]

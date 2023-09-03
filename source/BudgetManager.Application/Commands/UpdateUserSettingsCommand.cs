@@ -25,14 +25,3 @@ public class UpdateUserSettingsCommandHandler : BudgetCommandHandler<UpdateUserS
     return Unit.Value;
   }
 }
-
-public class UpdateUserSettingsCommandValidator : BudgetCommandValidator<UpdateUserSettingsCommand>
-{
-  public UpdateUserSettingsCommandValidator(IUserBudgetRepository repository) : base(repository)
-  {
-    RuleFor(x => x.AccountsOrder)
-      .NotEmpty();
-    RuleFor(x => x.FundsOrder)
-      .NotEmpty();
-  }
-}
