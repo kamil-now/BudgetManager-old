@@ -18,7 +18,7 @@ public class ShouldSucceed : BaseTest
   [Fact]
   public async void And_Add_Fund_To_Budget()
   {
-    await CreateBudgetWithDefaultFund();
+    await CreateBudgetWithFund();
     var fundId = await mediator.Send(new CreateFundCommand(userId, "mock"));
 
     var result = await mediator.Send(new FundRequest(userId, fundId));

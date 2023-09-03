@@ -6,7 +6,6 @@ export async function createFundRequest(fund:Fund): Promise<string> {
     'api/fund', 
     {
       name: fund.name,
-      isDefault: fund.isDefault,
     }
   ).then((response: AxiosResponse<string>) => response.data);
 }

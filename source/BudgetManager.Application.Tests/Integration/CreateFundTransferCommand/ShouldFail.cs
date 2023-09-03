@@ -26,9 +26,9 @@ public class ShouldFail : BaseTest
   [Fact]
   public async void When_Source_Fund_Does_Not_Exist()
   {
-    var defaultFundId = await CreateBudgetWithDefaultFund();
+    var fundId = await CreateBudgetWithFund();
     await AssertFailsValidationAsync(
-      _factory.CreateWithInvalidSourceFundId(userId, defaultFundId),
+      _factory.CreateWithInvalidSourceFundId(userId, fundId),
       "Source Fund with id 'invalid id' does not exist in the budget."
     );
   }
@@ -47,7 +47,7 @@ public class ShouldFail : BaseTest
   [Fact]
   public async void When_Target_Fund_Does_Not_Exist()
   {
-    var defaultFundId = await CreateBudgetWithDefaultFund();
+    var defaultFundId = await CreateBudgetWithFund();
     var accountId = await CreateAccount("EUR");
     await CreateIncome(new Money(1, "EUR"), accountId, defaultFundId);
     await AssertFailsValidationAsync(
@@ -137,7 +137,7 @@ public class ShouldFail : BaseTest
 
   private async Task<(string sourceFundId, string targetFundId)> CreateBudgetWithFunds(Money? sourceFundBalance = null)
   {
-    await CreateBudgetWithDefaultFund();
+    await CreateBudgetWithFund();
     var sourceFundId = await CreateFund();
     if (sourceFundBalance.HasValue)
     {

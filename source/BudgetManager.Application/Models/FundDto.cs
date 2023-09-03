@@ -1,2 +1,2 @@
 
-public record FundDto(string Id, string Name, Balance Balance, bool IsDefault);
+public record FundDto(string Id, string Name, Balance Balance);

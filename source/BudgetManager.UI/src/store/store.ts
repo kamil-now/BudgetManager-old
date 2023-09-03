@@ -25,7 +25,7 @@ export type AppGetters = {
   // findIndexById: (state: AppState) => (id: string) => number;
 };
 export type AppActions = {
-  createBudget(accounts: Account[], funds: Fund[]): void;
+  createBudget(): void;
   updateUserSettings(): void,
   setLoggedIn(value: boolean): void;
   fetchBudget(): void;
@@ -91,24 +91,8 @@ export const APP_STORE: DefineStoreOptions<
           })
       );
     },
-    async createBudget(
-      accounts: Account[],
-      funds: Fund[]
-    ) {
-      await Utils.runAsyncOperation(this, () => 
-        axios.post<void>('api/budget')
-          .then(() =>
-            funds.length > 0
-              ? funds.map(fund => createFundRequest(fund))
-              : [Promise.resolve()])
-          .then(() =>
-            accounts.length > 0
-              ? accounts
-                .map(account => createAccountRequest(account))
-              : [Promise.resolve()])
-          .then(() => this.fetchBudget())
-          .then(() => this.updateUserSettings())
-      );
+    async createBudget() {
+      await Utils.runAsyncOperation(this, () => axios.post<void>('api/budget'));
     },
     async updateUserSettings() {
       await axios.put('api/user-settings', { 
@@ -118,23 +102,23 @@ export const APP_STORE: DefineStoreOptions<
     },
     
     async createNewAccount(account: Account) {
-      await Utils.runAsyncOperation(this, (state) => 
-        createAccountRequest(account)
-          .then(async id => {
-            const fromState = state.accounts.find(x => x.id === id);
-            if (!fromState) {
-              state.accounts.unshift({ ...account, id });
-            } else {
-              const index = state.accounts.indexOf(fromState);
-              state.accounts[index] = account; 
-            }
-
-            const defaultFund = state.funds.find(x => x.isDefault);
-            if (defaultFund) {
-              state.funds[state.funds.indexOf(defaultFund)] = await getFundRequest(defaultFund);
-            }
-          })
-      );
+      await Utils.runAsyncOperation(this, async (state) => {
+        const fundId = state.funds[0].id;
+        const id = await createAccountRequest(account, fundId);
+        const fromState = state.accounts.find(x => x.id === id);
+        if (!fromState) {
+          state.accounts.unshift({ ...account, id });
+        } else {
+          const index = state.accounts.indexOf(fromState);
+          state.accounts[index] = account;
+        }
+        if (account.balance.amount > 0) {
+          const fund = state.funds.find(x_1 => x_1.id === fundId);
+          if (fund) {
+            state.funds[state.funds.indexOf(fund)] = await getFundRequest(fund);
+          }
+        }
+      });
     },
     async updateAccount(account: Account) {
       await Utils.runAsyncOperation(this, (state) => 

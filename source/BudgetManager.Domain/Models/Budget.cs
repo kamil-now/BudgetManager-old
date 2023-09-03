@@ -33,11 +33,11 @@ public class Budget
 
   public T GetOperation<T>(string operationId) where T : MoneyOperation
   {
-        if (Operations.First(x => x.Id == operationId) is not T operation)
-        {
-            throw new InvalidOperationException();
-        }
-        return operation;
+    if (Operations.First(x => x.Id == operationId) is not T operation)
+    {
+      throw new InvalidOperationException();
+    }
+    return operation;
   }
 
   public void AddOperation<T>(T operation) where T : MoneyOperation
@@ -64,13 +64,16 @@ public class Budget
     return (T)operation;
   }
 
-  public string AddAccount(string accountName, Money initialBalance)
+  public string AddAccount(string accountName, string? fundId, Money initialBalance)
   {
     var id = Guid.NewGuid().ToString();
     var account = new Account(id, accountName, initialBalance.Currency);
     account.Add(initialBalance);
     _accounts.Add(account);
-    _funds.First(x => x.IsDefault).Add(initialBalance);
+    if (initialBalance.Amount > 0)
+    {
+      _funds.First(x => x.Id == fundId).Add(initialBalance);
+    }
     return id;
   }
   public Account RenameAccount(string accountId, string newName)
@@ -89,14 +92,10 @@ public class Budget
     account.IsDeleted = true;
   }
 
-  public string AddFund(string name, bool isDefault)
+  public string AddFund(string name)
   {
     var id = Guid.NewGuid().ToString();
-    if (isDefault)
-    {
-      _funds.ForEach(fund => fund.IsDefault = false);
-    }
-    _funds.Add(new Fund(id, name, isDefault));
+    _funds.Add(new Fund(id, name));
     return id;
   }
   public Fund RenameFund(string fundId, string newName)

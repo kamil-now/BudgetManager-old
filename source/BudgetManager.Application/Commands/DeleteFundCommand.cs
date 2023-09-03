@@ -36,13 +36,6 @@ public class DeleteFundCommandValidator : BudgetCommandValidator<DeleteFundComma
           .MustAsync(async (command, cancellation) =>
           {
             var budget = await repository.Get(command.UserId);
-            return !budget!.Funds!.First(x => x.Id == command.FundId).IsDefault;
-          }).WithMessage("Default fund cannot be removed.");
-
-        RuleFor(x => x)
-          .MustAsync(async (command, cancellation) =>
-          {
-            var budget = await repository.Get(command.UserId);
             return (budget!.Expenses is null || !budget!.Expenses.Any(x => x.FundId == command.FundId))
             && (budget!.FundTransfers is null || !budget!.FundTransfers.Any(x => x.SourceFundId == command.FundId || x.TargetFundId == command.FundId));
           }).WithMessage("Fund cannot be removed because there are budget operations referencing this fund");

@@ -14,12 +14,6 @@
     >
       <template #body="{ item }">
         <div class="funds-table_body">
-            <i 
-              v-if="item.isDefault" 
-              class="pi pi-star" 
-              style="position: absolute; color: var(--primary-color); right: 0;"
-            >
-            </i>
           <div class="funds-table_body_balance">
             <div class="money" v-for="(value, currency) in item.balance" :key="currency">
               {{ DisplayFormat.money({ amount: value, currency: currency.toString() }) }}

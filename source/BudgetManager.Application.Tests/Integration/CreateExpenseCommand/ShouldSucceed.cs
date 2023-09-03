@@ -18,7 +18,7 @@ public class ShouldSucceed : BaseTest
   [Fact]
   public async void And_Add_Expense_To_Budget()
   {
-    await CreateBudgetWithDefaultFund();
+    await CreateBudget();
     var expense = new Money(69, "PLN");
     var accountId = await CreateAccount(expense.Currency);
     var fundId = await CreateFund();
@@ -32,7 +32,7 @@ public class ShouldSucceed : BaseTest
   [Fact]
   public async void And_Decrease_Account_And_Fund_Balance()
   {
-    await CreateBudgetWithDefaultFund();
+    await CreateBudget();
     var income = new Money(420, "PLN");
     var expense = new Money(69, "PLN");
     var accountId = await CreateAccount(expense.Currency);

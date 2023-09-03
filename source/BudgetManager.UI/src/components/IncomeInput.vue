@@ -51,7 +51,7 @@ import { Fund } from '@/models/fund';
 import { Income } from '@/models/income';
 import { useAppStore } from '@/store/store';
 import { computed, ref, watch } from 'vue';
-const props = defineProps<{ income: Income, allowSetIsDefault?: boolean }>();
+const props = defineProps<{ income: Income }>();
 const emit = defineEmits(['changed']);
 const { accounts, funds }  = useAppStore();
 

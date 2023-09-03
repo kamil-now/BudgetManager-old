@@ -19,7 +19,7 @@ public class ShouldSucceed : BaseTest
   [Fact]
   public async void And_Transfer_Funds()
   {
-    await CreateBudgetWithDefaultFund();
+    await CreateBudget();
     var (sourceFundId, targetFundId) = (await CreateFund(), await CreateFund());
     var money = new Money(123, "EUR");
     await CreateIncome(money, await CreateAccount("EUR"), sourceFundId);

@@ -1,35 +1,35 @@
 <template>
   <div class="budget-page">
-    <CreateBudget v-if="isNewUser"/>
-    <template v-else>
-      <div class="budget-page_panel">
-        <FundsDataTable/>
-      </div>
-      <div class="budget-page_panel">
-        <IncomesDataTable />
-        <ExpensesDataTable />
-      </div>
-      <div class="budget-page_panel">
-        <AccountsDataTable/>
-      </div>
-    </template>
+    <div class="budget-page_panel">
+      <FundsDataTable/>
+    </div>
+    <div class="budget-page_panel">
+      <IncomesDataTable />
+      <ExpensesDataTable />
+    </div>
+    <div class="budget-page_panel">
+      <AccountsDataTable/>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import SettingsView from '@/components/SettingsView.vue';
 import AccountsDataTable from '@/components/AccountsDataTable.vue';
 import FundsDataTable from '@/components/FundsDataTable.vue';
 import ExpensesDataTable from '@/components/ExpensesDataTable.vue';
 import IncomesDataTable from '@/components/IncomesDataTable.vue';
-import BudgetSummary from '@/components/BudgetSummary.vue';
-import CreateBudget from '@/components/CreateBudget.vue';
 import { useAppStore } from '@/store/store';
-import { ref } from 'vue';
 import { storeToRefs } from 'pinia';
+import { onMounted } from 'vue';
 
-const { isNewUser } = storeToRefs(useAppStore());
-const activeIndex = ref(2);
+const store = useAppStore();
+const { isNewUser } = storeToRefs(store);
+
+onMounted(() => {
+  if (isNewUser) {
+    store.createBudget();
+  }
+});
 
 </script>
 

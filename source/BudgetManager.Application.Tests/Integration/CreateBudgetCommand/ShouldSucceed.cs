@@ -18,7 +18,7 @@ public class ShouldSucceed : BaseTest
   [Fact]
   public async void And_Create_Budget()
   {
-    await CreateBudgetWithDefaultFund();
+    await CreateBudget();
 
     var result = await mediator.Send(new BalanceRequest(userId));
 

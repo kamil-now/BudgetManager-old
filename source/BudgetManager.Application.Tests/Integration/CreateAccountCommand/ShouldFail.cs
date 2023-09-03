@@ -27,12 +27,12 @@ public class ShouldFail : BaseTest
   [Fact]
   public async void When_Currency_Code_Is_Empty()
   {
-    await CreateBudgetWithDefaultFund();
+    await CreateBudget();
     await AssertFailsValidationAsync(
       new CreateAccountCommand(
         userId,
         "mockAccount",
-        1,
+        0,
         ""
         ),
       "'Currency' must not be empty."
@@ -42,7 +42,7 @@ public class ShouldFail : BaseTest
   [Fact]
   public async void When_Currency_Code_Is_Invalid()
   {
-    await CreateBudgetWithDefaultFund();
+    await CreateBudget();
     await AssertFailsValidationAsync(
       new CreateAccountCommand(
         userId,
@@ -57,7 +57,7 @@ public class ShouldFail : BaseTest
   [Fact]
   public async void When_Name_Is_Too_Long()
   {
-    await CreateBudgetWithDefaultFund();
+    await CreateBudget();
     await AssertFailsValidationAsync(
       new CreateAccountCommand(
         userId,
@@ -72,12 +72,12 @@ public class ShouldFail : BaseTest
   [Fact]
   public async void When_Name_Is_Empty()
   {
-    await CreateBudgetWithDefaultFund();
+    await CreateBudget();
     await AssertFailsValidationAsync(
       new CreateAccountCommand(
         userId,
         "",
-        1,
+        0,
         "EUR"
         ),
       "'Name' must not be empty."
@@ -87,7 +87,7 @@ public class ShouldFail : BaseTest
   [Fact]
   public async void When_Initial_Amount_Is_Negative()
   {
-    await CreateBudgetWithDefaultFund();
+    await CreateBudget();
     await AssertFailsValidationAsync(
       new CreateAccountCommand(
         userId,
@@ -96,6 +96,22 @@ public class ShouldFail : BaseTest
         "EUR"
         ),
        "'Initial Amount' must be greater than or equal to '0'."
+     );
+  }
+
+   [Fact]
+  public async void When_Initial_Amount_Is_Positive_And_Fund_Does_Not_Exist()
+  {
+    await CreateBudget();
+    await AssertFailsValidationAsync(
+      new CreateAccountCommand(
+        userId,
+        "mockAccount",
+        1,
+        "EUR",
+        ""
+        ),
+       "When initial amount is greater than 0, fund id must be defined."
      );
   }
 }
