@@ -25,10 +25,7 @@ public class CreateAccountCommandValidator : BudgetCommandValidator<CreateAccoun
   public CreateAccountCommandValidator(IUserBudgetRepository repository, AppConfig config) : base(repository)
   {
     RuleFor(x => x.Currency)
-      .NotEmpty()
-      .Must(currency => ISO._4217.CurrencyCodesResolver.Codes
-      .Any(c => c.Code == currency))
-      .WithMessage("'Currency' must comply with ISO 4217.");
+      .ISO_4217_Currency();
 
     RuleFor(x => x.InitialAmount)
       .GreaterThanOrEqualTo(0);

@@ -38,8 +38,7 @@ public class CreateExpenseCommandHandler
         command.AccountId,
         command.FundId,
         command.Description ?? string.Empty,
-        DateTime.Now,
-        date <= now
+        DateTime.Now
         )
       );
 

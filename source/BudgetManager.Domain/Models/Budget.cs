@@ -31,17 +31,37 @@ public class Budget
     _userSettings = new UserSettings(accountsOrder, fundsOrder);
   }
 
+  public T GetOperation<T>(string operationId) where T : MoneyOperation
+  {
+        if (Operations.First(x => x.Id == operationId) is not T operation)
+        {
+            throw new InvalidOperationException();
+        }
+        return operation;
+  }
+
   public void AddOperation<T>(T operation) where T : MoneyOperation
   {
     ApplyOperation(operation);
     _operations.Add(operation);
   }
 
-  public void RemoveOperation<T>(string operationId) where T : MoneyOperation
+  public T UpdateOperation<T>(string operationId, Action<T> update) where T : MoneyOperation
+  {
+    var operation = GetOperation<T>(operationId);
+    UndoOperation(operation);
+    update(operation);
+    ApplyOperation(operation);
+    return operation;
+  }
+
+  public T RemoveOperation<T>(string operationId) where T : MoneyOperation
   {
     var operation = _operations.First(x => x.Id == operationId);
     UndoOperation(operation);
     _operations.RemoveAll(x => x.Id == operationId);
+
+    return (T)operation;
   }
 
   public string AddAccount(string accountName, Money initialBalance)
@@ -62,7 +82,11 @@ public class Budget
   public void RemoveAccount(string accountId)
   {
     var account = _accounts.First(x => x.Id == accountId);
-    _accounts.RemoveAll(x => x.Id == accountId);
+    if (account.Balance.Amount > 0)
+    {
+      throw new InvalidOperationException("Account cannot be deleted if its balance is greater than 0");
+    }
+    account.IsDeleted = true;
   }
 
   public string AddFund(string name, bool isDefault)
@@ -81,20 +105,14 @@ public class Budget
     fund.Name = newName;
     return fund;
   }
-  public void RemoveFund(string fundId) => _funds.RemoveAll(x => x.Id == fundId);
-
-  public void ToggleExpenseIsConfirmed(string expenseId)
+  public void RemoveFund(string fundId)
   {
-    var expense = _operations.First(x => x.Id == expenseId) as Expense;
-    expense!.IsConfirmed = !expense!.IsConfirmed;
-    if (expense!.IsConfirmed)
+    var fund = _funds.First(x => x.Id == fundId);
+    if (fund.Balance.Values.Any(x => x > 0))
     {
-      ApplyOperation(expense);
+      throw new InvalidOperationException("Fund cannot be deleted if its balance is greater than 0");
     }
-    else
-    {
-      UndoOperation<Expense>(expense);
-    }
+    fund.IsDeleted = true;
   }
 
   private void ApplyOperation<T>(T operation) where T : MoneyOperation
@@ -102,11 +120,8 @@ public class Budget
     switch (operation)
     {
       case Expense op:
-        if (op.Date <= DateOnly.FromDateTime(DateTime.Now) && op.IsConfirmed)
-        {
-          _funds.First(x => x.Id == op.FundId).Deduct(op.Value);
-          _accounts.First(x => x.Id == op.AccountId).Deduct(op.Value);
-        }
+        _funds.First(x => x.Id == op.FundId).Deduct(op.Value);
+        _accounts.First(x => x.Id == op.AccountId).Deduct(op.Value);
         break;
       case Income op:
         _accounts.First(x => x.Id == op.AccountId).Add(operation.Value);
@@ -115,6 +130,10 @@ public class Budget
       case FundTransfer op:
         _funds.First(x => x.Id == op.SourceFundId).Deduct(op.Value);
         _funds.First(x => x.Id == op.TargetFundId).Add(op.Value);
+        break;
+      case AccountTransfer op:
+        _accounts.First(x => x.Id == op.SourceAccountId).Deduct(op.Value);
+        _accounts.First(x => x.Id == op.TargetAccountId).Add(op.Value);
         break;
       default:
         throw new InvalidOperationException("Unhandled operation");
@@ -126,15 +145,20 @@ public class Budget
     switch (operation)
     {
       case Expense op:
-        if (op.Date <= DateOnly.FromDateTime(DateTime.Now) && op.IsConfirmed)
-        {
-          _funds.First(x => x.Id == op.FundId).Add(op.Value);
-          _accounts.First(x => x.Id == op.AccountId).Add(op.Value);
-        }
+        _funds.First(x => x.Id == op.FundId).Add(op.Value);
+        _accounts.First(x => x.Id == op.AccountId).Add(op.Value);
         break;
       case Income op:
         _accounts.First(x => x.Id == op.AccountId).Deduct(operation.Value);
         _funds.First(x => x.Id == op.FundId).Deduct(operation.Value);
+        break;
+      case FundTransfer op:
+        _funds.First(x => x.Id == op.SourceFundId).Add(op.Value);
+        _funds.First(x => x.Id == op.TargetFundId).Deduct(op.Value);
+        break;
+      case AccountTransfer op:
+        _accounts.First(x => x.Id == op.SourceAccountId).Add(op.Value);
+        _accounts.First(x => x.Id == op.TargetAccountId).Deduct(op.Value);
         break;
       default:
         throw new InvalidOperationException("Unhandled operation");

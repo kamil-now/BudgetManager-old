@@ -1,7 +1,6 @@
 namespace BudgetManager.Application.Commands;
 
 using AutoMapper;
-using BudgetManager.Application.Requests;
 using BudgetManager.Domain.Models;
 using BudgetManager.Infrastructure;
 

@@ -27,7 +27,7 @@ public class ShouldFail : BaseTest
   [Fact]
   public async void When_Currency_Code_Is_Empty()
   {
-    await CreateBudget();
+    await CreateBudgetWithDefaultFund();
     await AssertFailsValidationAsync(
       new CreateAccountCommand(
         userId,
@@ -42,7 +42,7 @@ public class ShouldFail : BaseTest
   [Fact]
   public async void When_Currency_Code_Is_Invalid()
   {
-    await CreateBudget();
+    await CreateBudgetWithDefaultFund();
     await AssertFailsValidationAsync(
       new CreateAccountCommand(
         userId,
@@ -57,7 +57,7 @@ public class ShouldFail : BaseTest
   [Fact]
   public async void When_Name_Is_Too_Long()
   {
-    await CreateBudget();
+    await CreateBudgetWithDefaultFund();
     await AssertFailsValidationAsync(
       new CreateAccountCommand(
         userId,
@@ -72,7 +72,7 @@ public class ShouldFail : BaseTest
   [Fact]
   public async void When_Name_Is_Empty()
   {
-    await CreateBudget();
+    await CreateBudgetWithDefaultFund();
     await AssertFailsValidationAsync(
       new CreateAccountCommand(
         userId,
@@ -87,7 +87,7 @@ public class ShouldFail : BaseTest
   [Fact]
   public async void When_Initial_Amount_Is_Negative()
   {
-    await CreateBudget();
+    await CreateBudgetWithDefaultFund();
     await AssertFailsValidationAsync(
       new CreateAccountCommand(
         userId,

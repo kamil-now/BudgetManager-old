@@ -36,6 +36,7 @@ import axios from 'axios';
 import { createPinia } from 'pinia';
 import { createApp } from 'vue';
 import { useAppStore } from './store/store';
+import Colada, { PiniaColadaPlugin } from 'colada-plugin';
 
 if (
   !process.env.VUE_APP_AAD_REDIRECT
@@ -48,12 +49,14 @@ axios.defaults.headers.common['Content-Type'] = 'application/json';
 axios.defaults.headers.common['Access-Control-Allow-Origin'] = process.env.VUE_APP_AAD_REDIRECT;
 
 const app = createApp(App);
+const pinia = createPinia();
 app
   .use(PrimeVue)
   .use(ConfirmationService)
-  .use(createPinia())
+  .use(pinia)
   .use(router);
-
+// pinia.use(PiniaColadaPlugin);
+// app.use(Colada);
 
 app
   .component('TabView', TabView)

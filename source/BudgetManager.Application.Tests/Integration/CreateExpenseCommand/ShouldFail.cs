@@ -1,6 +1,5 @@
 namespace CreateExpenseCommandTests;
 
-using System.Threading.Tasks;
 using BudgetManager.Application.Commands;
 using BudgetManager.Domain.Models;
 using Xunit.Abstractions;
@@ -32,7 +31,7 @@ public class ShouldFail : BaseTest
   [Fact]
   public async void When_Account_Does_Not_Exist()
   {
-    await CreateBudget();
+    await CreateBudgetWithDefaultFund();
     var fundId = await CreateFund();
     await AssertFailsValidationAsync(
       new CreateExpenseCommand(
@@ -51,7 +50,7 @@ public class ShouldFail : BaseTest
   [Fact]
   public async void When_Fund_Does_Not_Exist()
   {
-    await CreateBudget();
+    await CreateBudgetWithDefaultFund();
     var accountId = await CreateAccount();
     await AssertFailsValidationAsync(
       new CreateExpenseCommand(

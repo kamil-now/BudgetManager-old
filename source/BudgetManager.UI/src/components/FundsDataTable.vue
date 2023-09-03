@@ -20,12 +20,12 @@
               style="position: absolute; color: var(--primary-color)"
             >
             </i>
-          <div class="funds-table_body_name">{{ item.name }}</div>
           <div class="funds-table_body_balance">
             <div v-for="(value, currency) in item.balance" :key="currency">
               {{ DisplayFormat.money({ amount: value, currency: currency.toString() }) }}
             </div>
           </div>
+          <div class="funds-table_body_name">{{ item.name }}</div>
         </div>
       </template>
       <template #editor="{ item, index }">
@@ -95,8 +95,8 @@ function removeAt(event: MouseEvent, index: number) {
     width: 100%;
     &_name {
       width: 50%;
-      text-align: right;
-      padding-right: 1rem;
+      text-align: left;
+      padding-left: 1rem;
       display: inline-block;
       text-overflow: ellipsis;
       overflow: hidden;
@@ -106,6 +106,10 @@ function removeAt(event: MouseEvent, index: number) {
       display: inline-block;
       text-overflow: ellipsis;
       overflow: hidden;
+      > div {
+        display: flex;
+        justify-content: end;
+      }
     }
   }
   &_editor {

@@ -4,7 +4,6 @@ public class Expense : MoneyOperation
 {
   public string AccountId { get; private set; }
   public string FundId { get; private set; }
-  public bool IsConfirmed { get; internal set; }
 
   public Expense(
     string id,
@@ -14,13 +13,11 @@ public class Expense : MoneyOperation
     string accountId,
     string fundId,
     string description,
-    DateTime createdDate,
-    bool isConfirmed = true
+    DateTime createdDate
     ) : base(id, title, value, date, description, createdDate)
   {
     AccountId = accountId;
     FundId = fundId;
-    IsConfirmed = isConfirmed;
   }
 
   public void Update(string? accountId, string? title, Money? value, string? date, string? description)

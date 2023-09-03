@@ -106,8 +106,8 @@ export const APP_STORE: DefineStoreOptions<
               ? accounts
                 .map(account => createAccountRequest(account))
               : [Promise.resolve()])
-          .then(() => this.updateUserSettings())
           .then(() => this.fetchBudget())
+          .then(() => this.updateUserSettings())
       );
     },
     async updateUserSettings() {

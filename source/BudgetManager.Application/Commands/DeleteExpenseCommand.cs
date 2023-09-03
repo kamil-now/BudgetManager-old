@@ -11,7 +11,7 @@ public class DeleteExpenseCommandHandler : DeleteOperationCommandHandler<Expense
   }
 }
 
-public class DeleteExpenseCommandValidator : ExpenseCommandValidator<DeleteOperationCommand<Expense>>
+public class DeleteExpenseCommandValidator : UpdateOperationCommandValidator<DeleteOperationCommand<Expense>>
 {
   public DeleteExpenseCommandValidator(IUserBudgetRepository repository) : base(repository)
   {

@@ -2,7 +2,7 @@
   <div class="incomes-table">
     <ConfirmPopup></ConfirmPopup>
     <DynamicTable
-      header="Income"
+      header="Incomes"
       v-model="incomes"
       :allowEdit="true"
       :createNew="createIncomeObject"

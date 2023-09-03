@@ -11,7 +11,7 @@ public class DeleteIncomeCommandHandler : DeleteOperationCommandHandler<Income>
   }
 }
 
-public class DeleteIncomeCommandValidator : IncomeCommandValidator<DeleteOperationCommand<Income>>
+public class DeleteIncomeCommandValidator : UpdateOperationCommandValidator<DeleteOperationCommand<Income>>
 {
   public DeleteIncomeCommandValidator(IUserBudgetRepository repository) : base(repository)
   {

@@ -13,4 +13,5 @@ public class BudgetEntity
   public IEnumerable<IncomeEntity>? Incomes { get; set; }
   public IEnumerable<ExpenseEntity>? Expenses { get; set; }
   public IEnumerable<FundTransferEntity>? FundTransfers { get; set; }
+  public IEnumerable<AccountTransferEntity>? AccountTransfers { get; set; }
 }

@@ -2,7 +2,17 @@
   <div class="budget-page">
     <CreateBudget v-if="isNewUser"/>
     <template v-else>
-      <TabView :activeIndex="activeIndex">
+      <div class="budget-page_panel">
+        <FundsDataTable/>
+      </div>
+      <div class="budget-page_panel">
+        <IncomesDataTable />
+        <ExpensesDataTable />
+      </div>
+      <div class="budget-page_panel">
+        <AccountsDataTable/>
+      </div>
+      <!-- <TabView>
         <TabPanel header="EXC">
         </TabPanel>
         <TabPanel header="INC">
@@ -18,19 +28,21 @@
           <ExpensesDataTable />
         </TabPanel><TabPanel header="TRF">
         </TabPanel>
-        <!-- <TabPanel>
+        <TabPanel>
             <template #header>
               <i class="pi pi-cog"></i>
             </template>
             <SettingsView />
-        </TabPanel> -->
-      </TabView>
+        </TabPanel>
+      </TabView> -->
     </template>
   </div>
 </template>
 
 <script setup lang="ts">
 import SettingsView from '@/components/SettingsView.vue';
+import AccountsDataTable from '@/components/AccountsDataTable.vue';
+import FundsDataTable from '@/components/FundsDataTable.vue';
 import ExpensesDataTable from '@/components/ExpensesDataTable.vue';
 import IncomesDataTable from '@/components/IncomesDataTable.vue';
 import BudgetSummary from '@/components/BudgetSummary.vue';
@@ -48,23 +60,34 @@ const activeIndex = ref(2);
 .budget-page {
   max-height: 100%;
   display: flex;
-  flex-direction: column;
-  flex-wrap: wrap;
+  flex-direction: row;
+  flex-wrap: nowrap;
 
   overflow: hidden;
-  align-items:center;
+  justify-content: space-around;
 
-  height: auto;
-  width: map-get($breakpoints, 'xs');
-  margin-top: 3rem;
+  height: 100%;
+  width: 100%;
+  margin: 3rem;
   @extend .card;
-  @include media-breakpoint('sm', 'down') {
-    margin: 0;
-    border-radius: 0;
-    box-shadow: 0;
-  }
-  @include media-breakpoint('lg') {
-    width: map-get($breakpoints, 'md')
+  // width: map-get($breakpoints, 'xs');
+  // @include media-breakpoint('sm', 'down') {
+  //   margin: 0;
+  //   border-radius: 0;
+  //   box-shadow: 0;
+  //   width: 100%;
+  // }
+  // @include media-breakpoint('lg') {
+  //   width: map-get($breakpoints, 'md')
+  // }
+
+  &_panel {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    padding: 1rem;
   }
 
   .p-tabview-nav {

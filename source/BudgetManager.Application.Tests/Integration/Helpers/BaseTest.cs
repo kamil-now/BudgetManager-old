@@ -43,12 +43,15 @@ public abstract class BaseTest : TestBed<TestFixture>, IAsyncLifetime
       .WithMessage("One or more validation errors: " + expectedMessage);
   }
 
-  protected async Task CreateBudget(string defaultFundName = "Default")
-    => await mediator.Send(new CreateBudgetCommand(userId, defaultFundName));
+  protected async Task<string> CreateBudgetWithDefaultFund()
+  {
+    await mediator.Send(new CreateBudgetCommand(userId));
+    return await mediator.Send(new CreateFundCommand(userId, "Default", true));
+  }
 
   protected async Task<(string accountId, string fundId)> CreateBudgetWithAccountAndFund(string currency = "EUR")
   {
-    await CreateBudget();
+    await CreateBudgetWithDefaultFund();
     return (await CreateAccount(currency), await CreateFund());
   }
 

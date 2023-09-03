@@ -7,6 +7,8 @@ using Xunit.Abstractions;
 
 public class ShouldFail : BaseTest
 {
+  private readonly CreateFundTransferCommandFactory _factory = new();
+
   public ShouldFail(
     ITestOutputHelper testOutputHelper,
     TestFixture fixture
@@ -17,27 +19,54 @@ public class ShouldFail : BaseTest
   [Fact]
   public async void When_Budget_Does_Not_Exist()
     => await AssertFailsValidationAsync(
-      new CreateFundTransferCommand(
-        userId,
-        "mockFundTransfer",
-        new Money(1, "EUR"),
-        null,
-        null,
-        "",
-        ""
-      ),
+      _factory.CreateInvalidCommand(userId),
       "Budget does not exist."
     );
 
   [Fact]
+  public async void When_Source_Fund_Does_Not_Exist()
+  {
+    var defaultFundId = await CreateBudgetWithDefaultFund();
+    await AssertFailsValidationAsync(
+      _factory.CreateWithInvalidSourceFundId(userId, defaultFundId),
+      "Source Fund with id 'invalid id' does not exist in the budget."
+    );
+  }
+
+  [Fact]
+  public async void When_Funds_Are_Insufficient()
+  {
+    var money = new Money(2, "EUR");
+    var (sourceFundId, targetFundId) = await CreateBudgetWithFunds(money);
+    await AssertFailsValidationAsync(
+      _factory.CreateWithExceededFunds(userId, sourceFundId, targetFundId, money),
+      "Insufficient funds."
+    );
+  }
+
+  [Fact]
+  public async void When_Target_Fund_Does_Not_Exist()
+  {
+    var defaultFundId = await CreateBudgetWithDefaultFund();
+    var accountId = await CreateAccount("EUR");
+    await CreateIncome(new Money(1, "EUR"), accountId, defaultFundId);
+    await AssertFailsValidationAsync(
+      _factory.CreateWithInvalidTargetFundId(userId, defaultFundId),
+      "Target Fund with id 'invalid id' does not exist in the budget."
+    );
+  }
+
+  [Fact]
   public async void When_Title_Is_Too_Long()
   {
-    var (targetFundId, sourceFundId) = await CreateBudgetWithFunds();
+    var money = new Money(1, "EUR");
+    var (sourceFundId, targetFundId) = await CreateBudgetWithFunds(money);
+
     await AssertFailsValidationAsync(
       new CreateFundTransferCommand(
         userId,
         GetStringWithLength(appConfig.MaxTitleLength + 1),
-        new Money(1, "EUR"),
+        money,
         null,
         null,
         sourceFundId,
@@ -50,12 +79,13 @@ public class ShouldFail : BaseTest
   [Fact]
   public async void When_Title_Is_Empty()
   {
-    var (targetFundId, sourceFundId) = await CreateBudgetWithFunds();
+    var money = new Money(1, "EUR");
+    var (sourceFundId, targetFundId) = await CreateBudgetWithFunds(money);
     await AssertFailsValidationAsync(
       new CreateFundTransferCommand(
         userId,
         "",
-        new Money(1, "EUR"),
+        money,
         null,
         null,
         sourceFundId,
@@ -68,12 +98,13 @@ public class ShouldFail : BaseTest
   [Fact]
   public async void When_Description_Is_Too_Long()
   {
-    var (targetFundId, sourceFundId) = await CreateBudgetWithFunds();
+    var money = new Money(1, "EUR");
+    var (sourceFundId, targetFundId) = await CreateBudgetWithFunds(money);
     await AssertFailsValidationAsync(
       new CreateFundTransferCommand(
         userId,
         "mockFundTransfer",
-        new Money(1, "EUR"),
+        money,
         null,
         GetStringWithLength(appConfig.MaxContentLength + 1),
         sourceFundId,
@@ -88,14 +119,15 @@ public class ShouldFail : BaseTest
   [InlineData(-1)]
   public async void When_Value_Amount_Is_Not_Positive(int value)
   {
-    var (targetFundId, sourceFundId) = await CreateBudgetWithFunds();
+    var money = new Money(value, "EUR");
+    var (sourceFundId, targetFundId) = await CreateBudgetWithFunds(money);
     await AssertFailsValidationAsync(
-     new CreateFundTransferCommand(
-       userId,
-       "mockFundTransfer",
-       new Money(value, "EUR"),
-       null,
-       null,
+      new CreateFundTransferCommand(
+        userId,
+        "mockFundTransfer",
+        money,
+        null,
+        null,
         sourceFundId,
         targetFundId
        ),
@@ -103,9 +135,16 @@ public class ShouldFail : BaseTest
     );
   }
 
-  private async Task<(string sourceFundId, string targetFundId)> CreateBudgetWithFunds()
+  private async Task<(string sourceFundId, string targetFundId)> CreateBudgetWithFunds(Money? sourceFundBalance = null)
   {
-    await CreateBudget();
-    return (await CreateFund(), await CreateFund());
+    await CreateBudgetWithDefaultFund();
+    var sourceFundId = await CreateFund();
+    if (sourceFundBalance.HasValue)
+    {
+      var accountId = await CreateAccount();
+      await CreateIncome(sourceFundBalance.Value, accountId, sourceFundId);
+    }
+    
+    return (sourceFundId, await CreateFund());
   }
 }

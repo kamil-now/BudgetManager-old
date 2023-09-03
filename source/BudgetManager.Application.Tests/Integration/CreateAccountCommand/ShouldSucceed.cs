@@ -21,7 +21,7 @@ public class ShouldSucceed : BaseTest
   public async void And_Add_Account_To_Budget()
   {
     var balance = new Money(69, "PLN");
-    await CreateBudget();
+    await CreateBudgetWithDefaultFund();
     var accountId = await CreateAccount(balance.Currency, balance.Amount);
 
     var result = await mediator.Send(new AccountRequest(userId, accountId));
@@ -33,7 +33,7 @@ public class ShouldSucceed : BaseTest
   public async void And_Add_Account_Initial_Balance_To_Default_Fund()
   {
     var balance = new Money(69, "PLN");
-    await CreateBudget();
+    await CreateBudgetWithDefaultFund();
     var accountId = await CreateAccount(balance.Currency, balance.Amount);
 
     var result = await mediator.Send(new BudgetRequest<FundDto>(userId));

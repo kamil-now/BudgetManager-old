@@ -132,6 +132,18 @@ async (
 .WithTags(API_TITLE)
 .RequireAuthorization();
 
+app.MapDelete("/budget",
+async (
+  HttpContext context,
+  IMediator mediator,
+  CancellationToken cancellationToken
+  ) =>
+  {
+    await mediator.Send(new DeleteBudgetCommand(context.GetUserId()));
+    return Results.Ok();
+  })
+.WithTags(API_TITLE)
+.RequireAuthorization();
 
 app.MapGet("/balance",
   [SwaggerOperation(Summary = "Gets user overall balance in a form of a dictionary with currency codes as keys")]
@@ -176,17 +188,6 @@ app.MapCRUD<ExpenseDto, CreateExpenseCommand, ExpenseRequest, UpdateExpenseComma
   (ctx, update) => update with { UserId = ctx.GetUserId() },
   (ctx, accountId) => new DeleteOperationCommand<Expense>(ctx.GetUserId(), accountId)
 );
-
-app.MapPut("/toggle-expense",
-  [SwaggerOperation(Summary = "Toggles IsConfirmed property of an expense - unconfirmed expenses will not affect overall balance")]
-async (
-  HttpContext context,
-  IMediator mediator,
-  [FromBody] ToggleExpenseCommand command,
-  CancellationToken cancellationToken
-) => Results.Ok(await mediator.Send(command, cancellationToken)))
-.WithTags("Expense")
-.RequireAuthorization();
 
 app.MapCRUD<FundTransferDto, CreateFundTransferCommand, FundTransferRequest, UpdateFundTransferCommand, DeleteOperationCommand<FundTransfer>>(
   "fundTransfer",

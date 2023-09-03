@@ -36,6 +36,23 @@
         "${workspaceFolder}/source/BudgetManager.Api/BudgetManager.Api.csproj"
       ],
       "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "test",
+      "type": "process",
+      "isBackground": true,
+      "command": "dotnet",
+      "args": [
+        "test"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}/source/BudgetManager.Application.Tests",
+        "env": {
+          "VSTEST_HOST_DEBUG": "1"
+        },
+      },
+      "group": "test",
+      "problemMatcher": "$msCompile"
     }
   ]
 }

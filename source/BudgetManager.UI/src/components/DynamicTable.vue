@@ -10,7 +10,7 @@
       dataKey="id"
       columnResizeMode="expand"
       scrollable
-      scrollHeight="50vh"
+      scrollHeight="flex"
       @row-edit-init="onRowEditInit"
       @row-edit-cancel="onRowEditCancel"
       @row-edit-save="onRowEditSave"

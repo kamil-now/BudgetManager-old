@@ -25,7 +25,7 @@ public class ShouldFail : BaseTest
   [Fact]
   public async void When_Name_Is_Too_Long()
   {
-    await CreateBudget();
+    await CreateBudgetWithDefaultFund();
     await AssertFailsValidationAsync(
       new CreateFundCommand(
         userId,
@@ -38,7 +38,7 @@ public class ShouldFail : BaseTest
   [Fact]
   public async void When_Name_Is_Empty()
   {
-    await CreateBudget();
+    await CreateBudgetWithDefaultFund();
     await AssertFailsValidationAsync(
       new CreateFundCommand(
         userId,

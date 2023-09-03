@@ -18,7 +18,7 @@ public class ShouldSucceed : BaseTest
   [Fact]
   public async void And_Transfer_Funds()
   {
-    await CreateBudget();
+    await CreateBudgetWithDefaultFund();
     var (sourceFundId, targetFundId) = (await CreateFund(), await CreateFund());
     var fundtransferId = await mediator.Send(
       new CreateFundTransferCommand(

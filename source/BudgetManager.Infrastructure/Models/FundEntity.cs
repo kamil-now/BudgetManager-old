@@ -6,4 +6,5 @@ public class FundEntity
   public string? Name { get; set; }
   public Dictionary<string, decimal>? Balance { get; set; }
   public bool IsDefault { get; set; }
+  public bool IsDeleted { get; set; }
 }

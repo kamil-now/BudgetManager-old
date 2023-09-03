@@ -40,7 +40,7 @@ public class ShouldSucceed : BaseTest
   [Fact]
   public async void And_Add_Income_To_Budget()
   {
-    await CreateBudget();
+    await CreateBudgetWithDefaultFund();
     var incomeValue = new Money(420, "USD");
     var accountId = await CreateAccount(incomeValue.Currency);
     var fundId = await CreateFund();
@@ -57,9 +57,9 @@ public class ShouldSucceed : BaseTest
 
   [Theory]
   [MemberData(nameof(TestCases))]
-  public async void And_Increase_Account_Balance(decimal initial, Money[] incomes, Money expectedBalance)
+  public async void And_Increase_Account_And_Fund_Balance(decimal initial, Money[] incomes, Money expectedBalance)
   {
-    await CreateBudget();
+    await CreateBudgetWithDefaultFund();
     var accountId = await CreateAccount(expectedBalance.Currency, initial);
     var fundId = await CreateFund();
 
@@ -69,7 +69,9 @@ public class ShouldSucceed : BaseTest
     }
 
     var account = await mediator.Send(new AccountRequest(userId, accountId));
+    var fund = await mediator.Send(new FundRequest(userId, fundId));
 
     account.Balance.Should().BeEquivalentTo(expectedBalance);
+    fund.Balance.Should().BeEquivalentTo(expectedBalance - new Money(initial, expectedBalance.Currency));
   }
 }
