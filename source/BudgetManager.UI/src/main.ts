@@ -24,12 +24,12 @@ import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import ColumnGroup from 'primevue/columngroup';   // optional
 import Row from 'primevue/row';
-import DataView from 'primevue/dataview';
 import Calendar from 'primevue/calendar';
 import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';
 import Toast from 'primevue/toast';
 import ToastService from 'primevue/toastservice';
+import Inplace from 'primevue/inplace';
 // PrimeVue
 import App from '@/App.vue';
 import { AUTH, IAuthService, MsalAuthService, MsalConfiguration } from '@/auth';
@@ -65,7 +65,6 @@ app
   .component('TabView', TabView)
   .component('TabPanel', TabPanel)
   .component('Calendar', Calendar)
-  .component('DataView', DataView)
   .component('DataTable', DataTable)
   .component('Column', Column)
   .component('ColumnGroup', ColumnGroup)
@@ -85,7 +84,8 @@ app
   .component('Button', Button)
   .component('InputText', InputText)
   .component('InputNumber', InputNumber)
-  .component('Toast', Toast);
+  .component('Toast', Toast)
+  .component('Inplace', Inplace);
 
 if (process.env.VUE_APP_ENV === 'production') {
   if (!process.env.VUE_APP_AAD_CLIENT_ID

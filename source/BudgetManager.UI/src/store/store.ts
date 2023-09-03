@@ -111,6 +111,7 @@ export const APP_STORE: DefineStoreOptions<
             state.funds[state.funds.indexOf(fund)] = await getFundRequest(fund);
           }
         }
+        this.fetchBudget(); // TODO fetch only affected funds/accounts 
         this.updateUserSettings();
       });
     },
@@ -124,6 +125,7 @@ export const APP_STORE: DefineStoreOptions<
             }
             const index = state.accounts.indexOf(fromState);
             state.accounts[index] = account; 
+            this.fetchBudget(); // TODO fetch only affected funds/accounts 
           })
       );
     },
@@ -170,7 +172,10 @@ export const APP_STORE: DefineStoreOptions<
     ) {
       await Utils.runAsyncOperation(this, (state) => 
         createExpenseRequest(expense)
-          .then(id => state.expenses.unshift({ ...expense, id }))
+          .then(id => {
+            state.expenses.unshift({ ...expense, id });
+            this.fetchBudget(); // TODO fetch only affected funds/accounts 
+          })
       );
     },
     async updateExpense(expense: Expense) {
@@ -183,6 +188,7 @@ export const APP_STORE: DefineStoreOptions<
             }
             const index = state.expenses.indexOf(fromState);
             state.expenses[index] = expense; 
+            this.fetchBudget(); // TODO fetch only affected funds/accounts 
           })
       );
     },
@@ -198,7 +204,10 @@ export const APP_STORE: DefineStoreOptions<
     ) {
       await Utils.runAsyncOperation(this, (state) => 
         createIncomeRequest(income)
-          .then(id => state.incomes.unshift({ ...income, id }))
+          .then(id => {
+            state.incomes.unshift({ ...income, id }); 
+            this.fetchBudget(); // TODO fetch only affected funds/accounts 
+          })
       );
     },
     async updateIncome(income: Income) {
@@ -211,6 +220,7 @@ export const APP_STORE: DefineStoreOptions<
             }
             const index = state.incomes.indexOf(fromState);
             state.incomes[index] = income; 
+            this.fetchBudget(); // TODO fetch only affected funds/accounts 
           })
       );
     },

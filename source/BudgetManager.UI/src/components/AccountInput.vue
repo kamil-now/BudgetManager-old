@@ -85,10 +85,7 @@ const accountName = computed({
   }
 });
 const accountBalance = computed({
-  get: () => {
-    console.warn('GET');
-    return props.account.balance.amount;
-  },
+  get: () =>  props.account.balance.amount,
   set: (newValue) => {
     emit('changed', {
       ...props.account,

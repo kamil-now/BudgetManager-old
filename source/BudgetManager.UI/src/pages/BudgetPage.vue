@@ -2,23 +2,23 @@
   <Toast />
   <div class="budget-page">
     <div class="budget-page_panel">
-      <FundsDataTable/>
+      <FundsView/>
     </div>
     <div class="budget-page_panel">
-      <IncomesDataTable />
-      <ExpensesDataTable />
+      <IncomesView />
+      <ExpensesView />
     </div>
     <div class="budget-page_panel">
-      <AccountsDataTable/>
+      <AccountsView/>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import AccountsDataTable from '@/components/AccountsDataTable.vue';
-import FundsDataTable from '@/components/FundsDataTable.vue';
-import ExpensesDataTable from '@/components/ExpensesDataTable.vue';
-import IncomesDataTable from '@/components/IncomesDataTable.vue';
+import AccountsView from '@/components/AccountsView.vue';
+import FundsView from '@/components/FundsView.vue';
+import ExpensesView from '@/components/ExpensesView.vue';
+import IncomesView from '@/components/IncomesView.vue';
 import { useAppStore } from '@/store/store';
 import { storeToRefs } from 'pinia';
 import { onMounted } from 'vue';
