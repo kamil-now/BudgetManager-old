@@ -11,7 +11,7 @@ public class Balance : Dictionary<string, decimal>
   }
   public void Add(Money money)
   {
-    if (this.ContainsKey(money.Currency))
+    if (ContainsKey(money.Currency))
     {
       this[money.Currency] += money.Amount;
     }
@@ -22,7 +22,7 @@ public class Balance : Dictionary<string, decimal>
   }
   public void Deduct(Money money)
   {
-    if (this.ContainsKey(money.Currency))
+    if (ContainsKey(money.Currency))
     {
       this[money.Currency] -= money.Amount;
     }

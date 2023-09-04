@@ -9,7 +9,6 @@ using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.FileProviders;
-using Microsoft.Identity.Web;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -195,6 +194,14 @@ app.MapCRUD<FundTransferDto, CreateFundTransferCommand, FundTransferRequest, Upd
   (ctx, accountId) => new FundTransferRequest(ctx.GetUserId(), accountId),
   (ctx, update) => update with { UserId = ctx.GetUserId() },
   (ctx, accountId) => new DeleteOperationCommand<FundTransfer>(ctx.GetUserId(), accountId)
+);
+
+app.MapCRUD<AllocationDto, CreateAllocationCommand, AllocationRequest, UpdateAllocationCommand, DeleteOperationCommand<Allocation>>(
+  "allocation",
+  (ctx, create) => create with { UserId = ctx.GetUserId() },
+  (ctx, accountId) => new AllocationRequest(ctx.GetUserId(), accountId),
+  (ctx, update) => update with { UserId = ctx.GetUserId() },
+  (ctx, accountId) => new DeleteOperationCommand<Allocation>(ctx.GetUserId(), accountId)
 );
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();

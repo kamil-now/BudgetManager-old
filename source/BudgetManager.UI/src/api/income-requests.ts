@@ -9,7 +9,6 @@ export async function createIncomeRequest(income: Income): Promise<string> {
       value: income.value,
       date: income.date,
       accountId: income.accountId,
-      fundId: income.fundId,
       description: income.description
     }
   ).then((response: AxiosResponse<string>) => response.data);
@@ -24,7 +23,6 @@ export async function updateIncomeRequest(income: Income): Promise<Income> {
       value: income.value,
       date: income.date,
       accountId: income.accountId,
-      fundId: income.fundId,
       description: income.description
     }
   ).then(res => res.data);

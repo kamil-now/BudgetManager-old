@@ -11,7 +11,6 @@ public record CreateIncomeCommand(
   Money Value,
   string? Date,
   string AccountId,
-  string FundId,
   string? Description
   ) : IRequest<string>, IBudgetCommand;
 
@@ -33,7 +32,6 @@ public class CreateIncomeCommandHandler
       new Income(
         id,
         command.AccountId,
-        command.FundId,
         command.Title,
         command.Value,
         date,
@@ -75,10 +73,5 @@ public class CreateIncomeCommandValidator
               .First(x => x.Id == command.AccountId).Currency == command.Value.Currency)
         .WithMessage("Account currency does not match income currency.")
       );
-
-    RuleFor(x => x)
-      .MustAsync(async (command, cancellation)
-        => (await repository.Get(command.UserId)).Funds?.Any(x => x.Id == command.FundId && !x.IsDeleted) ?? false)
-      .WithMessage("Fund is deleted or does not exist.");
   }
 }

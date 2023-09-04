@@ -3,17 +3,17 @@ namespace BudgetManager.Application.Requests;
 using AutoMapper;
 
 public record BalanceRequest(string UserId)
-  : IBudgetRequest, IRequest<Dictionary<string, decimal>>;
+  : IBudgetRequest, IRequest<BudgetBalanceDto>;
 
 public class BalanceRequestHandler
-  : BudgetRequestHandler<BalanceRequest, Dictionary<string, decimal>>
+  : BudgetRequestHandler<BalanceRequest, BudgetBalanceDto>
 {
   public BalanceRequestHandler(IUserBudgetRepository repo, IMapper map)
    : base(repo, map)
   {
   }
 
-  public override Dictionary<string, decimal> Get(BalanceRequest request, Budget budget)
+  public override BudgetBalanceDto Get(BalanceRequest request, Budget budget)
   {
     var balance = new Dictionary<string, decimal>();
 
@@ -29,7 +29,7 @@ public class BalanceRequestHandler
       }
     }
 
-    return balance;
+    return new BudgetBalanceDto(new Balance(balance), budget.Unallocated);
   }
 }
 

@@ -6,7 +6,7 @@ namespace CreateFundTransferCommandTests;
 public class CreateFundTransferCommandFactory
 {
   public CreateFundTransferCommand CreateInvalidCommand(string userId)
-    => new CreateFundTransferCommand(
+    => new(
        userId,
        "mockFundTransfer",
        new Money(1, "EUR"),
@@ -16,7 +16,7 @@ public class CreateFundTransferCommandFactory
        ""
      );
   public CreateFundTransferCommand CreateWithInvalidSourceFundId(string userId, string targetFundId)
-      => new CreateFundTransferCommand(
+      => new(
          userId,
          "mockFundTransfer",
          new Money(1, "EUR"),
@@ -27,7 +27,7 @@ public class CreateFundTransferCommandFactory
        );
 
   public CreateFundTransferCommand CreateWithInvalidTargetFundId(string userId, string sourceFundId)
-    => new CreateFundTransferCommand(
+    => new(
        userId,
        "mockFundTransfer",
        new Money(1, "EUR"),
@@ -42,7 +42,7 @@ public class CreateFundTransferCommandFactory
     string sourceFundId,
     string targetFundId,
     Money money)
-    => new CreateFundTransferCommand(
+    => new(
        userId,
        "mockFundTransfer",
         money with { Amount = money.Amount + 0.00000000001m },

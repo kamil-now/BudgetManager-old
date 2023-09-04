@@ -52,6 +52,12 @@ public abstract class BaseTest : TestBed<TestFixture>, IAsyncLifetime
     return await mediator.Send(new CreateFundCommand(userId, "Default"));
   }
 
+  protected async Task<string> CreateBudgetWithAccount(string currency = "EUR")
+  {
+    await CreateBudget();
+    return await CreateAccount(currency);
+  }
+
   protected async Task<(string accountId, string fundId)> CreateBudgetWithAccountAndFund(string currency = "EUR")
   {
     await CreateBudget();
@@ -61,11 +67,20 @@ public abstract class BaseTest : TestBed<TestFixture>, IAsyncLifetime
   protected async Task<string> CreateAccount(string currency = "EUR")
     => await mediator.Send(new CreateAccountCommand(userId, "mockAccount", 0, currency));
 
-  protected async Task<string> CreateAccount(string fundId, decimal amount, string currency = "EUR")
-    => await mediator.Send(new CreateAccountCommand(userId, "mockAccount", amount, currency, fundId));
+  protected async Task<string> CreateAccount(decimal amount, string currency = "EUR")
+    => await mediator.Send(new CreateAccountCommand(userId, "mockAccount", amount, currency));
 
-  protected async Task<string> CreateIncome(Money income, string accountId, string fundId)
-    => await mediator.Send(new CreateIncomeCommand(userId, "mockIncome", income, null, accountId, fundId, null));
+  protected async Task<string> CreateAccount(Money balance)
+    => await mediator.Send(new CreateAccountCommand(userId, "mockAccount", balance.Amount, balance.Currency));
+
+  protected async Task<string> CreateIncome(Money income, string accountId)
+    => await mediator.Send(new CreateIncomeCommand(userId, "mockIncome", income, null, accountId, null));
+
+  protected async Task CreateIncome(Money income, string accountId, string fundId)
+  {
+    await mediator.Send(new CreateIncomeCommand(userId, "mockIncome", income, null, accountId, null));
+    await mediator.Send(new CreateAllocationCommand(userId, "mockAllocation", income, null, fundId, null));
+  }
 
   protected async Task<string> CreateFund()
     => await mediator.Send(new CreateFundCommand(userId, "mockFund"));

@@ -14,4 +14,6 @@ public class BudgetEntity
   public IEnumerable<ExpenseEntity>? Expenses { get; set; }
   public IEnumerable<FundTransferEntity>? FundTransfers { get; set; }
   public IEnumerable<AccountTransferEntity>? AccountTransfers { get; set; }
+  public IEnumerable<AllocationEntity>? Allocations { get; set; }
+  public Dictionary<string, decimal>? Unallocated { get; set; }
 }

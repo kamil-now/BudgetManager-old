@@ -8,18 +8,6 @@
     />
     <Dropdown
       class="p-inputtext-sm"
-      v-model="selectedFund"
-      :options="funds" 
-    >
-      <template #value="{ value }">
-        <span>{{ value?.name }}</span>
-      </template>
-      <template #option="{ option }">
-        <span>{{ option?.name }}</span>
-      </template>
-    </Dropdown>
-    <Dropdown
-      class="p-inputtext-sm"
       v-model="selectedAccount"
       :options="accounts" 
     >
@@ -47,13 +35,12 @@
 </template>
 <script setup lang="ts">
 import { Account } from '@/models/account';
-import { Fund } from '@/models/fund';
 import { Income } from '@/models/income';
 import { useAppStore } from '@/store/store';
 import { computed, ref, watch } from 'vue';
 const props = defineProps<{ income: Income }>();
 const emit = defineEmits(['changed']);
-const { accounts, funds }  = useAppStore();
+const { accounts }  = useAppStore();
 
 const selectedAccount = ref<Account | undefined>(
   props.income.accountId 
@@ -69,19 +56,6 @@ watch(selectedAccount, async (account) => {
       ...props.income.value,
       currency: account?.balance.currency
     }
-  });
-});
-
-const selectedFund = ref<Fund | undefined>(
-  props.income.fundId 
-    ? funds.find(x => x.id === props.income.fundId)
-    : undefined
-);
-
-watch(selectedFund, async (fund) => {
-  emit('changed', {
-    ...props.income, 
-    fundId: fund?.id
   });
 });
 

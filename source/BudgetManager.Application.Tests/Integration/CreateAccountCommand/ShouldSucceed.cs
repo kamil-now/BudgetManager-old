@@ -1,7 +1,6 @@
 namespace CreateAccountCommandTests;
 
 using System.Collections.Generic;
-using System.Linq;
 using BudgetManager.Application.Requests;
 using BudgetManager.Domain.Models;
 using FluentAssertions;
@@ -30,16 +29,13 @@ public class ShouldSucceed : BaseTest
   }
 
   [Fact]
-  public async void And_Add_Account_Initial_Balance_To_Fund()
+  public async void And_Add_Account_Initial_Balance_To_Unallocated()
   {
     var balance = new Money(69, "PLN");
-    var fundId = await CreateBudgetWithFund();
-    await CreateAccount(fundId, balance.Amount, balance.Currency);
+    await CreateBudget();
+    await CreateAccount( balance.Amount, balance.Currency);
 
-    var result = await mediator.Send(new BudgetRequest<FundDto>(userId));
-
-    result.Should().HaveCount(1);
-    var fund = result.First();
-    fund.Balance.Should().BeEquivalentTo(new Dictionary<string, decimal>() { { balance.Currency, balance.Amount } });
+    var budgetBalance = await mediator.Send(new BalanceRequest(userId));
+    budgetBalance.Unallocated.Should().BeEquivalentTo(new Dictionary<string, decimal>() { { balance.Currency, balance.Amount } });
   }
 }

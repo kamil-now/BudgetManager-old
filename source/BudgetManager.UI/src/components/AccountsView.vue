@@ -43,7 +43,6 @@ const { accounts, funds } = storeToRefs(store);
 function onAccountChanged(account: Account, newValue: Account) {
   account.name = newValue.name;
   account.balance = { ...newValue.balance };
-  account.initialFundId = newValue.initialFundId;
 }
 
 function createAccountObject() {

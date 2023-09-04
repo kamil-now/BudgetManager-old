@@ -98,20 +98,4 @@ public class ShouldFail : BaseTest
        "'Initial Amount' must be greater than or equal to '0'."
      );
   }
-
-   [Fact]
-  public async void When_Initial_Amount_Is_Positive_And_Fund_Does_Not_Exist()
-  {
-    await CreateBudget();
-    await AssertFailsValidationAsync(
-      new CreateAccountCommand(
-        userId,
-        "mockAccount",
-        1,
-        "EUR",
-        ""
-        ),
-       "When initial amount is greater than 0, fund id must be defined."
-     );
-  }
 }

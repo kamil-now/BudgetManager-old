@@ -7,23 +7,27 @@ public class Budget
   public IReadOnlyCollection<Account> Accounts => _accounts.AsReadOnly();
   public IReadOnlyCollection<Fund> Funds => _funds.AsReadOnly();
   public IReadOnlyCollection<MoneyOperation> Operations => _operations.AsReadOnly();
+  public Balance Unallocated => _unallocated; // TODO make readonly
 
   private readonly List<MoneyOperation> _operations;
   private readonly List<Account> _accounts;
   private readonly List<Fund> _funds;
   private UserSettings _userSettings;
+  private Balance _unallocated;
 
   public Budget(
     UserSettings userSettings,
     IEnumerable<Account> accounts,
     IEnumerable<Fund> funds,
-    IEnumerable<MoneyOperation> operations
+    IEnumerable<MoneyOperation> operations,
+    Balance unallocated
     )
   {
     _userSettings = userSettings;
     _accounts = accounts.ToList();
     _funds = funds.ToList();
     _operations = operations.ToList();
+    _unallocated = unallocated;
   }
 
   public void UpdateUserSettings(IEnumerable<string> accountsOrder, IEnumerable<string> fundsOrder)
@@ -64,16 +68,13 @@ public class Budget
     return (T)operation;
   }
 
-  public string AddAccount(string accountName, string? fundId, Money initialBalance)
+  public string AddAccount(string accountName, Money initialBalance)
   {
     var id = Guid.NewGuid().ToString();
     var account = new Account(id, accountName, initialBalance.Currency);
     account.Add(initialBalance);
+    _unallocated.Add(initialBalance);
     _accounts.Add(account);
-    if (initialBalance.Amount > 0)
-    {
-      _funds.First(x => x.Id == fundId).Add(initialBalance);
-    }
     return id;
   }
   public Account RenameAccount(string accountId, string newName)
@@ -124,7 +125,7 @@ public class Budget
         break;
       case Income op:
         _accounts.First(x => x.Id == op.AccountId).Add(operation.Value);
-        _funds.First(x => x.Id == op.FundId).Add(operation.Value);
+        _unallocated.Add(operation.Value);
         break;
       case FundTransfer op:
         _funds.First(x => x.Id == op.SourceFundId).Deduct(op.Value);
@@ -133,6 +134,10 @@ public class Budget
       case AccountTransfer op:
         _accounts.First(x => x.Id == op.SourceAccountId).Deduct(op.Value);
         _accounts.First(x => x.Id == op.TargetAccountId).Add(op.Value);
+        break;
+      case Allocation op:
+        _unallocated.Deduct(op.Value);
+        _funds.First(x => x.Id == op.TargetFundId).Add(op.Value);
         break;
       default:
         throw new InvalidOperationException("Unhandled operation");
@@ -149,7 +154,7 @@ public class Budget
         break;
       case Income op:
         _accounts.First(x => x.Id == op.AccountId).Deduct(operation.Value);
-        _funds.First(x => x.Id == op.FundId).Deduct(operation.Value);
+        _unallocated.Deduct(operation.Value);
         break;
       case FundTransfer op:
         _funds.First(x => x.Id == op.SourceFundId).Add(op.Value);
@@ -158,6 +163,10 @@ public class Budget
       case AccountTransfer op:
         _accounts.First(x => x.Id == op.SourceAccountId).Add(op.Value);
         _accounts.First(x => x.Id == op.TargetAccountId).Deduct(op.Value);
+        break;
+      case Allocation op:
+        _unallocated.Add(op.Value);
+        _funds.First(x => x.Id == op.TargetFundId).Deduct(op.Value);
         break;
       default:
         throw new InvalidOperationException("Unhandled operation");

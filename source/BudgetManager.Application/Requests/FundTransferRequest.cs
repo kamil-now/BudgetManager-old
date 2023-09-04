@@ -47,6 +47,6 @@ public class FundTransferRequestValidator : BudgetRequestValidator<FundTransferR
       {
         var budget = await repository.Get(request.UserId);
         return budget!.FundTransfers?.Any(x => x.Id == request.FundTransferId) ?? false;
-      }).WithMessage("FundTransfer with a given id does not exist in the budget");
+      }).WithMessage("FundTransfer with a given id does not exist in the budget.");
   }
 }

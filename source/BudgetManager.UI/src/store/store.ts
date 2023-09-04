@@ -9,7 +9,7 @@ import axios from 'axios';
 import { defineStore, DefineStoreOptions, Store } from 'pinia';
 import { createAccountRequest, deleteAccountRequest, updateAccountRequest } from '../api/account-requests';
 import { fetchBudgetRequest } from '../api/fetch-budget-request';
-import { createFundRequest, deleteFundRequest, getFundRequest, updateFundRequest } from '../api/fund-requests';
+import { createFundRequest, deleteFundRequest, updateFundRequest } from '../api/fund-requests';
 
 export type AppState = {
   isLoading: boolean;
@@ -103,14 +103,8 @@ export const APP_STORE: DefineStoreOptions<
     
     async createNewAccount(account: Account) {
       await Utils.runAsyncOperation(this, async (state) => {
-        const id = await createAccountRequest(account, account.initialFundId);
+        const id = await createAccountRequest(account);
         state.accounts.unshift({ ...account, id });
-        if (account.balance.amount > 0) {
-          const fund = state.funds.find(x => x.id === account.initialFundId);
-          if (fund) {
-            state.funds[state.funds.indexOf(fund)] = await getFundRequest(fund);
-          }
-        }
         this.fetchBudget(); // TODO fetch only affected funds/accounts 
         this.updateUserSettings();
       });

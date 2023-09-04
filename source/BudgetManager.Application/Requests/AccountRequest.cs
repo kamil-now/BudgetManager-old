@@ -38,6 +38,6 @@ public class AccountRequestValidator : BudgetRequestValidator<AccountRequest>
       {
         var budget = await repository.Get(request.UserId);
         return budget!.Accounts?.Any(x => x.Id == request.AccountId) ?? false;
-      }).WithMessage("Account with a given id does not exist in the budget");
+      }).WithMessage("Account with a given id does not exist in the budget.");
   }
 }

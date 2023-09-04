@@ -3,6 +3,7 @@ namespace CreateFundTransferCommandTests;
 using System.Threading.Tasks;
 using BudgetManager.Application.Commands;
 using BudgetManager.Domain.Models;
+using Castle.Components.DictionaryAdapter.Xml;
 using Xunit.Abstractions;
 
 public class ShouldFail : BaseTest
@@ -48,8 +49,9 @@ public class ShouldFail : BaseTest
   public async void When_Target_Fund_Does_Not_Exist()
   {
     var defaultFundId = await CreateBudgetWithFund();
-    var accountId = await CreateAccount("EUR");
-    await CreateIncome(new Money(1, "EUR"), accountId, defaultFundId);
+    var balance = new Money(1, "EUR");
+    var accountId = await CreateAccount(balance);
+    await CreateIncome(balance, accountId, defaultFundId);
     await AssertFailsValidationAsync(
       _factory.CreateWithInvalidTargetFundId(userId, defaultFundId),
       "Target Fund with id 'invalid id' does not exist in the budget."
@@ -141,7 +143,7 @@ public class ShouldFail : BaseTest
     var sourceFundId = await CreateFund();
     if (sourceFundBalance.HasValue)
     {
-      var accountId = await CreateAccount();
+      var accountId = await CreateAccount(sourceFundBalance.Value);
       await CreateIncome(sourceFundBalance.Value, accountId, sourceFundId);
     }
     

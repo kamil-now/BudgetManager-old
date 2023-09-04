@@ -19,7 +19,6 @@
           </div>
           <div class="incomes-view_body-right">
             <span class="operation-title">{{ data.title }}</span>
-            <span>{{ getFundName(data.fundId) }}</span>
           </div>
         </div>
       </template>
@@ -48,14 +47,9 @@ const { incomes, accounts, funds } = storeToRefs(store);
 function getAccountName(accountId: string) {
   return accounts.value.find(x => x.id === accountId)?.name;
 }
-// TODO extend DTO instead
-function getFundName(fundId: string) {
-  return funds.value.find(x => x.id === fundId)?.name;
-}
 
 function onIncomeChanged(income: Income, newValue: Income) {
   income.accountId = newValue.accountId;
-  income.fundId = newValue.fundId;
   income.createdDate = newValue.createdDate;
   income.title = newValue.title;
   income.value = newValue.value;

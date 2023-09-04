@@ -34,12 +34,12 @@
             @mouseenter="hover = data"
             @mouseleave="hover = null"
           >
-            <template v-if="editing !== data">
+            <div class="list-view_body-content" v-if="editing !== data">
               <slot name="content" :data="data"></slot>
-            </template>
-            <template v-else>
+            </div>
+            <div class="list-view_body-editor" v-else>
               <slot name="editor" :data="data"></slot>
-            </template>
+            </div>
             <div style="position: absolute; right: 0; display: flex;">
               <Button
                 v-if="hover === data && editing !== data"
@@ -170,9 +170,16 @@ $header-column-width: 2rem;
     justify-content: end;
   }
   &_body {
+    width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    &-content {
+      width: 100%;
+    }
+    &-editor {
+      padding-right: 6rem; // for 2 3rem width floating action buttons
+    }
   }
   &_content-column {
     padding: 0.5rem !important;

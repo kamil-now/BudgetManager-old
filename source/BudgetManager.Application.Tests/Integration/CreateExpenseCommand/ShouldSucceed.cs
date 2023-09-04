@@ -38,7 +38,7 @@ public class ShouldSucceed : BaseTest
     var accountId = await CreateAccount(expense.Currency);
     var fundId = await CreateFund();
     await CreateIncome(income, accountId, fundId);
-    var expenseId = await CreateExpense(expense, accountId, fundId);
+    await CreateExpense(expense, accountId, fundId);
 
     var account = await mediator.Send(new AccountRequest(userId, accountId));
     var fund = await mediator.Send(new FundRequest(userId, fundId));

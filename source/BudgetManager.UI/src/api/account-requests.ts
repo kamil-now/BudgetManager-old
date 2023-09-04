@@ -1,14 +1,13 @@
 import { Account } from '@/models/account';
 import axios, { AxiosResponse } from 'axios';
 
-export async function createAccountRequest(account: Account, fundId?: string): Promise<string> {
+export async function createAccountRequest(account: Account): Promise<string> {
   return axios.post<string>(
     'api/account', 
     {
       name: account.name,
       initialAmount: account.balance.amount,
       currency: account.balance.currency,
-      fundId
     }
   ).then((response: AxiosResponse<string>) => response.data);
 }
