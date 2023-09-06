@@ -5,6 +5,9 @@
       <FundsView/>
     </div>
     <div class="budget-page_panel">
+      <BalanceView />
+      <Divider />
+      <AllocationsView />
       <IncomesView />
       <ExpensesView />
     </div>
@@ -15,6 +18,8 @@
 </template>
 
 <script setup lang="ts">
+import BalanceView from '@/components/BalanceView.vue';
+import AllocationsView from '@/components/AllocationsView.vue';
 import AccountsView from '@/components/AccountsView.vue';
 import FundsView from '@/components/FundsView.vue';
 import ExpensesView from '@/components/ExpensesView.vue';

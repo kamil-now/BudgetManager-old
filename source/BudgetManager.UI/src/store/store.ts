@@ -10,16 +10,19 @@ import { defineStore, DefineStoreOptions, Store } from 'pinia';
 import { createAccountRequest, deleteAccountRequest, updateAccountRequest } from '../api/account-requests';
 import { fetchBudgetRequest } from '../api/fetch-budget-request';
 import { createFundRequest, deleteFundRequest, updateFundRequest } from '../api/fund-requests';
+import { Allocation } from '@/models/allocation';
+import { createAllocationRequest, deleteAllocationRequest, updateAllocationRequest } from '@/api/allocation-requests';
 
 export type AppState = {
   isLoading: boolean;
   isLoggedIn: boolean;
   isNewUser: boolean,
-  balance?: Balance,
+  budgetBalance: { balance: Balance, unallocated: Balance },
   accounts: Account[],
   funds: Fund[],
   incomes: Income[],
   expenses: Expense[],
+  allocations: Allocation[]
 };
 export type AppGetters = {
   // findIndexById: (state: AppState) => (id: string) => number;
@@ -45,6 +48,11 @@ export type AppActions = {
   createNewExpense(expense: Expense): void,
   updateExpense(expense: Expense): void;
   deleteExpense(expense: Expense): void;
+
+  
+  createNewAllocation(allocation: Allocation): void,
+  updateAllocation(allocation: Allocation): void;
+  deleteAllocation(allocation: Allocation): void;
 };
 export type AppStore = Store<string, AppState, AppGetters, AppActions>;
 
@@ -56,6 +64,8 @@ export const getInitialAppState: () => AppState = () => ({
   funds: [],
   incomes: [],
   expenses: [],
+  allocations: [],
+  budgetBalance: { balance: {} as Balance, unallocated: {} as Balance }
 });
 
 export const APP_STORE: DefineStoreOptions<
@@ -79,7 +89,7 @@ export const APP_STORE: DefineStoreOptions<
         fetchBudgetRequest()
           .then(res => {
             if (res !== null) {
-              this.balance = res.balance;
+              this.budgetBalance = res.balance;
               this.accounts = res.accounts;
               this.funds = res.funds;
               this.incomes = res.incomes;
@@ -222,6 +232,37 @@ export const APP_STORE: DefineStoreOptions<
       await Utils.runAsyncOperation(this, (state) => 
         deleteIncomeRequest(income)
           .then(() => state.incomes.splice(state.incomes.indexOf(income), 1))
+      );
+    },
+    async createNewAllocation(
+      allocation: Allocation,
+    ) {
+      await Utils.runAsyncOperation(this, (state) => 
+        createAllocationRequest(allocation)
+          .then(id => {
+            state.allocations.unshift({ ...allocation, id }); 
+            this.fetchBudget(); // TODO fetch only affected funds/accounts 
+          })
+      );
+    },
+    async updateAllocation(allocation: Allocation) {
+      await Utils.runAsyncOperation(this, (state) => 
+        updateAllocationRequest(allocation)
+          .then(allocation => {
+            const fromState = state.allocations.find(x => x.id === allocation.id);
+            if (!fromState) {
+              throw new Error('Invalid operation - account does not exist');
+            }
+            const index = state.allocations.indexOf(fromState);
+            state.allocations[index] = allocation; 
+            this.fetchBudget(); // TODO fetch only affected funds/accounts 
+          })
+      );
+    },
+    async deleteAllocation(allocation: Allocation) {
+      await Utils.runAsyncOperation(this, (state) => 
+        deleteAllocationRequest(allocation)
+          .then(() => state.allocations.splice(state.allocations.indexOf(allocation), 1))
       );
     },
   }

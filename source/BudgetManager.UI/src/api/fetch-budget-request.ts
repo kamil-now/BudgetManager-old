@@ -9,12 +9,12 @@ import axios, { AxiosError } from 'axios';
 export function fetchBudgetRequest(): Promise<{
   accounts: Account[],
   funds: Fund[],
-  balance: Balance,
+  balance: {balance: Balance, unallocated: Balance},
   incomes: Income[],
   expenses: Expense[],
 } | null> {
 
-  return axios.get<Balance>('/api/balance')
+  return axios.get<{balance: Balance, unallocated: Balance}>('/api/balance')
     .then(res => 
       Promise.all(
         [

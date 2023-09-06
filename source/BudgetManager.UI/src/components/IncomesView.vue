@@ -7,7 +7,7 @@
       :save="createNewIncome"
       :update="updateIncome"
       :remove="deleteIncome"
-      :allowAdd="funds.length > 0 && accounts.length > 0"
+      :allowAdd="accounts.length > 0"
       :onReorder="updateUserSettings"
     >
       <template #content="{ data }">
@@ -42,7 +42,7 @@ import { storeToRefs } from 'pinia';
 const store = useAppStore();
 const { createNewIncome, updateIncome, deleteIncome, updateUserSettings } = store;
 
-const { incomes, accounts, funds } = storeToRefs(store);
+const { incomes, accounts } = storeToRefs(store);
 // TODO extend DTO instead
 function getAccountName(accountId: string) {
   return accounts.value.find(x => x.id === accountId)?.name;
@@ -59,11 +59,9 @@ function onIncomeChanged(income: Income, newValue: Income) {
 
 function createIncomeObject() {
   const defaultAccount = store.accounts[0];
-  const defaultFund = store.funds[0];
   return  {
     date: new Date().toDateString(),
     accountId: defaultAccount.id,
-    fundId: defaultFund.id,
     value: { 
       currency: defaultAccount.balance.currency,
       amount: 0

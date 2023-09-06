@@ -9,7 +9,7 @@
       :update="updateAccount"
       :remove="deleteAccount"
       :onReorder="updateUserSettings"
-      :allowAdd="funds.length > 0"
+      :allowAdd="true"
     >
       <template #content="{ data }">
         <div class="accounts-view_body">
@@ -38,7 +38,7 @@ import { storeToRefs } from 'pinia';
 const store = useAppStore();
 const { createNewAccount, updateAccount, deleteAccount, updateUserSettings } = store;
 
-const { accounts, funds } = storeToRefs(store);
+const { accounts } = storeToRefs(store);
 
 function onAccountChanged(account: Account, newValue: Account) {
   account.name = newValue.name;
