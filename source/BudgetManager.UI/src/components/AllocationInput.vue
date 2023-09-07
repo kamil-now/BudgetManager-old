@@ -22,7 +22,7 @@
     <InputNumber 
       v-if="selectedFund && budgetBalance"
       class="p-inputtext-sm"
-      id="accountBalance"
+      id="allocationValue"
       v-model="allocationValue" 
       mode="currency"
       currencyDisplay="code"
@@ -34,7 +34,7 @@
     />
     <Dropdown
       class="p-inputtext-sm"
-      id="accountCurrency" 
+      id="allocationCurrency" 
       v-model="allocationCurrency" 
       :options="currencyCodeList" 
     />
@@ -106,7 +106,7 @@ const allocationCurrency = computed({
   set: (newValue) => {
     emit('changed', {
       ...props.allocation,
-      balance: {
+      value: {
         ...props.allocation.value,
         currency: newValue 
       }

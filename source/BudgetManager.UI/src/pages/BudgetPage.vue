@@ -1,18 +1,16 @@
 <template>
   <Toast />
   <div class="budget-page">
-    <div class="budget-page_panel">
-      <FundsView/>
-    </div>
-    <div class="budget-page_panel">
+    <div class="budget-page_header">
       <BalanceView />
       <Divider />
+    </div>
+    <div class="budget-page_content">
+      <FundsView/>
+      <AccountsView/>
       <AllocationsView />
       <IncomesView />
       <ExpensesView />
-    </div>
-    <div class="budget-page_panel">
-      <AccountsView/>
     </div>
   </div>
 </template>
@@ -52,19 +50,31 @@ onMounted(() => {
 </script>
 
 <style lang="scss">
-.budget-page {
-  max-height: 100%;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-
-  overflow: hidden;
-  justify-content: space-around;
-
+.budget-page {  
   height: 100%;
   width: 100%;
   margin: 3rem;
+  padding: 1rem;
   @extend .card;
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  &_header {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding-left: 1rem;
+  }
+  &_content {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 50px;
+  }
+
+  overflow: hidden;
+
+
   // width: map-get($breakpoints, 'xs');
   // @include media-breakpoint('sm', 'down') {
   //   margin: 0;
