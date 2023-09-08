@@ -57,9 +57,11 @@ builder.Services.AddSwaggerGen(options =>
   options.OperationFilter<AuthenticationOperationFilter>();
 #endif
 });
+var appConfig = builder.Configuration.GetSection("AppConfig").Get<AppConfig>() ?? throw new Exception("Missing app configuration.");
+var dbConnectionString = builder.Configuration.GetConnectionString("Database") ?? throw new Exception("Missing database connection string.");
 
-builder.Services.AddApplicationServices(builder.Configuration.GetSection("AppConfig").Get<AppConfig>());
-builder.Services.AddDatabaseConnection(builder.Configuration.GetConnectionString("Database"));
+builder.Services.AddApplicationServices(appConfig);
+builder.Services.AddDatabaseConnection(dbConnectionString);
 
 builder.Services.AddCors(
 options => options.AddDefaultPolicy(
@@ -189,12 +191,21 @@ app.MapCRUD<ExpenseDto, CreateExpenseCommand, ExpenseRequest, UpdateExpenseComma
 );
 
 app.MapCRUD<FundTransferDto, CreateFundTransferCommand, FundTransferRequest, UpdateFundTransferCommand, DeleteOperationCommand<FundTransfer>>(
-  "fundTransfer",
+  "fund-transfer",
   (ctx, create) => create with { UserId = ctx.GetUserId() },
   (ctx, accountId) => new FundTransferRequest(ctx.GetUserId(), accountId),
   (ctx, update) => update with { UserId = ctx.GetUserId() },
   (ctx, accountId) => new DeleteOperationCommand<FundTransfer>(ctx.GetUserId(), accountId)
 );
+
+app.MapCRUD<AccountTransferDto, CreateAccountTransferCommand, AccountTransferRequest, UpdateAccountTransferCommand, DeleteOperationCommand<AccountTransfer>>(
+  "account-transfer",
+  (ctx, create) => create with { UserId = ctx.GetUserId() },
+  (ctx, accountId) => new AccountTransferRequest(ctx.GetUserId(), accountId),
+  (ctx, update) => update with { UserId = ctx.GetUserId() },
+  (ctx, accountId) => new DeleteOperationCommand<AccountTransfer>(ctx.GetUserId(), accountId)
+);
+
 
 app.MapCRUD<AllocationDto, CreateAllocationCommand, AllocationRequest, UpdateAllocationCommand, DeleteOperationCommand<Allocation>>(
   "allocation",

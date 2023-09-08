@@ -1,16 +1,31 @@
 <template>
   <Toast />
-  <div class="budget-page">
-    <div class="budget-page_header">
+  <div v-if="!failed" class="budget-page">
+    <!-- <div class="budget-page_header">
       <BalanceView />
-      <Divider />
-    </div>
+    </div> -->
     <div class="budget-page_content">
-      <FundsView/>
-      <AccountsView/>
-      <AllocationsView />
-      <IncomesView />
-      <ExpensesView />
+      <div class="budget-page_content-panel">
+        <TabView class="budget-page_content-panel_tab-view">
+          <TabPanel header="Funds">
+            <BalanceView />
+            <FundsView/>
+          </TabPanel>
+          <TabPanel header="Accounts">
+            <BalanceView />
+            <AccountsView/>
+          </TabPanel>
+        </TabView>
+      </div>
+      <div class="budget-page_content-panel">
+        <IncomesView />
+        <AllocationsView />
+        <ExpensesView />
+      </div>
+      <div class="budget-page_content-panel">
+        <FundTransfersView />
+        <AccountTransfersView />
+      </div>
     </div>
   </div>
 </template>
@@ -18,19 +33,22 @@
 <script setup lang="ts">
 import BalanceView from '@/components/BalanceView.vue';
 import AllocationsView from '@/components/AllocationsView.vue';
+import FundTransfersView from '@/components/FundTransfersView.vue';
+import AccountTransfersView from '@/components/AccountTransfersView.vue';
 import AccountsView from '@/components/AccountsView.vue';
 import FundsView from '@/components/FundsView.vue';
 import ExpensesView from '@/components/ExpensesView.vue';
 import IncomesView from '@/components/IncomesView.vue';
 import { useAppStore } from '@/store/store';
 import { storeToRefs } from 'pinia';
-import { onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import axios, { AxiosError } from 'axios';
 
 const store = useAppStore();
 const { isNewUser } = storeToRefs(store);
 const toast = useToast();
+const failed = ref<boolean>(false);
 onMounted(() => {
   if (isNewUser) {
     store.createBudget();
@@ -38,12 +56,34 @@ onMounted(() => {
   
   axios.interceptors.response.use(
     response => response,
-    (error: AxiosError) => toast.add({ 
-      severity: 'error',
-      summary: error.request.statusText, 
-      detail: (error.response?.data as string[]).join('\n'),
-      life: 3000 
-    })
+    (error: AxiosError | Error) => {
+      console.error(error);
+      let errorMessage: string;
+      
+      if (typeof (error as AxiosError).response === 'string') {
+        toast.add({ 
+          severity: 'error',
+          summary: 'Unexpected error.',
+          detail: 'Please reload the page.',
+        });
+        failed.value = true;
+        return;
+      }
+      const axiosErrorMessage = (error as AxiosError).response?.data  as string[];
+      if (Array.isArray(axiosErrorMessage)) {
+        errorMessage = axiosErrorMessage.join('\n');
+      } else {
+        errorMessage = (error as Error).message;
+      }
+      if (errorMessage.includes('Budget already exists.')) {
+        return;
+      }
+      toast.add({ 
+        severity: 'error',
+        summary: (error as AxiosError).request ? (error as AxiosError).request.statusText : error.name, 
+        detail: errorMessage,
+      });
+    }
   );
 });
 
@@ -67,9 +107,23 @@ onMounted(() => {
     padding-left: 1rem;
   }
   &_content {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 50px;
+    display: flex;
+    gap: 1rem;
+    height: 100%;
+    flex-wrap: wrap;
+    overflow: auto;
+    &-panel {
+      height: 100%;
+      width: 32%;
+      min-width: 300px;
+      > * {
+        overflow: auto;
+        max-height: 33%;
+      }
+      &_tab-view {
+        max-height: 100%;
+      }
+    }
   }
 
   overflow: hidden;
@@ -86,15 +140,6 @@ onMounted(() => {
   //   width: map-get($breakpoints, 'md')
   // }
 
-  &_panel {
-    height: 100%;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: start;
-    padding: 1rem;
-  }
-
   .p-tabview-nav {
     display: flex;
     justify-content: space-around;
@@ -110,6 +155,9 @@ onMounted(() => {
 
   .p-tabview {
     width: 100%;
+  }
+  .p-tabview-panels {
+    padding: 0;
   }
 }
 </style>

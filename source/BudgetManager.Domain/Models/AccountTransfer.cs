@@ -23,7 +23,6 @@ public class AccountTransfer : MoneyOperation
   public void Update(
     string? sourceAccountId, 
     string? targetAccountId, 
-    string? category, 
     string? title, 
     Money? value, 
     string? date, 

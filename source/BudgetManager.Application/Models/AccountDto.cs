@@ -1,1 +1,1 @@
-public record AccountDto(string Id, string Name, Money Balance);
+public record AccountDto(string Id, string Name, Money Balance, Money InitialBalance);

@@ -71,25 +71,31 @@ public class Budget
   public string AddAccount(string accountName, Money initialBalance)
   {
     var id = Guid.NewGuid().ToString();
-    var account = new Account(id, accountName, initialBalance.Currency);
-    account.Add(initialBalance);
+    var account = new Account(id, accountName, initialBalance);
     _unallocated.Add(initialBalance);
     _accounts.Add(account);
     return id;
   }
-  public Account RenameAccount(string accountId, string newName)
+
+  public Account UpdateAccount(string accountId, string? name, Money? balance)
   {
     var account = _accounts.First(x => x.Id == accountId);
-    account.Name = newName;
+    if (name is not null)
+    {
+      account.Name = name;
+    }
+
+    if (balance is not null)
+    {
+      _unallocated.Deduct(account.InitialBalance);
+      account.InitialBalance = (Money)balance;
+      _unallocated.Add(account.InitialBalance);
+    }
     return account;
   }
   public void RemoveAccount(string accountId)
   {
     var account = _accounts.First(x => x.Id == accountId);
-    if (account.Balance.Amount > 0)
-    {
-      throw new InvalidOperationException("Account cannot be deleted if its balance is greater than 0");
-    }
     account.IsDeleted = true;
   }
 
@@ -108,10 +114,6 @@ public class Budget
   public void RemoveFund(string fundId)
   {
     var fund = _funds.First(x => x.Id == fundId);
-    if (fund.Balance.Values.Any(x => x > 0))
-    {
-      throw new InvalidOperationException("Fund cannot be deleted if its balance is greater than 0");
-    }
     fund.IsDeleted = true;
   }
 

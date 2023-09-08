@@ -18,6 +18,7 @@ export async function updateAccountRequest(account: Account): Promise<Account> {
     {
       accountId: account.id,
       name: account.name,
+      initialBalance: account.initialBalance
     }
   ).then(res => res.data);
 }

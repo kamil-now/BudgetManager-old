@@ -4,7 +4,7 @@ using AutoMapper;
 using BudgetManager.Domain.Models;
 using BudgetManager.Infrastructure;
 
-public record UpdateAccountCommand(string UserId, string AccountId, string Name) : IRequest<AccountDto>, IBudgetCommand;
+public record UpdateAccountCommand(string UserId, string AccountId, string Name, Money InitialBalance) : IRequest<AccountDto>, IBudgetCommand;
 
 public class UpdateAccountCommandHandler : BudgetCommandHandler<UpdateAccountCommand, AccountDto>
 {
@@ -14,7 +14,7 @@ public class UpdateAccountCommandHandler : BudgetCommandHandler<UpdateAccountCom
   }
 
   public override AccountDto ModifyBudget(UpdateAccountCommand command, Budget budget)
-   => _mapper.Map<AccountDto>(budget.RenameAccount(command.AccountId, command.Name));
+   => _mapper.Map<AccountDto>(budget.UpdateAccount(command.AccountId, command.Name, command.InitialBalance));
 }
 
 public class UpdateAccountCommandValidator : BudgetCommandValidator<UpdateAccountCommand>

@@ -12,7 +12,7 @@ public class MappingProfile : Profile
         new Account(
           src.Id!,
           src.Name!,
-          src.Currency!
+          new Money(src.InitialBalance, src.Currency!)
           )
         ).ForMember(x => x.Balance,
           opt => opt.MapFrom(src => new Money(src.Balance, src.Currency!))
@@ -37,7 +37,7 @@ public class MappingProfile : Profile
         );
         return budget;
       }).ForAllMembers(opt => opt.Ignore());
-    
+
     CreateMap<UserSettingsEntity, UserSettings>();
 
     CreateMap<ExpenseEntity, Expense>()
@@ -121,7 +121,8 @@ public class MappingProfile : Profile
 
     CreateMap<Account, AccountEntity>()
       .ForMember(x => x.Currency, opt => opt.MapFrom(src => src.Balance.Currency))
-      .ForMember(x => x.Balance, opt => opt.MapFrom(src => src.Balance.Amount));
+      .ForMember(x => x.Balance, opt => opt.MapFrom(src => src.Balance.Amount))
+      .ForMember(x => x.InitialBalance, opt => opt.MapFrom(src => src.InitialBalance.Amount));
 
     CreateMap<Budget, BudgetEntity>()
       .ForMember(x => x.UserId, opt => opt.Ignore())
@@ -156,14 +157,14 @@ public class MappingProfile : Profile
             )
           )
       )
-      .ForMember(x => x.AccountTransfers, opt => 
+      .ForMember(x => x.AccountTransfers, opt =>
         opt.MapFrom((src, _, __, ctx) =>
           ctx.Mapper.Map<IEnumerable<AccountTransferEntity>>(
             src.Operations.Where(x => x is AccountTransfer)?.Select(x => x as AccountTransfer).ToArray()
             )
           )
       )
-      .ForMember(x => x.Allocations, opt => 
+      .ForMember(x => x.Allocations, opt =>
         opt.MapFrom((src, _, __, ctx) =>
           ctx.Mapper.Map<IEnumerable<AllocationEntity>>(
             src.Operations.Where(x => x is Allocation)?.Select(x => x as Allocation).ToArray()
@@ -213,7 +214,10 @@ public class MappingProfile : Profile
 
     CreateMap<FundTransfer, FundTransferDto>()
       .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString()));
-      
+
+    CreateMap<AccountTransfer, AccountTransferDto>()
+      .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString()));
+
     CreateMap<Allocation, AllocationDto>()
       .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString()));
 

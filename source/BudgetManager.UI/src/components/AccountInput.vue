@@ -9,7 +9,6 @@
     />
     <InputNumber
       class="p-inputtext-sm"
-      :disabled="!!account.id"
       id="accountBalance"
       v-model="accountBalance" 
       mode="currency"
@@ -20,8 +19,7 @@
       :maxFractionDigits="2"
       :max="1000000000"
     />
-    <Dropdown 
-      :disabled="!!account.id"
+    <Dropdown
       class="p-inputtext-sm"
       id="accountCurrency" 
       v-model="accountCurrency" 
@@ -58,24 +56,24 @@ const accountName = computed({
   }
 });
 const accountBalance = computed({
-  get: () =>  props.account.balance.amount,
+  get: () =>  props.account.initialBalance.amount,
   set: (newValue) => {
     emit('changed', {
       ...props.account,
       balance: {
-        ...props.account.balance,
+        ...props.account.initialBalance,
         amount: newValue
       }
     });
   }
 });
 const accountCurrency = computed({
-  get: () => props.account.balance.currency,
+  get: () => props.account.initialBalance.currency,
   set: (newValue) => {
     emit('changed', {
       ...props.account,
       balance: {
-        ...props.account.balance,
+        ...props.account.initialBalance,
         currency: newValue 
       }
     });

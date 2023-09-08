@@ -3,31 +3,28 @@
   <div class="list-view">
     <DataTable 
       :value="items" 
-      :editMode="'row'" 
+      :editMode="'row'"
       dataKey="id"
       columnResizeMode="expand"
       scrollable
       scrollHeight="flex"
       @rowReorder="onRowReorder" 
     >
-    <!-- v-if="allowReorder" -->
-      <Column 
-        rowReorder 
-        header-class="list-view_header-column"
-        :header="header"
-      />
+      <template #header> 
+        <div class="list-view_header">
+          <span>{{ header }}</span>
+          <Button
+            v-if="allowAdd && !editing"
+            icon="pi pi-plus" 
+            text 
+            rounded 
+            aria-label="Add" 
+            @click="add()" 
+          />
+        </div>
+      </template>
+      <Column v-if="allowReorder" rowReorder />
       <Column class="list-view_content-column">
-        <template #header>
-          <div v-if="allowAdd && !editing" class="list-view_header">
-            <Button
-              icon="pi pi-plus" 
-              text 
-              rounded 
-              aria-label="Add" 
-              @click="add()" 
-            />
-          </div>
-        </template>
         <template #body="{ data, index }">
           <div 
             class="list-view_body"
@@ -165,9 +162,9 @@ $header-column-width: 2rem;
   }
   &_header {
     width: 100%;
-    align-items: center;
     display: flex;
-    justify-content: end;
+    align-items: center;
+    justify-content: space-between;
   }
   &_body {
     width: 100%;
@@ -193,8 +190,14 @@ $header-column-width: 2rem;
   .p-datatable-wrapper {
     overflow-x: hidden;
   }
+  .p-datatable-header {
+    border-top: 0;
+  }
   .p-button {
     min-width: 3rem;
+  }
+  th {
+    display: none;
   }
 }
 </style>

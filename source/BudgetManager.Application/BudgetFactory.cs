@@ -12,6 +12,7 @@ public class BudgetFactory : IBudgetFactory
       Accounts = new List<AccountEntity>(),
       Funds = new List<FundEntity>(),
       FundTransfers = new List<FundTransferEntity>(),
+      AccountTransfers = new List<AccountTransferEntity>(),
       Incomes = new List<IncomeEntity>(),
       Expenses = new List<ExpenseEntity>(),
     };

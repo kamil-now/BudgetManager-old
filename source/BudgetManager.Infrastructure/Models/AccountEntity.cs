@@ -6,5 +6,6 @@ public class AccountEntity
   public string? Name { get; set; }
   public string? Currency { get; set; }
   public decimal Balance { get; set; }
+  public decimal InitialBalance { get; set; }
   public bool IsDeleted { get; set; }
 }

@@ -22,7 +22,7 @@ public class Expense : MoneyOperation
 
   public void Update(string? accountId, string? title, Money? value, string? date, string? description)
   {
-    base.Update(title, value, date, description);
+    Update(title, value, date, description);
     if (accountId is not null)
     {
       AccountId = accountId;

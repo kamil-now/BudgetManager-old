@@ -50,6 +50,10 @@ function createAccountObject() {
     balance: {
       amount: 0,
       currency: getDefaultCurrency() 
+    },
+    initialBalance: {
+      amount: 0,
+      currency: getDefaultCurrency() 
     }
   };
 }

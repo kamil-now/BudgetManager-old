@@ -12,6 +12,10 @@ import { fetchBudgetRequest } from '../api/fetch-budget-request';
 import { createFundRequest, deleteFundRequest, updateFundRequest } from '../api/fund-requests';
 import { Allocation } from '@/models/allocation';
 import { createAllocationRequest, deleteAllocationRequest, updateAllocationRequest } from '@/api/allocation-requests';
+import { AccountTransfer } from '@/models/account-transfer';
+import { FundTransfer } from '@/models/fund-transfer';
+import { createAccountTransferRequest, updateAccountTransferRequest, deleteAccountTransferRequest } from '@/api/account-transfer-requests';
+import { createFundTransferRequest, updateFundTransferRequest, deleteFundTransferRequest } from '@/api/fund-transfer-requests';
 
 export type AppState = {
   isLoading: boolean;
@@ -22,7 +26,9 @@ export type AppState = {
   funds: Fund[],
   incomes: Income[],
   expenses: Expense[],
-  allocations: Allocation[]
+  allocations: Allocation[],
+  fundTransfers: FundTransfer[],
+  accountTransfers: AccountTransfer[]
 };
 export type AppGetters = {
   // findIndexById: (state: AppState) => (id: string) => number;
@@ -49,10 +55,17 @@ export type AppActions = {
   updateExpense(expense: Expense): void;
   deleteExpense(expense: Expense): void;
 
+  createNewAllocation(accountTransfer: Allocation): void,
+  updateAllocation(accountTransfer: Allocation): void;
+  deleteAllocation(accountTransfer: Allocation): void;
+
+  createNewFundTransfer(fundTransfer: FundTransfer): void,
+  updateFundTransfer(fundTransfer: FundTransfer): void;
+  deleteFundTransfer(fundTransfer: FundTransfer): void;
   
-  createNewAllocation(allocation: Allocation): void,
-  updateAllocation(allocation: Allocation): void;
-  deleteAllocation(allocation: Allocation): void;
+  createNewAccountTransfer(accountTransfer: AccountTransfer): void,
+  updateAccountTransfer(accountTransfer: AccountTransfer): void;
+  deleteAccountTransfer(accountTransfer: AccountTransfer): void;
 };
 export type AppStore = Store<string, AppState, AppGetters, AppActions>;
 
@@ -65,6 +78,8 @@ export const getInitialAppState: () => AppState = () => ({
   incomes: [],
   expenses: [],
   allocations: [],
+  fundTransfers: [],
+  accountTransfers: [],
   budgetBalance: { balance: {} as Balance, unallocated: {} as Balance }
 });
 
@@ -95,10 +110,15 @@ export const APP_STORE: DefineStoreOptions<
               this.incomes = res.incomes;
               this.expenses = res.expenses;
               this.allocations = res.allocations;
+              this.fundTransfers = res.fundTransfers;
+              this.accountTransfers = res.accountTransfers;
               this.isNewUser = false;
             } else {
               this.isNewUser = true;
             }
+          },
+          (error) => {
+            console.error(error)
           })
       );
     },
@@ -189,7 +209,7 @@ export const APP_STORE: DefineStoreOptions<
           .then(expense => {
             const fromState = state.expenses.find(x => x.id === expense.id);
             if (!fromState) {
-              throw new Error('Invalid operation - account does not exist');
+              throw new Error('Invalid operation - expense does not exist');
             }
             const index = state.expenses.indexOf(fromState);
             state.expenses[index] = expense; 
@@ -198,9 +218,9 @@ export const APP_STORE: DefineStoreOptions<
       );
     },
     async deleteExpense(expense: Expense) {
-      await Utils.runAsyncOperation(this, (state) => 
+      await Utils.runAsyncOperation(this, () => 
         deleteExpenseRequest(expense)
-          .then(() => state.expenses.splice(state.expenses.indexOf(expense), 1))
+          .then(() => this.fetchBudget())// TODO fetch only affected funds/accounts 
       );
     },
 
@@ -221,7 +241,7 @@ export const APP_STORE: DefineStoreOptions<
           .then(income => {
             const fromState = state.incomes.find(x => x.id === income.id);
             if (!fromState) {
-              throw new Error('Invalid operation - account does not exist');
+              throw new Error('Invalid operation - income does not exist');
             }
             const index = state.incomes.indexOf(fromState);
             state.incomes[index] = income; 
@@ -230,9 +250,9 @@ export const APP_STORE: DefineStoreOptions<
       );
     },
     async deleteIncome(income: Income) {
-      await Utils.runAsyncOperation(this, (state) => 
+      await Utils.runAsyncOperation(this, () => 
         deleteIncomeRequest(income)
-          .then(() => state.incomes.splice(state.incomes.indexOf(income), 1))
+          .then(() => this.fetchBudget())// TODO fetch only affected funds/accounts 
       );
     },
     async createNewAllocation(
@@ -252,7 +272,7 @@ export const APP_STORE: DefineStoreOptions<
           .then(allocation => {
             const fromState = state.allocations.find(x => x.id === allocation.id);
             if (!fromState) {
-              throw new Error('Invalid operation - account does not exist');
+              throw new Error('Invalid operation - allocation does not exist');
             }
             const index = state.allocations.indexOf(fromState);
             state.allocations[index] = allocation; 
@@ -261,9 +281,71 @@ export const APP_STORE: DefineStoreOptions<
       );
     },
     async deleteAllocation(allocation: Allocation) {
-      await Utils.runAsyncOperation(this, (state) => 
+      await Utils.runAsyncOperation(this, () => 
         deleteAllocationRequest(allocation)
-          .then(() => state.allocations.splice(state.allocations.indexOf(allocation), 1))
+          .then(() => this.fetchBudget())// TODO fetch only affected funds/accounts 
+      );
+    },
+    async createNewFundTransfer(
+      fundTransfer: FundTransfer,
+    ) {
+      await Utils.runAsyncOperation(this, (state) => 
+        createFundTransferRequest(fundTransfer)
+          .then(id => {
+            state.fundTransfers.unshift({ ...fundTransfer, id }); 
+            this.fetchBudget(); // TODO fetch only affected funds/accounts 
+          })
+      );
+    },
+    async updateFundTransfer(fundTransfer: FundTransfer) {
+      await Utils.runAsyncOperation(this, (state) => 
+        updateFundTransferRequest(fundTransfer)
+          .then(fundTransfer => {
+            const fromState = state.fundTransfers.find(x => x.id === fundTransfer.id);
+            if (!fromState) {
+              throw new Error('Invalid operation - fund transfer does not exist');
+            }
+            const index = state.fundTransfers.indexOf(fromState);
+            state.fundTransfers[index] = fundTransfer; 
+            this.fetchBudget(); // TODO fetch only affected funds/accounts 
+          })
+      );
+    },
+    async deleteFundTransfer(fundTransfer: FundTransfer) {
+      await Utils.runAsyncOperation(this, () => 
+        deleteFundTransferRequest(fundTransfer)
+          .then(() => this.fetchBudget())// TODO fetch only affected funds/accounts 
+      );
+    },
+    async createNewAccountTransfer(
+      accountTransfer: AccountTransfer,
+    ) {
+      await Utils.runAsyncOperation(this, (state) => 
+        createAccountTransferRequest(accountTransfer)
+          .then(id => {
+            state.accountTransfers.unshift({ ...accountTransfer, id }); 
+            this.fetchBudget(); // TODO fetch only affected funds/accounts 
+          })
+      );
+    },
+    async updateAccountTransfer(accountTransfer: AccountTransfer) {
+      await Utils.runAsyncOperation(this, (state) => 
+        updateAccountTransferRequest(accountTransfer)
+          .then(accountTransfer => {
+            const fromState = state.accountTransfers.find(x => x.id === accountTransfer.id);
+            if (!fromState) {
+              throw new Error('Invalid operation - account transfer does not exist');
+            }
+            const index = state.accountTransfers.indexOf(fromState);
+            state.accountTransfers[index] = accountTransfer; 
+            this.fetchBudget(); // TODO fetch only affected funds/accounts 
+          })
+      );
+    },
+    async deleteAccountTransfer(accountTransfer: AccountTransfer) {
+      await Utils.runAsyncOperation(this, () => 
+        deleteAccountTransferRequest(accountTransfer)
+          .then(() => this.fetchBudget())// TODO fetch only affected funds/accounts 
       );
     },
   }
