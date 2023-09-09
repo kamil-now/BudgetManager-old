@@ -7,17 +7,6 @@ public class MappingProfile : Profile
 {
   public MappingProfile()
   {
-    CreateMap<AccountEntity, Account>(MemberList.None)
-      .ConstructUsing(src =>
-        new Account(
-          src.Id!,
-          src.Name!,
-          new Money(src.InitialBalance, src.Currency!)
-          )
-        ).ForMember(x => x.Balance,
-          opt => opt.MapFrom(src => new Money(src.Balance, src.Currency!))
-        );
-
     CreateMap<BudgetEntity, Budget>()
       .ConstructUsing((src, ctx) =>
       {
@@ -62,6 +51,17 @@ public class MappingProfile : Profile
           )
         )
       .ForMember(x => x.Balance, opt => opt.MapFrom(src => new Balance(src.Balance!)));
+
+    CreateMap<AccountEntity, Account>(MemberList.None)
+      .ConstructUsing(src =>
+        new Account(
+          src.Id!,
+          src.Name!,
+          new Balance(src.InitialBalance!)
+          )
+        )
+      .ForMember(x => x.Balance, opt => opt.MapFrom(src => new Balance(src.Balance!)))
+      .ForMember(x => x.InitialBalance, opt => opt.Ignore());
 
     CreateMap<FundTransferEntity, FundTransfer>()
       .IgnoreAllPropertiesWithAnInaccessibleSetter()
@@ -118,11 +118,6 @@ public class MappingProfile : Profile
           src.CreatedDate
           )
         ).ForAllMembers(opt => opt.Ignore());
-
-    CreateMap<Account, AccountEntity>()
-      .ForMember(x => x.Currency, opt => opt.MapFrom(src => src.Balance.Currency))
-      .ForMember(x => x.Balance, opt => opt.MapFrom(src => src.Balance.Amount))
-      .ForMember(x => x.InitialBalance, opt => opt.MapFrom(src => src.InitialBalance.Amount));
 
     CreateMap<Budget, BudgetEntity>()
       .ForMember(x => x.UserId, opt => opt.Ignore())
@@ -181,6 +176,10 @@ public class MappingProfile : Profile
 
     CreateMap<Fund, FundEntity>()
       .ForMember(x => x.Balance, opt => opt.MapFrom(src => new Dictionary<string, decimal>(src.Balance)));
+
+    CreateMap<Account, AccountEntity>()
+      .ForMember(x => x.Balance, opt => opt.MapFrom(src => new Dictionary<string, decimal>(src.Balance)))
+      .ForMember(x => x.InitialBalance, opt => opt.MapFrom(src => new Dictionary<string, decimal>(src.InitialBalance)));
 
     CreateMap<FundTransfer, FundTransferEntity>()
       .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString()))

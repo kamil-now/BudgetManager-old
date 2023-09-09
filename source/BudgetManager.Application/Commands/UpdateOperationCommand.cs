@@ -5,7 +5,7 @@ using AutoMapper;
 using BudgetManager.Domain.Models;
 using BudgetManager.Infrastructure;
 
-public record UpdateOperationCommand<T, TDto>([property: JsonIgnore()] string UserId, string OperationId)
+public record UpdateOperationCommand<T, TDto>([property: JsonIgnore()] string UserId, string Id)
   : IRequest<TDto>, IOperationCommand where T : MoneyOperation;
 
 
@@ -18,14 +18,9 @@ public abstract class UpdateOperationCommandHandler<TCommand, T, TDto>
   }
 
   public override TDto ModifyBudget(TCommand command, Budget budget)
-   => _mapper.Map<TDto>(
-        budget.UpdateOperation<T>(
-          command.OperationId,
-          o => Update(o, command)
-        )
-   );
+    => _mapper.Map<TDto>(budget.UpdateOperation<T>(command.Id, o => Update(o, command)));
 
-   protected abstract void Update(T operation, TCommand command);
+  protected abstract void Update(T operation, TCommand command);
 }
 public class UpdateOperationCommandValidator<T>
   : BudgetCommandValidator<T> where T : IOperationCommand
@@ -35,16 +30,13 @@ public class UpdateOperationCommandValidator<T>
     RuleFor(x => x)
       .MustAsync(async (command, cancellation) =>
       {
-        var budget = await repository.Get(command.UserId);
-        if(budget is null) {
-          throw new InvalidOperationException();
-        }
-        var existsIn = (IEnumerable<MoneyOperationEntity>? operations) => operations?.Any(x => x.Id == command.OperationId) ?? false;
-        return existsIn(budget.Incomes) 
-          || existsIn(budget.Expenses) 
-          || existsIn(budget.FundTransfers)
-          || existsIn(budget.Allocations)
-          || existsIn(budget.AccountTransfers);
-      }).WithMessage(command => $"Operation with a id {command.OperationId} does not exist in the budget");
+        var budget = await repository.Get(command.UserId) ?? throw new InvalidOperationException();
+        bool existsIn(IEnumerable<MoneyOperationEntity>? operations) => operations?.Any(x => x.Id == command.Id) ?? false;
+        return existsIn(budget.Incomes)
+        || existsIn(budget.Expenses)
+        || existsIn(budget.FundTransfers)
+        || existsIn(budget.Allocations)
+        || existsIn(budget.AccountTransfers);
+      }).WithMessage(command => $"Operation with a id {command.Id} does not exist in the budget");
   }
 }

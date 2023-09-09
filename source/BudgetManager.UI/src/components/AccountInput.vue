@@ -7,36 +7,51 @@
       placeholder="Account name"
       v-model="accountName" 
     />
-    <InputNumber
-      class="p-inputtext-sm"
-      id="accountBalance"
-      v-model="accountBalance" 
-      mode="currency"
-      currencyDisplay="code"
-      :allowEmpty="false"
-      :currency="accountCurrency" 
-      :min="0"
-      :maxFractionDigits="2"
-      :max="1000000000"
-    />
-    <Dropdown
-      class="p-inputtext-sm"
-      id="accountCurrency" 
-      v-model="accountCurrency" 
-      :options="currencyCodeList" 
-    />
+    <div class="account-input_value" v-for="(amount, currency) in initialBalance" :key="currency">
+      <MoneyInput :money="({amount, currency} as Money)" @changed="onMoneyChanged($event)"/>
+      <Button 
+          v-if="accountCurrencies.length > 0"
+          icon="pi pi-times" 
+          severity="danger" 
+          text 
+          rounded 
+          aria-label="Remove" 
+          @click="remove(currency as string)" 
+        />
+    </div>
+    
+    <div v-if="availableCurrencies.length > 0">
+      <Dropdown
+        class="p-inputtext-sm"
+        v-model="selectedCurrency" 
+        :options="availableCurrencies" 
+      />
+      <Button
+        icon="pi pi-plus" 
+        text 
+        rounded 
+        aria-label="Add" 
+        @click="add()" 
+      />
+    </div>
   </div>
 </template>
 <script setup lang="ts">
 import currencies from '@/assets/currencies.json';
 import { Account } from '@/models/account';
 import { computed, nextTick, onMounted, ref } from 'vue';
+import MoneyInput from './MoneyInput.vue';
+import { Money } from '@/models/money';
 
 const props = defineProps<{ account : Account }>();
 const emit = defineEmits(['changed']);
 const input = ref();
 
-const currencyCodeList = Object.keys(currencies);
+const accountCurrencies = computed(() => Object.keys(props.account.initialBalance));
+const availableCurrencies = computed(
+  () => Object.keys(currencies).filter(x => !accountCurrencies.value.includes(x))
+);
+const selectedCurrency = ref<string>(availableCurrencies.value.length > 0 ? availableCurrencies.value[0] : '');
 
 onMounted(() => focusInput());
 
@@ -55,30 +70,37 @@ const accountName = computed({
     });
   }
 });
-const accountBalance = computed({
-  get: () =>  props.account.initialBalance.amount,
-  set: (newValue) => {
-    emit('changed', {
-      ...props.account,
-      balance: {
-        ...props.account.initialBalance,
-        amount: newValue
-      }
-    });
-  }
-});
-const accountCurrency = computed({
-  get: () => props.account.initialBalance.currency,
-  set: (newValue) => {
-    emit('changed', {
-      ...props.account,
-      balance: {
-        ...props.account.initialBalance,
-        currency: newValue 
-      }
-    });
-  }
-});
+const initialBalance = computed(() => {
+  console.warn('GET', props.account.initialBalance);
+  return props.account.initialBalance;}
+);
+function add() {
+  emit('changed', {
+    ...props.account, 
+    initialBalance: {
+      ...props.account.initialBalance,
+      [selectedCurrency.value]: 0
+    }
+  });
+  selectedCurrency.value = availableCurrencies.value.length > 0 ? availableCurrencies.value[0] : '';
+}
+function remove(currency: string) {
+  const newInitialBalance = { ...props.account.initialBalance };
+  delete newInitialBalance[currency];
+  emit('changed', {
+    ...props.account, 
+    initialBalance: newInitialBalance
+  });
+}
+function onMoneyChanged(money: Money) {
+  emit('changed', {
+    ...props.account, 
+    initialBalance: {
+      ...props.account.initialBalance,
+      [money.currency]: money.amount
+    }
+  });
+} 
 </script>
 
 <style lang="scss">
@@ -87,5 +109,8 @@ const accountCurrency = computed({
   max-width: 100%;
   flex-wrap: wrap;
   gap: 1rem;
+  &_value {
+    display: flex;
+  }
 }
 </style>

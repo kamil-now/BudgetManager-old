@@ -65,13 +65,6 @@ public class CreateIncomeCommandValidator
     RuleFor(x => x)
       .MustAsync(async (command, cancellation)
         => (await repository.Get(command.UserId)).Accounts?.Any(x => x.Id == command.AccountId && !x.IsDeleted) ?? false)
-      .WithMessage("Account is deleted or does not exist.")
-      .DependentRules(() =>
-        RuleFor(x => x)
-        .MustAsync(async (command, cancellation)
-          => (await repository.Get(command.UserId)).Accounts!
-              .First(x => x.Id == command.AccountId).Currency == command.Value.Currency)
-        .WithMessage("Account currency does not match income currency.")
-      );
+      .WithMessage("Account is deleted or does not exist.");
   }
 }

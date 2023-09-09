@@ -68,7 +68,7 @@ public class Budget
     return (T)operation;
   }
 
-  public string AddAccount(string accountName, Money initialBalance)
+  public string AddAccount(string accountName, Balance initialBalance)
   {
     var id = Guid.NewGuid().ToString();
     var account = new Account(id, accountName, initialBalance);
@@ -77,7 +77,7 @@ public class Budget
     return id;
   }
 
-  public Account UpdateAccount(string accountId, string? name, Money? balance)
+  public Account UpdateAccount(string accountId, string? name, Balance? initialBalance)
   {
     var account = _accounts.First(x => x.Id == accountId);
     if (name is not null)
@@ -85,11 +85,21 @@ public class Budget
       account.Name = name;
     }
 
-    if (balance is not null)
+    if (initialBalance is not null)
     {
+      account.Balance.Deduct(account.InitialBalance);
       _unallocated.Deduct(account.InitialBalance);
-      account.InitialBalance = (Money)balance;
+
+      account.InitialBalance = new Balance(initialBalance);
+
+      account.Balance.Add(account.InitialBalance);
       _unallocated.Add(account.InitialBalance);
+
+      var toRemove = _unallocated.Keys.Where(key => _unallocated[key] == 0);
+      foreach (var key in toRemove)
+      {
+        _unallocated.Remove(key);
+      }
     }
     return account;
   }

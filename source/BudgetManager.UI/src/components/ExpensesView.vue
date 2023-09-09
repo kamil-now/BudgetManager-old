@@ -64,8 +64,8 @@ function onExpenseChanged(expense: Expense, newValue: Expense) {
 }
 
 function createExpenseObject() {
-  const defaultAccount = store.accounts[0];
-  const defaultFund = store.funds[0];
+  const defaultAccount = store.accounts.filter(x => !!x.id)[0];
+  const defaultFund = store.funds.filter(x => !!x.id)[0];
   return  {
     date: new Date().toDateString(),
     accountId: defaultAccount.id,

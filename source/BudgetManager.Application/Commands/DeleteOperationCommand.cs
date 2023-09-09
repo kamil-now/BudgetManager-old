@@ -4,7 +4,7 @@ using AutoMapper;
 using BudgetManager.Domain.Models;
 using BudgetManager.Infrastructure;
 
-public record DeleteOperationCommand<T>(string UserId, string OperationId)
+public record DeleteOperationCommand<T>(string UserId, string Id)
   : IRequest<T>, IOperationCommand where T : MoneyOperation;
 
 public abstract class DeleteOperationCommandHandler<T> 
@@ -16,5 +16,5 @@ public abstract class DeleteOperationCommandHandler<T>
   }
 
   public override T ModifyBudget(DeleteOperationCommand<T> command, Budget budget)
-    => budget.RemoveOperation<T>(command.OperationId);
+    => budget.RemoveOperation<T>(command.Id);
 }

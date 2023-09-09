@@ -4,7 +4,7 @@ using AutoMapper;
 using BudgetManager.Domain.Models;
 using BudgetManager.Infrastructure;
 
-public record UpdateAccountCommand(string UserId, string AccountId, string Name, Money InitialBalance) : IRequest<AccountDto>, IBudgetCommand;
+public record UpdateAccountCommand(string UserId, string AccountId, string Name, Balance InitialBalance) : IRequest<AccountDto>, IBudgetCommand;
 
 public class UpdateAccountCommandHandler : BudgetCommandHandler<UpdateAccountCommand, AccountDto>
 {

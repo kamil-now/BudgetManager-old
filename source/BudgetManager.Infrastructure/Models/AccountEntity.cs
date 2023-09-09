@@ -4,8 +4,7 @@ public class AccountEntity
 {
   public string? Id { get; set; }
   public string? Name { get; set; }
-  public string? Currency { get; set; }
-  public decimal Balance { get; set; }
-  public decimal InitialBalance { get; set; }
+  public Dictionary<string, decimal>? InitialBalance { get; set; }
+  public Dictionary<string, decimal>? Balance { get; set; }
   public bool IsDeleted { get; set; }
 }

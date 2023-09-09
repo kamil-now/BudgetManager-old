@@ -15,21 +15,14 @@ public class BalanceRequestHandler
 
   public override BudgetBalanceDto Get(BalanceRequest request, Budget budget)
   {
-    var balance = new Dictionary<string, decimal>();
+    var balance = new Balance();
 
     foreach (var accountBalance in budget.Accounts.Select(x => x.Balance))
     {
-      if (balance.ContainsKey(accountBalance.Currency))
-      {
-        balance[accountBalance.Currency] += accountBalance.Amount;
-      }
-      else
-      {
-        balance.Add(accountBalance.Currency, accountBalance.Amount);
-      }
+      balance.Add(accountBalance);
     }
 
-    return new BudgetBalanceDto(new Balance(balance), budget.Unallocated);
+    return new BudgetBalanceDto(balance, budget.Unallocated);
   }
 }
 

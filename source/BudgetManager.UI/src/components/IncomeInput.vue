@@ -19,21 +19,27 @@
       </template>
     </Dropdown>
     <InputNumber 
-      v-if="selectedAccount"
       class="p-inputtext-sm"
       id="accountBalance"
       v-model="incomeValue" 
       mode="currency"
       currencyDisplay="code"
       :allowEmpty="false"
-      :currency="selectedAccount?.balance.currency" 
+      :currency="incomeCurrency" 
       :min="0"
       :maxFractionDigits="2"
       :max="1000000000"
     />
+    <Dropdown
+      class="p-inputtext-sm"
+      id="selectedCurrency" 
+      v-model="incomeCurrency" 
+      :options="currencyCodeList" 
+    />
   </div>
 </template>
 <script setup lang="ts">
+import currencies from '@/assets/currencies.json';
 import { Account } from '@/models/account';
 import { Income } from '@/models/income';
 import { useAppStore } from '@/store/store';
@@ -42,6 +48,7 @@ const props = defineProps<{ income: Income }>();
 const emit = defineEmits(['changed']);
 const { accounts }  = useAppStore();
 
+const currencyCodeList = Object.keys(currencies);
 const selectedAccount = ref<Account | undefined>(
   props.income.accountId 
     ? accounts.find(x => x.id === props.income.accountId)
@@ -85,6 +92,18 @@ const incomeValue = computed({
       value: {
         ...props.income.value,
         amount: newValue
+      }
+    });
+  }
+});
+const incomeCurrency = computed({
+  get: () => props.income.value.currency,
+  set: (newValue) => {
+    emit('changed', {
+      ...props.income, 
+      value: {
+        ...props.income.value,
+        currency: newValue
       }
     });
   }

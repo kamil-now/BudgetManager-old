@@ -1,8 +1,8 @@
-import { Money } from './money';
+import { Balance } from './balance';
 
 export type Account = {
   id?: string,
   name?: string,
-  balance: Money,
-  initialBalance: Money,
+  balance: Balance,
+  initialBalance: Balance,
 }

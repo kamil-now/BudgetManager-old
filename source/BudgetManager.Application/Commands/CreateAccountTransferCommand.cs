@@ -88,9 +88,9 @@ public class CreateAccountTransferCommandValidator
               {
                 var budget = await repository.Get(command.UserId);
                 var account = budget!.Accounts!.First(x => x.Id == command.SourceAccountId);
-                return account!.Balance >= command.Value.Amount;
+                return account!.Balance!.ContainsKey(command.Value.Currency) && account!.Balance?[command.Value.Currency] >= command.Value.Amount;
               })
-              .WithMessage("Insufficient accounts.");
+              .WithMessage("Insufficient funds.");
           });
 
         RuleFor(x => x)

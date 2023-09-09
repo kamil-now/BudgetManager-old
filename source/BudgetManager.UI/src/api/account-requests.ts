@@ -6,8 +6,7 @@ export async function createAccountRequest(account: Account): Promise<string> {
     'api/account', 
     {
       name: account.name,
-      initialAmount: account.balance.amount,
-      currency: account.balance.currency,
+      initialBalance: account.initialBalance,
     }
   ).then((response: AxiosResponse<string>) => response.data);
 }

@@ -4,18 +4,18 @@ public class Account
 {
   public string Id { get; }
   public string Name { get; internal set; }
-  public Money Balance { get; private set; }
-  public Money InitialBalance { get; internal set; }
+  public Balance Balance { get; private set; }
+  public Balance InitialBalance { get; internal set; }
   public bool IsDeleted { get; internal set; }
 
-  public Account(string id, string name, Money initialBalance)
+  public Account(string id, string name, Balance initialBalance)
   {
     Id = id;
     Name = name;
-    Balance = new Money(initialBalance.Amount, initialBalance.Currency);
-    InitialBalance = new Money(initialBalance.Amount, initialBalance.Currency);
+    Balance = new Balance(initialBalance);
+    InitialBalance = new Balance(initialBalance);
   }
 
-  public void Add(Money money) => Balance = Balance with { Amount = Balance.Amount + money.Amount };
-  public void Deduct(Money money) => Balance = Balance with { Amount = Balance.Amount - money.Amount };
+  public void Add(Money money) => Balance.Add(money);
+  public void Deduct(Money money) => Balance.Deduct(money);
 }

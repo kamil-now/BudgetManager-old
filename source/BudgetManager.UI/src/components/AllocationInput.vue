@@ -30,7 +30,7 @@
       :currency="allocationCurrency" 
       :min="0"
       :maxFractionDigits="2"
-      :max="budgetBalance.unallocated[allocationCurrency]"
+      :max="1000000"
     />
     <Dropdown
       class="p-inputtext-sm"
@@ -46,6 +46,7 @@ import { Allocation } from '@/models/allocation';
 import { Fund } from '@/models/fund';
 import { useAppStore } from '@/store/store';
 import { computed, nextTick, onMounted, ref, watch } from 'vue';
+
 const props = defineProps<{ allocation: Allocation }>();
 const emit = defineEmits(['changed']);
 const input = ref();

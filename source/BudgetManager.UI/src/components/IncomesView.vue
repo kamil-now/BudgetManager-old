@@ -58,7 +58,7 @@ function onIncomeChanged(income: Income, newValue: Income) {
 }
 
 function createIncomeObject() {
-  const defaultAccount = store.accounts[0];
+  const defaultAccount = store.accounts.filter(x => !!x.id)[0];
   return  {
     date: new Date().toDateString(),
     accountId: defaultAccount.id,
