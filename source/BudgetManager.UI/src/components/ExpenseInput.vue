@@ -31,21 +31,27 @@
       </template>
     </Dropdown>
     <InputNumber 
-      v-if="selectedAccount"
       class="p-inputtext-sm"
       id="accountBalance"
       v-model="expenseValue" 
       mode="currency"
       currencyDisplay="code"
       :allowEmpty="false"
-      :currency="selectedAccount?.balance.currency" 
+      :currency="expenseCurrency" 
       :min="0"
       :maxFractionDigits="2"
       :max="1000000000"
     />
+    <Dropdown
+      class="p-inputtext-sm"
+      id="selectedCurrency" 
+      v-model="expenseCurrency" 
+      :options="currencyCodeList" 
+    />
   </div>
 </template>
 <script setup lang="ts">
+import currencies from '@/assets/currencies.json';
 import { Account } from '@/models/account';
 import { Fund } from '@/models/fund';
 import { Expense } from '@/models/expense';
@@ -55,6 +61,7 @@ const props = defineProps<{ expense: Expense }>();
 const emit = defineEmits(['changed']);
 const { accounts, funds }  = useAppStore();
 
+const currencyCodeList = Object.keys(currencies);
 const selectedAccount = ref<Account | undefined>(
   props.expense.accountId 
     ? accounts.find(x => x.id === props.expense.accountId)
@@ -65,10 +72,6 @@ watch(selectedAccount, async (account) => {
   emit('changed', {
     ...props.expense, 
     accountId: account?.id,
-    value: {
-      ...props.expense.value,
-      currency: account?.balance.currency
-    }
   });
 });
 
@@ -110,6 +113,18 @@ const expenseValue = computed({
       value: {
         ...props.expense.value,
         amount: newValue
+      }
+    });
+  }
+});
+const expenseCurrency = computed({
+  get: () => props.expense.value.currency,
+  set: (newValue) => {
+    emit('changed', {
+      ...props.expense, 
+      value: {
+        ...props.expense.value,
+        currency: newValue
       }
     });
   }

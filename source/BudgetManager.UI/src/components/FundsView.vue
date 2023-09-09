@@ -55,7 +55,7 @@ function createFundObject() {
 <style lang="scss">
 .funds-view {
   width: 100%;
-  max-height: 100%;
+  height: 100%;
   &_body {
     display: flex;
     width: 100%;

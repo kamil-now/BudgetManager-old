@@ -1,30 +1,44 @@
 <template>
   <Toast />
   <div v-if="!failed" class="budget-page">
-    <!-- <div class="budget-page_header">
+    <div class="budget-page_header">
       <BalanceView />
-    </div> -->
+    </div>
     <div class="budget-page_content">
       <div class="budget-page_content-panel">
         <TabView class="budget-page_content-panel_tab-view">
+          <TabPanel header="Fund Transfers">
+            <FundTransfersView />
+          </TabPanel>
+          <TabPanel header="Account Transfers">
+            <AccountTransfersView />
+          </TabPanel>
+        </TabView>
+      </div>
+      <div class="budget-page_content-panel">
+        <TabView class="budget-page_content-panel_tab-view">
           <TabPanel header="Funds">
-            <BalanceView />
+            <!-- <BalanceView /> -->
             <FundsView/>
           </TabPanel>
           <TabPanel header="Accounts">
-            <BalanceView />
+            <!-- <BalanceView /> -->
             <AccountsView/>
           </TabPanel>
         </TabView>
       </div>
       <div class="budget-page_content-panel">
-        <IncomesView />
-        <AllocationsView />
-        <ExpensesView />
-      </div>
-      <div class="budget-page_content-panel">
-        <FundTransfersView />
-        <AccountTransfersView />
+        <TabView class="budget-page_content-panel_tab-view">
+          <TabPanel header="Allocations">
+            <AllocationsView />
+          </TabPanel>
+          <TabPanel header="Incomes">
+            <IncomesView />
+          </TabPanel>
+          <TabPanel header="Expenses">
+            <ExpensesView />
+          </TabPanel>
+        </TabView>
       </div>
     </div>
   </div>
@@ -155,9 +169,15 @@ onMounted(() => {
 
   .p-tabview {
     width: 100%;
-  }
-  .p-tabview-panels {
-    padding: 0;
+    height: 100%;
+    overflow: hidden;
+    .p-tabview-panels {
+      height: 100%;
+      padding: 0;
+      .p-tabview-panel {
+        height: 100%;
+      }
+    }
   }
 }
 </style>

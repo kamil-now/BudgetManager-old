@@ -76,6 +76,7 @@ function createAccountTransferObject() {
 <style lang="scss">
 .accountTransfers-view {
   width: 100%;
+  height: 100%;
   &_body {
     display: flex;
     width: 100%;

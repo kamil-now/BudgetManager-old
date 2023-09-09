@@ -76,6 +76,7 @@ function createFundTransferObject() {
 <style lang="scss">
 .fundTransfers-view {
   width: 100%;
+  height: 100%;
   &_body {
     display: flex;
     width: 100%;
