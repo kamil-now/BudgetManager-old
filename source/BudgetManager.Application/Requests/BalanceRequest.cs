@@ -22,7 +22,14 @@ public class BalanceRequestHandler
       balance.Add(accountBalance);
     }
 
-    return new BudgetBalanceDto(balance, budget.Unallocated);
+    var unallocated = new Balance(balance);
+
+    foreach (var fundBalance in budget.Funds.Select(x => x.Balance))
+    {
+      unallocated.Deduct(fundBalance);
+    }
+
+    return new BudgetBalanceDto(balance, unallocated);
   }
 }
 

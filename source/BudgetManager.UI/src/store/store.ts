@@ -118,7 +118,7 @@ export const APP_STORE: DefineStoreOptions<
             }
           },
           (error) => {
-            console.error(error)
+            console.error(error);
           })
       );
     },

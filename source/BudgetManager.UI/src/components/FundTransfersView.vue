@@ -12,7 +12,7 @@
     >
       <template #content="{ data }">
         <div class="fundTransfers-view_body">
-          <span class="date">{{ data.date }}</span>
+          <span class="date">{{ DisplayFormat.dateOnly(data.date) }}</span>
           <div class="fundTransfers-view_body-left">
             <span class="money">{{ DisplayFormat.money(data.value) }}</span>
             <span>{{ getFundName(data.sourceFundId) }}</span>
@@ -33,8 +33,9 @@
   </div>
 </template>
 <script setup lang="ts">
-import ListView from '@/components/ListView.vue';
+import currencies from '@/assets/currencies.json';
 import FundTransferInput from '@/components/FundTransferInput.vue';
+import ListView from '@/components/ListView.vue';
 import { DisplayFormat } from '@/helpers/display-format';
 import { FundTransfer } from '@/models/fund-transfer';
 import { useAppStore } from '@/store/store';
@@ -60,14 +61,12 @@ function onFundTransferChanged(fundTransfer: FundTransfer, newValue: FundTransfe
 }
 
 function createFundTransferObject() {
-  const defaultAccount = store.accounts[0];
-  const defaultFund = store.funds[0];
   return  {
-    date: new Date().toDateString(),
-    accountId: defaultAccount.id,
-    fundId: defaultFund.id,
+    date: new Date(),
+    sourceFundId: store.funds[0].id,
+    targetFundId: store.funds[1].id,
     value: { 
-      currency: defaultAccount.balance.currency
+      currency: Object.keys(store.funds[0].balance)[0] ?? Object.keys(currencies)[0]
     }
   };
 }

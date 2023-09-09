@@ -31,13 +31,21 @@
             @mouseenter="hover = data"
             @mouseleave="hover = null"
           >
-            <div class="list-view_body-content" v-if="editing !== data">
+            <div class="list-view_body-content" :class="{ faded: hover === data}" v-if="editing !== data">
               <slot name="content" :data="data"></slot>
             </div>
             <div class="list-view_body-editor" v-else>
               <slot name="editor" :data="data"></slot>
             </div>
             <div style="position: absolute; right: 0; display: flex;">
+              <Button
+                v-if="hover === data && editing !== data && !!copy"
+                icon="pi pi-copy" 
+                text 
+                rounded 
+                aria-label="Copy" 
+                @click="createCopy(data)" 
+              />
               <Button
                 v-if="hover === data && editing !== data"
                 icon="pi pi-pencil" 
@@ -90,6 +98,7 @@ type Props<T> = {
   modelValue: T[],
   allowReorder?: boolean,
   allowAdd?: boolean,
+  copy?: (item: T) => T,
   createNew: () => T,
   save: (item: T) => void,
   update: (item: T) => void,
@@ -102,6 +111,16 @@ const emit = defineEmits(['update:modelValue']);
 const items = vueModel(props, emit);
 const hover = ref<object | null>(null);
 const editing = ref<object | null>(null);
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function createCopy(item: any) {
+  if (!props.copy) {
+    throw new Error('Copy delegate is undefined.');
+  }
+  const newItem = props.copy(item);
+  items.value.unshift(newItem);
+  editing.value = newItem;
+}
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function save(item: any, index: number) {
@@ -154,6 +173,9 @@ $padding: 0.25rem;
 $header-column-width: 2rem;
 
 .list-view {
+  .faded {
+    opacity: 0.3;
+  }
   width: 100%;
   height: 100%;
   &_header-column {

@@ -1,4 +1,5 @@
 
+import { MoneyOperationUtils } from '@/helpers/money-operation-utils';
 import { Account } from '@/models/account';
 import { AccountTransfer } from '@/models/account-transfer';
 import { Allocation } from '@/models/allocation';
@@ -7,7 +8,8 @@ import { Expense } from '@/models/expense';
 import { Fund } from '@/models/fund';
 import { FundTransfer } from '@/models/fund-transfer';
 import { Income } from '@/models/income';
-import axios, { AxiosError } from 'axios';
+import { MoneyOperation } from '@/models/money-operation';
+import axios from 'axios';
 
 export function fetchBudgetRequest(): Promise<{
   accounts: Account[],
@@ -41,15 +43,22 @@ export function fetchBudgetRequest(): Promise<{
           const [accounts, funds, incomes, expenses, allocations, fundTransfers, accountTransfers, settings] = data;
           return {
             balance: res.data,
-            incomes: incomes.sort((a, b) => new Date(a.createdDate).valueOf() - new Date(b.createdDate).valueOf()),
-            expenses: expenses.sort((a, b) => new Date(a.createdDate).valueOf() - new Date(b.createdDate).valueOf()),
+            incomes: parseAndSortOperations(incomes),
+            expenses: parseAndSortOperations(expenses),
             accounts: sortAccounts(accounts, settings),
             funds: sortFunds(funds, settings),
-            allocations: allocations.sort((a, b) => new Date(a.createdDate).valueOf() - new Date(b.createdDate).valueOf()),
-            fundTransfers: fundTransfers.sort((a, b) => new Date(a.createdDate).valueOf() - new Date(b.createdDate).valueOf()),
-            accountTransfers: accountTransfers.sort((a, b) => new Date(a.createdDate).valueOf() - new Date(b.createdDate).valueOf()),
+            allocations: parseAndSortOperations(allocations),
+            fundTransfers: parseAndSortOperations(fundTransfers),
+            accountTransfers: parseAndSortOperations(accountTransfers),
           };})
     );
+}
+
+function parseAndSortOperations<T extends MoneyOperation>(operations: T[]):T[] {
+  return operations.map(x => MoneyOperationUtils.parseFromResponse(x)).sort((a, b) => {
+    const byDate = new Date(b.date).valueOf() - new Date(a.date).valueOf();
+    return byDate === 0 ? new Date(b.createdDate).valueOf() - new Date(a.createdDate).valueOf() : byDate;
+  });
 }
 
 function sortFunds(

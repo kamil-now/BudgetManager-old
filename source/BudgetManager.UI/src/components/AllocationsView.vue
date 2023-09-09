@@ -3,6 +3,7 @@
     <ListView
       header="Allocations"
       v-model="allocations"
+      :copy="copyAllocation"
       :createNew="createAllocationObject"
       :save="createNewAllocation"
       :update="updateAllocation"
@@ -12,7 +13,7 @@
     >
       <template #content="{ data }">
         <div class="allocations-view_body">
-          <span class="date">{{ data.date }}</span>
+          <span class="date">{{ DisplayFormat.dateOnly(data.date) }}</span>
           <div class="allocations-view_body-left">
             <span class="money">{{ DisplayFormat.money(data.value) }}</span>
           </div>
@@ -59,14 +60,21 @@ function onAllocationChanged(allocation: Allocation, newValue: Allocation) {
 
 function createAllocationObject() {
   const defaultFund = store.funds[0];
-  const defaultCurrency = Object.keys(budgetBalance.value.unallocated)[0];
+  const defaultCurrency = Object.keys(budgetBalance.value.unallocated)[0] ?? Object.keys(defaultFund.balance)[0];
   return  {
-    date: new Date().toDateString(),
+    date: new Date(),
     targetFundId: defaultFund.id,
     value: { 
       currency: defaultCurrency
     }
   };
+}
+function copyAllocation(allocation: Allocation) {
+  const copy =  { 
+    ...allocation,
+    id: undefined
+  };
+  return copy;
 }
 </script>
 

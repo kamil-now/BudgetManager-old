@@ -8,11 +8,11 @@
       :update="updateAccountTransfer"
       :remove="deleteAccountTransfer"
       :onReorder="updateUserSettings"
-      :allowAdd="accounts.length > 0 && accounts.length > 0"
+      :allowAdd="accounts.length > 0"
     >
       <template #content="{ data }">
         <div class="accountTransfers-view_body">
-          <span class="date">{{ data.date }}</span>
+          <span class="date">{{ DisplayFormat.dateOnly(data.date) }}</span>
           <div class="accountTransfers-view_body-left">
             <span class="money">{{ DisplayFormat.money(data.value) }}</span>
             <span>{{ getAccountName(data.sourceAccountId) }}</span>
@@ -33,6 +33,7 @@
   </div>
 </template>
 <script setup lang="ts">
+import currencies from '@/assets/currencies.json';
 import ListView from '@/components/ListView.vue';
 import AccountTransferInput from '@/components/AccountTransferInput.vue';
 import { DisplayFormat } from '@/helpers/display-format';
@@ -60,14 +61,12 @@ function onAccountTransferChanged(accountTransfer: AccountTransfer, newValue: Ac
 }
 
 function createAccountTransferObject() {
-  const defaultSourceAccount = store.accounts[0];
-  const defaultTargetAccount = store.accounts.filter(x => x.balance.currency === defaultSourceAccount.balance.currency)[0];
   return  {
-    date: new Date().toDateString(),
-    sourceAccountId: defaultSourceAccount.id,
-    targetAccountId: defaultTargetAccount.id,
+    date: new Date(),
+    sourceAccountId: store.accounts[0].id,
+    targetAccountId: store.accounts[1].id,
     value: { 
-      currency: defaultSourceAccount.balance.currency
+      currency: Object.keys(store.accounts[0].balance)[0] ?? Object.keys(currencies)[0]
     }
   };
 }

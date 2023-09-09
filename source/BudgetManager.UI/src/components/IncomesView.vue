@@ -12,7 +12,7 @@
     >
       <template #content="{ data }">
         <div class="incomes-view_body">
-          <span class="date">{{ data.date }}</span>
+          <span class="date">{{ DisplayFormat.dateOnly(data.date) }}</span>
           <div class="incomes-view_body-left">
             <span class="money">{{ DisplayFormat.money(data.value) }}</span>
             <span>{{ getAccountName(data.accountId) }}</span>
@@ -60,10 +60,10 @@ function onIncomeChanged(income: Income, newValue: Income) {
 function createIncomeObject() {
   const defaultAccount = store.accounts.filter(x => !!x.id)[0];
   return  {
-    date: new Date().toDateString(),
+    date: new Date(),
     accountId: defaultAccount.id,
     value: { 
-      currency: defaultAccount.balance.currency,
+      currency: Object.keys(defaultAccount.balance)[0],
       amount: 0
     }
   };

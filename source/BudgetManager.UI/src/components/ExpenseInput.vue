@@ -92,7 +92,7 @@ const expenseDate = computed({
   set: (newValue) => {
     emit('changed', {
       ...props.expense, 
-      date: new Date(newValue).toLocaleDateString()
+      date: new Date(newValue)
     });
   }
 });

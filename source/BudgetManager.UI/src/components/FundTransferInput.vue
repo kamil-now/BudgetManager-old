@@ -30,8 +30,7 @@
         <span>{{ option?.name }}</span>
       </template>
     </Dropdown>
-    <InputNumber 
-      v-if="selectedSourceFund"
+    <InputNumber
       class="p-inputtext-sm"
       id="fundTransferValue"
       v-model="fundTransferValue" 
@@ -93,7 +92,7 @@ const fundTransferDate = computed({
   set: (newValue) => {
     emit('changed', {
       ...props.fundTransfer, 
-      date: new Date(newValue).toLocaleDateString()
+      date: new Date(newValue)
     });
   }
 });

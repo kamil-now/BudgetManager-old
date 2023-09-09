@@ -50,7 +50,6 @@ public class CreateAllocationCommandValidator
   public CreateAllocationCommandValidator(IUserBudgetRepository repository, AppConfig config) : base(repository)
   {
     RuleFor(x => x.Title)
-      .NotEmpty()
       .MaximumLength(config.MaxTitleLength);
 
     RuleFor(x => x.Description)

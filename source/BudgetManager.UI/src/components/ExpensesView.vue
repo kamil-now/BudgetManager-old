@@ -3,6 +3,7 @@
     <ListView
       header="Expenses"
       v-model="expenses"
+      :copy="copyExpense"
       :createNew="createExpenseObject"
       :save="createNewExpense"
       :update="updateExpense"
@@ -12,7 +13,7 @@
     >
       <template #content="{ data }">
         <div class="expenses-view_body">
-          <span class="date">{{ data.date }}</span>
+          <span class="date">{{ DisplayFormat.dateOnly(data.date) }}</span>
           <div class="expenses-view_body-left">
             <span class="money">{{ DisplayFormat.money(data.value) }}</span>
             <span>{{ getAccountName(data.accountId) }}</span>
@@ -66,9 +67,8 @@ function onExpenseChanged(expense: Expense, newValue: Expense) {
 function createExpenseObject() {
   const defaultAccount = store.accounts.filter(x => !!x.id)[0];
   const defaultFund = store.funds.filter(x => !!x.id)[0];
-  console.warn(Object.keys(defaultAccount.balance)[0],)
   return  {
-    date: new Date().toDateString(),
+    date: new Date(),
     accountId: defaultAccount.id,
     fundId: defaultFund.id,
     value: { 
@@ -76,6 +76,13 @@ function createExpenseObject() {
       amount: 0
     }
   };
+}
+function copyExpense(expense: Expense) {
+  const copy =  { 
+    ...expense,
+    id: undefined
+  };
+  return copy;
 }
 </script>
 

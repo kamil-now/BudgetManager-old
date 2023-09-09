@@ -31,21 +31,28 @@
       </template>
     </Dropdown>
     <InputNumber 
-      v-if="selectedSourceAccount"
       class="p-inputtext-sm"
       id="accountTransferValue"
       v-model="accountTransferValue" 
       mode="currency"
       currencyDisplay="code"
       :allowEmpty="false"
-      :currency="selectedSourceAccount?.balance.currency" 
+      :currency="accountTransferCurrency" 
       :min="0"
       :maxFractionDigits="2"
       :max="1000000000"
     />
+    
+    <Dropdown
+      class="p-inputtext-sm"
+      id="accountTransferCurrency" 
+      v-model="accountTransferCurrency" 
+      :options="currencyCodeList" 
+    />
   </div>
 </template>
 <script setup lang="ts">
+import currencies from '@/assets/currencies.json';
 import { Account } from '@/models/account';
 import { AccountTransfer } from '@/models/account-transfer';
 import { useAppStore } from '@/store/store';
@@ -53,6 +60,7 @@ import { computed, ref, watch } from 'vue';
 const props = defineProps<{ accountTransfer: AccountTransfer }>();
 const emit = defineEmits(['changed']);
 const { accounts }  = useAppStore();
+const currencyCodeList = Object.keys(currencies);
 
 const selectedSourceAccount = ref<Account | undefined>(
   props.accountTransfer.sourceAccountId 
@@ -63,10 +71,6 @@ watch(selectedSourceAccount, async (account) => {
   emit('changed', {
     ...props.accountTransfer, 
     sourceAccountId: account?.id,
-    value: {
-      ...props.accountTransfer.value,
-      currency: account?.balance.currency
-    }
   });
 });
 
@@ -79,10 +83,6 @@ watch(selectedTargetAccount, async (account) => {
   emit('changed', {
     ...props.accountTransfer, 
     targetAccountId: account?.id,
-    value: {
-      ...props.accountTransfer.value,
-      currency: account?.balance.currency
-    }
   });
 });
 
@@ -91,7 +91,7 @@ const accountTransferDate = computed({
   set: (newValue) => {
     emit('changed', {
       ...props.accountTransfer, 
-      date: new Date(newValue).toLocaleDateString()
+      date: new Date(newValue)
     });
   }
 });
@@ -112,6 +112,18 @@ const accountTransferValue = computed({
       value: {
         ...props.accountTransfer.value,
         amount: newValue
+      }
+    });
+  }
+});
+const accountTransferCurrency = computed({
+  get: () => props.accountTransfer.value.currency,
+  set: (newValue) => {
+    emit('changed', {
+      ...props.accountTransfer, 
+      value: {
+        ...props.accountTransfer.value,
+        currency: newValue
       }
     });
   }

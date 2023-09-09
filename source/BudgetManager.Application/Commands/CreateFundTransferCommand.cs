@@ -27,7 +27,7 @@ public class CreateFundTransferCommandHandler
   {
     var id = Guid.NewGuid().ToString();
     var now = DateOnly.FromDateTime(DateTime.Now);
-    var date = command.Date is null ? now : DateOnly.Parse(command.Date);
+    var date = command.Date is null ? now : DateOnly.FromDateTime(DateTime.Parse(command.Date));
 
     budget.AddOperation(
       new FundTransfer(
@@ -52,7 +52,6 @@ public class CreateFundTransferCommandValidator
   public CreateFundTransferCommandValidator(IUserBudgetRepository repository, AppConfig appConfig) : base(repository)
   {
     RuleFor(x => x.Title)
-      .NotEmpty()
       .MaximumLength(appConfig.MaxTitleLength);
 
     RuleFor(x => x.Description)

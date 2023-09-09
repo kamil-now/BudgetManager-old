@@ -1,3 +1,4 @@
+import { MoneyOperationUtils } from '@/helpers/money-operation-utils';
 import { Expense } from '@/models/expense';
 import axios, { AxiosResponse } from 'axios';
 
@@ -27,13 +28,13 @@ export async function updateExpenseRequest(expense: Expense): Promise<Expense> {
       fundId: expense.fundId,
       description: expense.description
     }
-  ).then(res => res.data);
+  ).then(res => MoneyOperationUtils.parseFromResponse(res.data));
 }
 
 export async function getExpenseRequest(expense: Expense): Promise<Expense> {
   return axios.get<Expense>(
     `api/expense/${expense.id}`
-  ).then(res => res.data);
+  ).then(res => MoneyOperationUtils.parseFromResponse(res.data));
 }
 
 export async function deleteExpenseRequest(expense: Expense): Promise<void> {

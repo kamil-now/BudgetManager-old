@@ -1,3 +1,4 @@
+import { MoneyOperationUtils } from '@/helpers/money-operation-utils';
 import { Income } from '@/models/income';
 import axios, { AxiosResponse } from 'axios';
 
@@ -25,13 +26,13 @@ export async function updateIncomeRequest(income: Income): Promise<Income> {
       accountId: income.accountId,
       description: income.description
     }
-  ).then(res => res.data);
+  ).then(res => MoneyOperationUtils.parseFromResponse(res.data));
 }
 
 export async function getIncomeRequest(income: Income): Promise<Income> {
   return axios.get<Income>(
     `api/income/${income.id}`
-  ).then(res => res.data);
+  ).then(res => MoneyOperationUtils.parseFromResponse(res.data));
 }
 
 export async function deleteIncomeRequest(income: Income): Promise<void> {

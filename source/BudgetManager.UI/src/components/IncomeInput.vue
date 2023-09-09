@@ -59,10 +59,6 @@ watch(selectedAccount, async (account) => {
   emit('changed', {
     ...props.income, 
     accountId: account?.id,
-    value: {
-      ...props.income.value,
-      currency: account?.balance.currency
-    }
   });
 });
 
@@ -71,7 +67,7 @@ const incomeDate = computed({
   set: (newValue) => {
     emit('changed', {
       ...props.income, 
-      date: new Date(newValue).toLocaleDateString()
+      date: new Date(newValue)
     });
   }
 });

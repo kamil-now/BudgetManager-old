@@ -28,7 +28,7 @@ public class AccountTransfer : MoneyOperation
     string? date, 
     string? description)
   {
-    base.Update(title, value, date, description);
+    Update(title, value, date, description);
 
     if (sourceAccountId is not null)
     {

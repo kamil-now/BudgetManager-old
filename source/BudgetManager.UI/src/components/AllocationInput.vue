@@ -76,7 +76,7 @@ const allocationDate = computed({
   set: (newValue) => {
     emit('changed', {
       ...props.allocation, 
-      date: new Date(newValue).toLocaleDateString()
+      date: new Date(newValue)
     });
   }
 });

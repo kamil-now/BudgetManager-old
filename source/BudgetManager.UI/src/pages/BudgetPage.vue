@@ -4,17 +4,8 @@
     <div class="budget-page_header">
       <BalanceView />
     </div>
+
     <div class="budget-page_content">
-      <div class="budget-page_content-panel">
-        <TabView class="budget-page_content-panel_tab-view">
-          <TabPanel header="Fund Transfers">
-            <FundTransfersView />
-          </TabPanel>
-          <TabPanel header="Account Transfers">
-            <AccountTransfersView />
-          </TabPanel>
-        </TabView>
-      </div>
       <div class="budget-page_content-panel">
         <TabView class="budget-page_content-panel_tab-view">
           <TabPanel header="Funds">
@@ -27,19 +18,32 @@
           </TabPanel>
         </TabView>
       </div>
+
       <div class="budget-page_content-panel">
         <TabView class="budget-page_content-panel_tab-view">
-          <TabPanel header="Allocations">
-            <AllocationsView />
+          <TabPanel header="Expenses">
+            <ExpensesView />
           </TabPanel>
           <TabPanel header="Incomes">
             <IncomesView />
           </TabPanel>
-          <TabPanel header="Expenses">
-            <ExpensesView />
+          <TabPanel header="Allocations">
+            <AllocationsView />
           </TabPanel>
         </TabView>
       </div>
+      
+      <div class="budget-page_content-panel">
+        <TabView class="budget-page_content-panel_tab-view">
+          <TabPanel header="Fund Transfers">
+            <FundTransfersView />
+          </TabPanel>
+          <TabPanel header="Account Transfers">
+            <AccountTransfersView />
+          </TabPanel>
+        </TabView>
+      </div>
+
     </div>
   </div>
 </template>
@@ -172,7 +176,7 @@ onMounted(() => {
     height: 100%;
     overflow: hidden;
     .p-tabview-panels {
-      height: 100%;
+      height: 90%;
       padding: 0;
       .p-tabview-panel {
         height: 100%;
