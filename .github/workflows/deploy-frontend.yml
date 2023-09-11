@@ -2,11 +2,13 @@ name: Build & Deploy Frontend
 
 on:
   push:
-    branches: ["main"]
+    branches:
+      - main
     paths:
-      - 'source/BudgetManager.UI/**' 
+      - 'source/BudgetManager.UI/**'
       - '.github/**'
   workflow_dispatch:
+
 env:
   AZURE_WEBAPP_NAME: hajs-manager
   AZURE_WEBAPP_PACKAGE_PATH: "source/BudgetManager.UI"
@@ -17,27 +19,45 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@main
+      - name: Checkout Repository
+        uses: actions/checkout@v2
 
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '18.x'
+          node-version: '18.x' # Use a Node.js version compatible with your project
 
-      - name: Install FE dependencies
+      - name: Install FE Dependencies
         working-directory: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
         run: npm install
 
       - name: Build FE
         working-directory: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
-        run: | 
+        run: |
           echo "${{ secrets.ENV_FILE }}" > .env.production
           npm run build -- -configuration --production --env-file .env.production
-          cp -vr ./dist ./${{env.AZURE_WEBAPP_PACKAGE_TARGET_DIRECTORY}}
+          cp -vr ./dist ./${{ env.AZURE_WEBAPP_PACKAGE_TARGET_DIRECTORY }}
 
-      - name: "Deploy"
+      - name: Setup Nginx Configuration
+        run: |
+          # Create a custom Nginx configuration file
+          echo 'server {
+              listen 80;
+              location / {
+                  root /usr/share/nginx/html;
+                  index index.html;
+                  try_files $uri $uri/ /index.html;
+              }
+              location /api/ {
+                  proxy_pass ${{ env.AZURE_AAD_REDIRECT }};
+                  proxy_set_header Host $host;
+                  proxy_set_header X-Real-IP $remote_addr;
+              }
+          }' > nginx.conf
+
+      - name: Deploy
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_UI_PUBLISHPROFILE  }}
-          package: "${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/${{env.AZURE_WEBAPP_PACKAGE_TARGET_DIRECTORY}}"
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_UI_PUBLISHPROFILE }}
+          package: "${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/${{ env.AZURE_WEBAPP_PACKAGE_TARGET_DIRECTORY }}"
