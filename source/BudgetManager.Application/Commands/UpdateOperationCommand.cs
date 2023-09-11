@@ -36,7 +36,8 @@ public class UpdateOperationCommandValidator<T>
         || existsIn(budget.Expenses)
         || existsIn(budget.FundTransfers)
         || existsIn(budget.Allocations)
-        || existsIn(budget.AccountTransfers);
+        || existsIn(budget.AccountTransfers)
+        || existsIn(budget.CurrencyExchanges);
       }).WithMessage(command => $"Operation with a id {command.Id} does not exist in the budget");
   }
 }

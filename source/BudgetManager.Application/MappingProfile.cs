@@ -16,6 +16,7 @@ public class MappingProfile : Profile
         operations.AddRange(ctx.Mapper.Map<IEnumerable<FundTransfer>>(src.FundTransfers));
         operations.AddRange(ctx.Mapper.Map<IEnumerable<AccountTransfer>>(src.AccountTransfers));
         operations.AddRange(ctx.Mapper.Map<IEnumerable<Allocation>>(src.Allocations));
+        operations.AddRange(ctx.Mapper.Map<IEnumerable<CurrencyExchange>>(src.CurrencyExchanges));
 
         var budget = new Budget(
           ctx.Mapper.Map<UserSettings>(src.UserSettings),
@@ -119,6 +120,21 @@ public class MappingProfile : Profile
           )
         ).ForAllMembers(opt => opt.Ignore());
 
+    CreateMap<CurrencyExchangeEntity, CurrencyExchange>()
+      .ConstructUsing(src =>
+        new CurrencyExchange(
+          src.Id!,
+          src.Title!,
+          new Money(src.Amount, src.Currency!),
+          src.AccountId!,
+          src.TargetCurrency!,
+          src.ExchangeRate,
+          DateOnly.Parse(src.Date!),
+          src.Description!,
+          src.CreatedDate
+          )
+        ).ForAllMembers(opt => opt.Ignore());
+
     CreateMap<Budget, BudgetEntity>()
       .ForMember(x => x.UserId, opt => opt.Ignore())
       .ForMember(x => x.Accounts, opt =>
@@ -165,6 +181,13 @@ public class MappingProfile : Profile
             src.Operations.Where(x => x is Allocation)?.Select(x => x as Allocation).ToArray()
             )
           )
+      )
+      .ForMember(x => x.CurrencyExchanges, opt =>
+        opt.MapFrom((src, _, __, ctx) =>
+          ctx.Mapper.Map<IEnumerable<CurrencyExchangeEntity>>(
+            src.Operations.Where(x => x is CurrencyExchange)?.Select(x => x as CurrencyExchange).ToArray()
+            )
+          )
       );
 
     CreateMap<UserSettings, UserSettingsEntity>();
@@ -201,6 +224,11 @@ public class MappingProfile : Profile
       .ForMember(x => x.Amount, opt => opt.MapFrom(src => src.Value.Amount))
       .ForMember(x => x.Currency, opt => opt.MapFrom(src => src.Value.Currency));
 
+    CreateMap<CurrencyExchange, CurrencyExchangeEntity>()
+      .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString()))
+      .ForMember(x => x.Amount, opt => opt.MapFrom(src => src.Value.Amount))
+      .ForMember(x => x.Currency, opt => opt.MapFrom(src => src.Value.Currency));
+
     CreateMap<Account, AccountDto>();
 
     CreateMap<Fund, FundDto>();
@@ -218,6 +246,9 @@ public class MappingProfile : Profile
       .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString()));
 
     CreateMap<Allocation, AllocationDto>()
+      .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString()));
+
+    CreateMap<CurrencyExchange, CurrencyExchangeDto>()
       .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString()));
 
     CreateMap<UserSettings, UserSettingsDto>();

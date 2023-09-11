@@ -9,11 +9,9 @@
       <div class="budget-page_content-panel">
         <TabView class="budget-page_content-panel_tab-view">
           <TabPanel header="Funds">
-            <!-- <BalanceView /> -->
             <FundsView/>
           </TabPanel>
           <TabPanel header="Accounts">
-            <!-- <BalanceView /> -->
             <AccountsView/>
           </TabPanel>
         </TabView>
@@ -41,6 +39,9 @@
           <TabPanel header="Account Transfers">
             <AccountTransfersView />
           </TabPanel>
+          <TabPanel header="Currency Exchanges">
+            <CurrencyExchangesView/>
+          </TabPanel>
         </TabView>
       </div>
 
@@ -57,6 +58,7 @@ import AccountsView from '@/components/AccountsView.vue';
 import FundsView from '@/components/FundsView.vue';
 import ExpensesView from '@/components/ExpensesView.vue';
 import IncomesView from '@/components/IncomesView.vue';
+import CurrencyExchangesView from '@/components/CurrencyExchangesView.vue';
 import { useAppStore } from '@/store/store';
 import { storeToRefs } from 'pinia';
 import { onMounted, ref } from 'vue';

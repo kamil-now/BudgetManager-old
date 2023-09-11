@@ -3,7 +3,6 @@
     <ListView 
       header="Accounts"
       v-model="accounts"
-      :allowReorder="true"
       :createNew="createAccountObject"
       :save="createNewAccount"
       :update="updateAccount"
@@ -51,7 +50,7 @@ function onAccountChanged(account: Account, newValue: Account) {
 }
 
 function createAccountObject() {
-  const defaultCurrency = getDefaultCurrency();
+  const defaultCurrency = Object.keys(accounts.value[accounts.value.length - 1].initialBalance)[0] ?? Object.keys(currencies)[0];
   return  {
     balance: {
       [defaultCurrency]: 0
@@ -60,13 +59,6 @@ function createAccountObject() {
       [defaultCurrency]: 0
     }
   };
-}
-
-
-function getDefaultCurrency(): string {
-  return accounts.value.length > 0
-    ? Object.keys(accounts.value[accounts.value.length - 1].initialBalance)[0]
-    : Object.keys(currencies)[0];
 }
 
 </script>

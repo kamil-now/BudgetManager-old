@@ -28,7 +28,7 @@
       currencyDisplay="code"
       :allowEmpty="false"
       :currency="allocationCurrency" 
-      :min="0"
+      :min="-1000000"
       :maxFractionDigits="2"
       :max="1000000"
     />

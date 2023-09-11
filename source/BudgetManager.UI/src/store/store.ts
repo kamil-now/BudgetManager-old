@@ -16,6 +16,8 @@ import { AccountTransfer } from '@/models/account-transfer';
 import { FundTransfer } from '@/models/fund-transfer';
 import { createAccountTransferRequest, updateAccountTransferRequest, deleteAccountTransferRequest } from '@/api/account-transfer-requests';
 import { createFundTransferRequest, updateFundTransferRequest, deleteFundTransferRequest } from '@/api/fund-transfer-requests';
+import { CurrencyExchange } from '@/models/currency-exchange';
+import { createCurrencyExchangeRequest, updateCurrencyExchangeRequest, deleteCurrencyExchangeRequest } from '@/api/currency-exchange-requests';
 
 export type AppState = {
   isLoading: boolean;
@@ -28,7 +30,8 @@ export type AppState = {
   expenses: Expense[],
   allocations: Allocation[],
   fundTransfers: FundTransfer[],
-  accountTransfers: AccountTransfer[]
+  accountTransfers: AccountTransfer[],
+  currencyExchanges: CurrencyExchange[]
 };
 export type AppGetters = {
   // findIndexById: (state: AppState) => (id: string) => number;
@@ -66,6 +69,10 @@ export type AppActions = {
   createNewAccountTransfer(accountTransfer: AccountTransfer): void,
   updateAccountTransfer(accountTransfer: AccountTransfer): void;
   deleteAccountTransfer(accountTransfer: AccountTransfer): void;
+
+  createNewCurrencyExchange(currencyExchange: CurrencyExchange): void,
+  updateCurrencyExchange(currencyExchange: CurrencyExchange): void;
+  deleteCurrencyExchange(currencyExchange: CurrencyExchange): void;
 };
 export type AppStore = Store<string, AppState, AppGetters, AppActions>;
 
@@ -80,6 +87,7 @@ export const getInitialAppState: () => AppState = () => ({
   allocations: [],
   fundTransfers: [],
   accountTransfers: [],
+  currencyExchanges: [],
   budgetBalance: { balance: {} as Balance, unallocated: {} as Balance }
 });
 
@@ -112,6 +120,7 @@ export const APP_STORE: DefineStoreOptions<
               this.allocations = res.allocations;
               this.fundTransfers = res.fundTransfers;
               this.accountTransfers = res.accountTransfers;
+              this.currencyExchanges = res.currencyExchanges;
               this.isNewUser = false;
             } else {
               this.isNewUser = true;
@@ -345,6 +354,37 @@ export const APP_STORE: DefineStoreOptions<
     async deleteAccountTransfer(accountTransfer: AccountTransfer) {
       await Utils.runAsyncOperation(this, () => 
         deleteAccountTransferRequest(accountTransfer)
+          .then(() => this.fetchBudget())// TODO fetch only affected funds/accounts 
+      );
+    },
+    async createNewCurrencyExchange(
+      currencyExchange: CurrencyExchange,
+    ) {
+      await Utils.runAsyncOperation(this, (state) => 
+        createCurrencyExchangeRequest(currencyExchange)
+          .then(id => {
+            state.currencyExchanges.unshift({ ...currencyExchange, id }); 
+            this.fetchBudget(); // TODO fetch only affected funds/accounts 
+          })
+      );
+    },
+    async updateCurrencyExchange(currencyExchange: CurrencyExchange) {
+      await Utils.runAsyncOperation(this, (state) => 
+        updateCurrencyExchangeRequest(currencyExchange)
+          .then(currencyExchange => {
+            const fromState = state.currencyExchanges.find(x => x.id === currencyExchange.id);
+            if (!fromState) {
+              throw new Error('Invalid operation - account transfer does not exist');
+            }
+            const index = state.currencyExchanges.indexOf(fromState);
+            state.currencyExchanges[index] = currencyExchange; 
+            this.fetchBudget(); // TODO fetch only affected funds/accounts 
+          })
+      );
+    },
+    async deleteCurrencyExchange(currencyExchange: CurrencyExchange) {
+      await Utils.runAsyncOperation(this, () => 
+        deleteCurrencyExchangeRequest(currencyExchange)
           .then(() => this.fetchBudget())// TODO fetch only affected funds/accounts 
       );
     },

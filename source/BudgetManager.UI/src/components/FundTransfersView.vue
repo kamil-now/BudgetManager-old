@@ -7,7 +7,6 @@
       :save="createNewFundTransfer"
       :update="updateFundTransfer"
       :remove="deleteFundTransfer"
-      :onReorder="updateUserSettings"
       :allowAdd="funds.length > 0 && accounts.length > 0"
     >
       <template #content="{ data }">
@@ -42,7 +41,7 @@ import { useAppStore } from '@/store/store';
 import { storeToRefs } from 'pinia';
 
 const store = useAppStore();
-const { createNewFundTransfer, updateFundTransfer, deleteFundTransfer, updateUserSettings } = store;
+const { createNewFundTransfer, updateFundTransfer, deleteFundTransfer } = store;
 
 const { fundTransfers, accounts, funds } = storeToRefs(store);
 // TODO extend DTO instead

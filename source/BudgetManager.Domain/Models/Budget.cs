@@ -151,6 +151,11 @@ public class Budget
         _unallocated.Deduct(op.Value);
         _funds.First(x => x.Id == op.TargetFundId).Add(op.Value);
         break;
+      case CurrencyExchange op:
+        var account =_accounts.First(x => x.Id == op.AccountId);
+        account.Deduct(op.Value);
+        account.Add(op.Result);
+        break;
       default:
         throw new InvalidOperationException("Unhandled operation");
     }
@@ -179,6 +184,11 @@ public class Budget
       case Allocation op:
         _unallocated.Add(op.Value);
         _funds.First(x => x.Id == op.TargetFundId).Deduct(op.Value);
+        break;
+      case CurrencyExchange op:
+        var account =_accounts.First(x => x.Id == op.AccountId);
+        account.Deduct(op.Result);
+        account.Add(op.Value);
         break;
       default:
         throw new InvalidOperationException("Unhandled operation");

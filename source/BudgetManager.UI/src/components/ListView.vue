@@ -23,7 +23,7 @@
           />
         </div>
       </template>
-      <Column v-if="allowReorder" rowReorder />
+      <Column v-if="!!onReorder" rowReorder />
       <Column class="list-view_content-column">
         <template #body="{ data, index }">
           <div 
@@ -31,7 +31,7 @@
             @mouseenter="hover = data"
             @mouseleave="hover = null"
           >
-            <div class="list-view_body-content" :class="{ faded: hover === data}" v-if="editing !== data">
+            <div class="list-view_body-content" :class="{ blur: hover === data}" v-if="editing !== data">
               <slot name="content" :data="data"></slot>
             </div>
             <div class="list-view_body-editor" v-else>
@@ -96,13 +96,12 @@ const confirm = useConfirm();
 type Props<T> = {
   header: string,
   modelValue: T[],
-  allowReorder?: boolean,
   allowAdd?: boolean,
   copy?: (item: T) => T,
   createNew: () => T,
   save: (item: T) => void,
   update: (item: T) => void,
-  onReorder: () => void,
+  onReorder?: () => void,
   remove: (item: T) => void
 }// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const props = defineProps<Props<any & {id?: string, name: string}>>();
@@ -160,6 +159,9 @@ function add() {
 }
 
 function onRowReorder(event: {dragIndex: number, dropIndex: number}) {
+  if (!props.onReorder) {
+    throw new Error('Copy delegate is undefined.');
+  }
   const { dragIndex, dropIndex } = event;
   const element = items.value[dragIndex];
   items.value.splice(dragIndex, 1);
@@ -173,8 +175,8 @@ $padding: 0.25rem;
 $header-column-width: 2rem;
 
 .list-view {
-  .faded {
-    opacity: 0.3;
+  .blur {
+    filter: blur(1px);
   }
   width: 100%;
   height: 100%;

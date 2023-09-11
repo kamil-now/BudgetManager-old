@@ -4,28 +4,30 @@ using AutoMapper;
 using BudgetManager.Domain.Models;
 using BudgetManager.Infrastructure;
 
-public record UpdateExpenseCommand(
+public record UpdateCurrencyExchangeCommand(
   string UserId,
   string OperationId,
   string? Title,
   Money? Value,
   string? Date,
   string? AccountId,
-  string? FundId,
+  string? TargetCurrency,
+  decimal? ExchangeRate,
   string? Description
-  ) : UpdateOperationCommand<Expense, ExpenseDto>(UserId, OperationId);
+  ) : UpdateOperationCommand<CurrencyExchange, CurrencyExchangeDto>(UserId, OperationId);
 
-public class UpdateExpenseCommandHandler : UpdateOperationCommandHandler<UpdateExpenseCommand, Expense, ExpenseDto>
+public class UpdateCurrencyExchangeCommandHandler : UpdateOperationCommandHandler<UpdateCurrencyExchangeCommand, CurrencyExchange, CurrencyExchangeDto>
 {
-  public UpdateExpenseCommandHandler(IUserBudgetRepository repo, IMapper map)
+  public UpdateCurrencyExchangeCommandHandler(IUserBudgetRepository repo, IMapper map)
   : base(repo, map)
   {
   }
 
-  protected override void Update(Expense operation, UpdateExpenseCommand command)
+  protected override void Update(CurrencyExchange operation, UpdateCurrencyExchangeCommand command)
     => operation.Update(
-        command.FundId,
         command.AccountId,
+        command.TargetCurrency,
+        command.ExchangeRate,
         command.Title,
         command.Value,
         command.Date,
@@ -33,9 +35,9 @@ public class UpdateExpenseCommandHandler : UpdateOperationCommandHandler<UpdateE
       );
 }
 
-public class UpdateExpenseCommandValidator : UpdateOperationCommandValidator<UpdateExpenseCommand>
+public class UpdateCurrencyExchangeCommandValidator : UpdateOperationCommandValidator<UpdateCurrencyExchangeCommand>
 {
-  public UpdateExpenseCommandValidator(IUserBudgetRepository repository, AppConfig config) : base(repository)
+  public UpdateCurrencyExchangeCommandValidator(IUserBudgetRepository repository, AppConfig config) : base(repository)
   {
     RuleFor(x => x.Title)
       .Must(title => title is null || title.Length <= config.MaxTitleLength);
@@ -50,14 +52,5 @@ public class UpdateExpenseCommandValidator : UpdateOperationCommandValidator<Upd
         var budget = await repository.Get(command.UserId);
         return budget.Accounts?.Any(x => x.Id == command.AccountId) ?? false;
       }).WithMessage(command => $"Account with id {command.AccountId} does not exist in the budget");
-
-    RuleFor(x => x)
-      .MustAsync(async (command, cancellation) =>
-      {
-        if (command.FundId is null)
-          return true;
-        var budget = await repository.Get(command.UserId);
-        return budget.Funds?.Any(x => x.Id == command.FundId) ?? false;
-      }).WithMessage(command => $"Fund with id {command.FundId} does not exist in the budget");
   }
 }

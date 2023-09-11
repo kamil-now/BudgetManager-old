@@ -206,13 +206,20 @@ app.MapCRUD<AccountTransferDto, CreateAccountTransferCommand, AccountTransferReq
   (ctx, accountId) => new DeleteOperationCommand<AccountTransfer>(ctx.GetUserId(), accountId)
 );
 
-
 app.MapCRUD<AllocationDto, CreateAllocationCommand, AllocationRequest, UpdateAllocationCommand, DeleteOperationCommand<Allocation>>(
   "allocation",
   (ctx, create) => create with { UserId = ctx.GetUserId() },
   (ctx, accountId) => new AllocationRequest(ctx.GetUserId(), accountId),
   (ctx, update) => update with { UserId = ctx.GetUserId() },
   (ctx, accountId) => new DeleteOperationCommand<Allocation>(ctx.GetUserId(), accountId)
+);
+
+app.MapCRUD<CurrencyExchangeDto, CreateCurrencyExchangeCommand, CurrencyExchangeRequest, UpdateCurrencyExchangeCommand, DeleteOperationCommand<CurrencyExchange>>(
+  "currency-exchange",
+  (ctx, create) => create with { UserId = ctx.GetUserId() },
+  (ctx, accountId) => new CurrencyExchangeRequest(ctx.GetUserId(), accountId),
+  (ctx, update) => update with { UserId = ctx.GetUserId() },
+  (ctx, accountId) => new DeleteOperationCommand<CurrencyExchange>(ctx.GetUserId(), accountId)
 );
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();

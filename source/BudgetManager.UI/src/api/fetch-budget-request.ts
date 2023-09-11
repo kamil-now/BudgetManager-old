@@ -4,6 +4,7 @@ import { Account } from '@/models/account';
 import { AccountTransfer } from '@/models/account-transfer';
 import { Allocation } from '@/models/allocation';
 import { Balance } from '@/models/balance';
+import { CurrencyExchange } from '@/models/currency-exchange';
 import { Expense } from '@/models/expense';
 import { Fund } from '@/models/fund';
 import { FundTransfer } from '@/models/fund-transfer';
@@ -20,6 +21,7 @@ export function fetchBudgetRequest(): Promise<{
   allocations: Allocation[],
   fundTransfers: FundTransfer[],
   accountTransfers: AccountTransfer[],
+  currencyExchanges: CurrencyExchange[],
 } | null> {
 
   return axios.get<{balance: Balance, unallocated: Balance}>('/api/balance')
@@ -33,6 +35,7 @@ export function fetchBudgetRequest(): Promise<{
           axios.get<Allocation[]>('api/allocations').then(res => res?.data),
           axios.get<FundTransfer[]>('api/fund-transfers').then(res => res?.data),
           axios.get<AccountTransfer[]>('api/account-transfers').then(res => res?.data),
+          axios.get<CurrencyExchange[]>('api/currency-exchanges').then(res => res?.data),
           axios.get<{ accountsOrder: string[], fundsOrder: string[] }>('api/user-settings')
             .then(res => res?.data, () => ({ accountsOrder: [], fundsOrder: [] }))
         ])
@@ -40,7 +43,7 @@ export function fetchBudgetRequest(): Promise<{
           if (data.some(x => !x)) {
             throw new Error('Failed to fetch budget data.');
           }
-          const [accounts, funds, incomes, expenses, allocations, fundTransfers, accountTransfers, settings] = data;
+          const [accounts, funds, incomes, expenses, allocations, fundTransfers, accountTransfers, currencyExchanges, settings] = data;
           return {
             balance: res.data,
             incomes: parseAndSortOperations(incomes),
@@ -50,6 +53,7 @@ export function fetchBudgetRequest(): Promise<{
             allocations: parseAndSortOperations(allocations),
             fundTransfers: parseAndSortOperations(fundTransfers),
             accountTransfers: parseAndSortOperations(accountTransfers),
+            currencyExchanges: parseAndSortOperations(currencyExchanges),
           };})
     );
 }

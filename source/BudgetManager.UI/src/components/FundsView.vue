@@ -3,7 +3,6 @@
     <ListView
       header="Funds"
       v-model="funds"
-      :allowReorder="true"
       :createNew="createFundObject"
       :save="createNewFund"
       :update="updateFund"

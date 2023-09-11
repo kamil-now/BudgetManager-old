@@ -8,7 +8,6 @@
       :update="updateIncome"
       :remove="deleteIncome"
       :allowAdd="accounts.length > 0"
-      :onReorder="updateUserSettings"
     >
       <template #content="{ data }">
         <div class="incomes-view_body">
@@ -40,7 +39,7 @@ import { useAppStore } from '@/store/store';
 import { storeToRefs } from 'pinia';
 
 const store = useAppStore();
-const { createNewIncome, updateIncome, deleteIncome, updateUserSettings } = store;
+const { createNewIncome, updateIncome, deleteIncome } = store;
 
 const { incomes, accounts } = storeToRefs(store);
 // TODO extend DTO instead

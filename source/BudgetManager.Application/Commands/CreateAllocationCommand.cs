@@ -56,17 +56,11 @@ public class CreateAllocationCommandValidator
       .MaximumLength(config.MaxContentLength);
 
     RuleFor(x => x.Value.Amount)
-      .GreaterThan(0);
+      .NotEqual(0);
   }
 
   protected override void RulesWhenBudgetExists()
   {
-    RuleFor(x => x)
-      .MustAsync(async (command, cancellation) => {
-        var unallocated = (await repository.Get(command.UserId)).Unallocated;
-        return (unallocated?.ContainsKey(command.Value.Currency) ?? false) && unallocated[command.Value.Currency] >= command.Value.Amount;
-      }).WithMessage("Insufficient unallocated funds.");
-
     RuleFor(x => x)
       .MustAsync(async (command, cancellation)
         => (await repository.Get(command.UserId)).Funds?.Any(x => x.Id == command.TargetFundId && !x.IsDeleted) ?? false)

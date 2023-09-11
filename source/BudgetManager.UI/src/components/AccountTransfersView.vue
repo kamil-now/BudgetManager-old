@@ -7,7 +7,6 @@
       :save="createNewAccountTransfer"
       :update="updateAccountTransfer"
       :remove="deleteAccountTransfer"
-      :onReorder="updateUserSettings"
       :allowAdd="accounts.length > 0"
     >
       <template #content="{ data }">
@@ -34,15 +33,15 @@
 </template>
 <script setup lang="ts">
 import currencies from '@/assets/currencies.json';
-import ListView from '@/components/ListView.vue';
 import AccountTransferInput from '@/components/AccountTransferInput.vue';
+import ListView from '@/components/ListView.vue';
 import { DisplayFormat } from '@/helpers/display-format';
 import { AccountTransfer } from '@/models/account-transfer';
 import { useAppStore } from '@/store/store';
 import { storeToRefs } from 'pinia';
 
 const store = useAppStore();
-const { createNewAccountTransfer, updateAccountTransfer, deleteAccountTransfer, updateUserSettings } = store;
+const { createNewAccountTransfer, updateAccountTransfer, deleteAccountTransfer } = store;
 
 const { accountTransfers, accounts } = storeToRefs(store);
 // TODO extend DTO instead
