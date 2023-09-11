@@ -5,6 +5,7 @@ using BudgetManager.Application.Requests;
 
 public class MappingProfile : Profile
 {
+  const string DATE_FORMAT = "dd/MM/yyyy";
   public MappingProfile()
   {
     CreateMap<BudgetEntity, Budget>()
@@ -36,7 +37,7 @@ public class MappingProfile : Profile
           src.Id!,
           src.Title!,
           new Money(src.Amount, src.Currency!),
-          DateOnly.Parse(src.Date!),
+          DateOnly.ParseExact(src.Date!, DATE_FORMAT),
           src.AccountId!,
           src.FundId!,
           src.Description!,
@@ -73,7 +74,7 @@ public class MappingProfile : Profile
           new Money(src.Amount, src.Currency!),
           src.SourceFundId!,
           src.TargetFundId!,
-          DateOnly.Parse(src.Date!),
+          DateOnly.ParseExact(src.Date!, DATE_FORMAT),
           src.Description!,
           src.CreatedDate
           )
@@ -88,7 +89,7 @@ public class MappingProfile : Profile
           new Money(src.Amount, src.Currency!),
           src.SourceAccountId!,
           src.TargetAccountId!,
-          DateOnly.Parse(src.Date!),
+          DateOnly.ParseExact(src.Date!, DATE_FORMAT),
           src.Description!,
           src.CreatedDate
           )
@@ -101,7 +102,7 @@ public class MappingProfile : Profile
           src.AccountId!,
           src.Title!,
           new Money(src.Amount, src.Currency!),
-          DateOnly.Parse(src.Date!),
+          DateOnly.ParseExact(src.Date!, DATE_FORMAT),
           src.Description!,
           src.CreatedDate
           )
@@ -114,7 +115,7 @@ public class MappingProfile : Profile
           src.Title!,
           new Money(src.Amount, src.Currency!),
           src.TargetFundId!,
-          DateOnly.Parse(src.Date!),
+          DateOnly.ParseExact(src.Date!, DATE_FORMAT),
           src.Description!,
           src.CreatedDate
           )
@@ -129,7 +130,7 @@ public class MappingProfile : Profile
           src.AccountId!,
           src.TargetCurrency!,
           src.ExchangeRate,
-          DateOnly.Parse(src.Date!),
+          DateOnly.ParseExact(src.Date!, DATE_FORMAT),
           src.Description!,
           src.CreatedDate
           )
@@ -193,7 +194,7 @@ public class MappingProfile : Profile
     CreateMap<UserSettings, UserSettingsEntity>();
 
     CreateMap<Expense, ExpenseEntity>()
-      .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString()))
+      .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString(DATE_FORMAT)))
       .ForMember(x => x.Amount, opt => opt.MapFrom(src => src.Value.Amount))
       .ForMember(x => x.Currency, opt => opt.MapFrom(src => src.Value.Currency));
 
@@ -205,27 +206,27 @@ public class MappingProfile : Profile
       .ForMember(x => x.InitialBalance, opt => opt.MapFrom(src => new Dictionary<string, decimal>(src.InitialBalance)));
 
     CreateMap<FundTransfer, FundTransferEntity>()
-      .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString()))
+      .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString(DATE_FORMAT)))
       .ForMember(x => x.Amount, opt => opt.MapFrom(src => src.Value.Amount))
       .ForMember(x => x.Currency, opt => opt.MapFrom(src => src.Value.Currency));
 
     CreateMap<AccountTransfer, AccountTransferEntity>()
-      .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString()))
+      .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString(DATE_FORMAT)))
       .ForMember(x => x.Amount, opt => opt.MapFrom(src => src.Value.Amount))
       .ForMember(x => x.Currency, opt => opt.MapFrom(src => src.Value.Currency));
 
     CreateMap<Income, IncomeEntity>()
-      .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString()))
+      .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString(DATE_FORMAT)))
       .ForMember(x => x.Amount, opt => opt.MapFrom(src => src.Value.Amount))
       .ForMember(x => x.Currency, opt => opt.MapFrom(src => src.Value.Currency));
 
     CreateMap<Allocation, AllocationEntity>()
-      .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString()))
+      .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString(DATE_FORMAT)))
       .ForMember(x => x.Amount, opt => opt.MapFrom(src => src.Value.Amount))
       .ForMember(x => x.Currency, opt => opt.MapFrom(src => src.Value.Currency));
 
     CreateMap<CurrencyExchange, CurrencyExchangeEntity>()
-      .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString()))
+      .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString(DATE_FORMAT)))
       .ForMember(x => x.Amount, opt => opt.MapFrom(src => src.Value.Amount))
       .ForMember(x => x.Currency, opt => opt.MapFrom(src => src.Value.Currency));
 
