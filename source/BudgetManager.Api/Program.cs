@@ -9,7 +9,6 @@ using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.FileProviders;
-using Microsoft.Identity.Web;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -58,9 +57,11 @@ builder.Services.AddSwaggerGen(options =>
   options.OperationFilter<AuthenticationOperationFilter>();
 #endif
 });
+var appConfig = builder.Configuration.GetSection("AppConfig").Get<AppConfig>() ?? throw new Exception("Missing app configuration.");
+var dbConnectionString = builder.Configuration.GetConnectionString("Database") ?? throw new Exception("Missing database connection string.");
 
-builder.Services.AddApplicationServices(builder.Configuration.GetSection("AppConfig").Get<AppConfig>());
-builder.Services.AddDatabaseConnection(builder.Configuration.GetConnectionString("Database"));
+builder.Services.AddApplicationServices(appConfig);
+builder.Services.AddDatabaseConnection(dbConnectionString);
 
 builder.Services.AddCors(
 options => options.AddDefaultPolicy(
@@ -112,6 +113,38 @@ async (
 .WithTags(API_TITLE)
 .RequireAuthorization();
 
+app.MapGet("/user-settings",
+async (
+  HttpContext context,
+  IMediator mediator,
+  CancellationToken cancellationToken
+  ) => Results.Ok(await mediator.Send(new UserSettingsRequest(context.GetUserId()))))
+.WithTags(API_TITLE)
+.RequireAuthorization();
+
+app.MapPut("/user-settings",
+async (
+  HttpContext context,
+  IMediator mediator,
+  [FromBody] UpdateUserSettingsCommand command,
+  CancellationToken cancellationToken
+  )
+  => Results.Ok(await mediator.Send(command with { UserId = context.GetUserId() })))
+.WithTags(API_TITLE)
+.RequireAuthorization();
+
+app.MapDelete("/budget",
+async (
+  HttpContext context,
+  IMediator mediator,
+  CancellationToken cancellationToken
+  ) =>
+  {
+    await mediator.Send(new DeleteBudgetCommand(context.GetUserId()));
+    return Results.Ok();
+  })
+.WithTags(API_TITLE)
+.RequireAuthorization();
 
 app.MapGet("/balance",
   [SwaggerOperation(Summary = "Gets user overall balance in a form of a dictionary with currency codes as keys")]
@@ -157,23 +190,36 @@ app.MapCRUD<ExpenseDto, CreateExpenseCommand, ExpenseRequest, UpdateExpenseComma
   (ctx, accountId) => new DeleteOperationCommand<Expense>(ctx.GetUserId(), accountId)
 );
 
-app.MapPut("/toggle-expense",
-  [SwaggerOperation(Summary = "Toggles IsConfirmed property of an expense - unconfirmed expenses will not affect overall balance")]
-async (
-  HttpContext context,
-  IMediator mediator,
-  [FromBody] ToggleExpenseCommand command,
-  CancellationToken cancellationToken
-) => Results.Ok(await mediator.Send(command, cancellationToken)))
-.WithTags("Expense")
-.RequireAuthorization();
-
 app.MapCRUD<FundTransferDto, CreateFundTransferCommand, FundTransferRequest, UpdateFundTransferCommand, DeleteOperationCommand<FundTransfer>>(
-  "fundTransfer",
+  "fund-transfer",
   (ctx, create) => create with { UserId = ctx.GetUserId() },
   (ctx, accountId) => new FundTransferRequest(ctx.GetUserId(), accountId),
   (ctx, update) => update with { UserId = ctx.GetUserId() },
   (ctx, accountId) => new DeleteOperationCommand<FundTransfer>(ctx.GetUserId(), accountId)
+);
+
+app.MapCRUD<AccountTransferDto, CreateAccountTransferCommand, AccountTransferRequest, UpdateAccountTransferCommand, DeleteOperationCommand<AccountTransfer>>(
+  "account-transfer",
+  (ctx, create) => create with { UserId = ctx.GetUserId() },
+  (ctx, accountId) => new AccountTransferRequest(ctx.GetUserId(), accountId),
+  (ctx, update) => update with { UserId = ctx.GetUserId() },
+  (ctx, accountId) => new DeleteOperationCommand<AccountTransfer>(ctx.GetUserId(), accountId)
+);
+
+app.MapCRUD<AllocationDto, CreateAllocationCommand, AllocationRequest, UpdateAllocationCommand, DeleteOperationCommand<Allocation>>(
+  "allocation",
+  (ctx, create) => create with { UserId = ctx.GetUserId() },
+  (ctx, accountId) => new AllocationRequest(ctx.GetUserId(), accountId),
+  (ctx, update) => update with { UserId = ctx.GetUserId() },
+  (ctx, accountId) => new DeleteOperationCommand<Allocation>(ctx.GetUserId(), accountId)
+);
+
+app.MapCRUD<CurrencyExchangeDto, CreateCurrencyExchangeCommand, CurrencyExchangeRequest, UpdateCurrencyExchangeCommand, DeleteOperationCommand<CurrencyExchange>>(
+  "currency-exchange",
+  (ctx, create) => create with { UserId = ctx.GetUserId() },
+  (ctx, accountId) => new CurrencyExchangeRequest(ctx.GetUserId(), accountId),
+  (ctx, update) => update with { UserId = ctx.GetUserId() },
+  (ctx, accountId) => new DeleteOperationCommand<CurrencyExchange>(ctx.GetUserId(), accountId)
 );
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();

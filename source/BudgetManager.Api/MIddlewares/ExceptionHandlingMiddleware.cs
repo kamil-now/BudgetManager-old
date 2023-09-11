@@ -22,7 +22,8 @@ public class ExceptionHandlingMiddleware
     {
       context.Response.ContentType = "application/json";
       context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-      await context.Response.WriteAsync(JsonSerializer.Serialize(ex.Errors.Select(x => x.ErrorMessage)));
+      var errorMessage = JsonSerializer.Serialize(ex.Errors.Select(x => x.ErrorMessage));
+      await context.Response.WriteAsync(errorMessage);
     }
   }
 }

@@ -22,6 +22,7 @@ public class ShouldSucceed : BaseTest
 
     var result = await mediator.Send(new BalanceRequest(userId));
 
-    result.Should().BeEquivalentTo(new Dictionary<string, decimal>());
+    result.Balance.Should().BeEquivalentTo(new Dictionary<string, decimal>());
+    result.Unallocated.Should().BeEquivalentTo(new Dictionary<string, decimal>());
   }
 }

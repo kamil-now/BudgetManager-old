@@ -1,65 +1,39 @@
 namespace BudgetManager.Application.Commands;
 
-using System.Text.Json.Serialization;
 using AutoMapper;
 using BudgetManager.Domain.Models;
 using BudgetManager.Infrastructure;
 
 public record UpdateIncomeCommand(
-  [property: JsonIgnore()]
   string UserId,
   string OperationId,
   string? Title,
   Money? Value,
   string? Date,
   string? AccountId,
-  string? FundId,
   string? Description
-  ) : IRequest<Unit>, IOperationCommand;
+  ) : UpdateOperationCommand<Income, IncomeDto>(UserId, OperationId);
 
 public class UpdateIncomeCommandHandler
-  : BudgetCommandHandler<UpdateIncomeCommand, Unit>
+  : UpdateOperationCommandHandler<UpdateIncomeCommand, Income, IncomeDto>
 {
   public UpdateIncomeCommandHandler(IUserBudgetRepository repo, IMapper map)
   : base(repo, map)
   {
   }
 
-  public override Unit ModifyBudget(UpdateIncomeCommand command, Budget budget)
-  {
-    var Income = budget.Operations.First(x => x.Id == command.OperationId) as Income;
-
-    Income!.Update(command.AccountId, command.FundId, command.Title, command.Value, command.Date, command.Description);
-
-    return Unit.Value;
-  }
+  protected override void Update(Income operation, UpdateIncomeCommand command)
+  => operation.Update(command.AccountId, command.Title, command.Value, command.Date, command.Description);
 }
 
-
-public class IncomeCommandValidator<T>
-  : BudgetCommandValidator<T> where T : IRequest<Unit>, IOperationCommand
+public class UpdateIncomeCommandValidator : UpdateOperationCommandValidator<UpdateIncomeCommand>
 {
-  public IncomeCommandValidator(IUserBudgetRepository repository) : base(repository)
+  public UpdateIncomeCommandValidator(IUserBudgetRepository repository, AppConfig config) : base(repository)
   {
-    RuleFor(x => x)
-      .MustAsync(async (command, cancellation) =>
-      {
-        var budget = await repository.Get(command.UserId);
-        return budget!.Incomes?.Any(x => x.Id == command.OperationId) ?? false;
-      }).WithMessage("Income with a given id does not exist in the budget");
-  }
-}
+     RuleFor(x => x.Title)
+      .Must(title => title is null || title.Length <= config.MaxTitleLength);
 
-public class UpdateIncomeCommandValidator
-  : IncomeCommandValidator<UpdateIncomeCommand>
-{
-  public UpdateIncomeCommandValidator(IUserBudgetRepository repository) : base(repository)
-  {
-    RuleFor(x => x.Title)
-      .Must(title => title is null || title.Length <= 50);
-
-    RuleFor(x => x.Value)
-      .Must(value => value is null || value?.Currency.Length == 3);
+    RuleFor(x => x.Value).ISO_4217_Currency(allowNull: true);
 
     RuleFor(x => x)
       .MustAsync(async (command, cancellation) =>
@@ -67,7 +41,7 @@ public class UpdateIncomeCommandValidator
         if (command.AccountId is null)
           return true;
         var budget = await repository.Get(command.UserId);
-        return budget!.Accounts?.Any(x => x.Id == command.AccountId) ?? false;
-      }).WithMessage("Account with a given id does not exist in the budget");
+        return budget.Accounts?.Any(x => x.Id == command.AccountId) ?? false;
+      }).WithMessage(command => $"Account with id {command.AccountId} does not exist in the budget");
   }
 }

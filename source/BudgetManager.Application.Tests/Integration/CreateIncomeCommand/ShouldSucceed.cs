@@ -43,33 +43,34 @@ public class ShouldSucceed : BaseTest
     await CreateBudget();
     var incomeValue = new Money(420, "USD");
     var accountId = await CreateAccount(incomeValue.Currency);
-    var fundId = await CreateFund();
 
-    var incomeId = await CreateIncome(incomeValue, accountId, fundId);
+    var incomeId = await CreateIncome(incomeValue, accountId);
 
     var income = await mediator.Send(new IncomeRequest(userId, incomeId));
 
     income.AccountId.Should().Be(accountId);
-    income.FundId.Should().Be(fundId);
     income.Value.Should().Be(incomeValue);
     income.Date.Should().Be(DateTime.Now.ToShortDateString());
   }
 
   [Theory]
   [MemberData(nameof(TestCases))]
-  public async void And_Increase_Account_Balance(decimal initial, Money[] incomes, Money expectedBalance)
+  public async void And_Increase_Account_And_Unallocated_Balance(decimal initial, Money[] incomes, Money expectedBalance)
   {
     await CreateBudget();
-    var accountId = await CreateAccount(expectedBalance.Currency, initial);
-    var fundId = await CreateFund();
+    var accountId = await CreateAccount(initial, expectedBalance.Currency);
 
     foreach (var income in incomes)
     {
-      await CreateIncome(income, accountId, fundId);
+      await CreateIncome(income, accountId);
     }
 
     var account = await mediator.Send(new AccountRequest(userId, accountId));
+    var budgetBalance = await mediator.Send(new BalanceRequest(userId));
 
     account.Balance.Should().BeEquivalentTo(expectedBalance);
+    budgetBalance.Unallocated.Keys.Count.Should().Be(1);
+    budgetBalance.Unallocated.Keys.Should().Contain(expectedBalance.Currency);
+    budgetBalance.Unallocated[expectedBalance.Currency].Should().Be(expectedBalance.Amount);
   }
 }

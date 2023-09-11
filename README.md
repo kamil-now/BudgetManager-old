@@ -36,3 +36,11 @@ Go to /source/BudgetManager.Application.Tests and run:
 
 ```dotnet test -l "console;verbosity=detailed"```
 
+### Debug tests in VS Code
+
+Ctrl+Shift+P -> Tasks:Run Task -> test
+
+This will start process and should ouput 'Process Id: {your process id}' in the terminal
+
+Ctrl+Shift+D -> .NET Core Attach -> find your process by id and select it
+

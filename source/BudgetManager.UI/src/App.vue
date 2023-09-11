@@ -1,24 +1,54 @@
 <template>
-  <router-view />
+  <ProgressBar 
+    v-if="isLoggedIn && isLoading"
+    class="loading-indicator"
+    mode="indeterminate"
+    >
+  </ProgressBar>
+  <router-view/>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { storeToRefs } from 'pinia';
+import { useAppStore } from './store/store';
+
+const store = useAppStore();
+const { isLoggedIn, isLoading } = storeToRefs(store);
+
+</script>
 
 <style lang="scss">
-@media only screen and (max-width: 600px) {
-  #app {
-    padding-top: 1rem !important;
-    margin: 0 !important;
-  }
-}
 #app {
+  @media (max-width: map-get($breakpoints, xs)), (max-height: 500px) {
+    * {
+      display: none;
+    }
+  }
+
+  &::before {
+    display: none;
+    content: "Your screen size is not supported";
+    align-items: center;
+    justify-content: center;
+    height: 50%;
+      
+    @media (max-width: map-get($breakpoints, xs)), (max-height: 500px) {
+      display: flex;
+    }
+  }
   height: calc(100vh - 4rem);
-  padding: 3rem 0 1rem 0;
-  margin: 0 1rem;
+  margin: 0;
   display: flex;
   align-items: flex-start;
   justify-content: center;
   animation: fadein 1s;
+
+  .loading-indicator {
+    height: 0.25rem;
+    width: 100vw;
+    position: absolute;
+    top: 0;
+  }
 }
 
 @keyframes fadein {
@@ -29,20 +59,5 @@
     opacity: 1;
   }
 }
-.log-in-btn {
-  min-width: 100px;
-  background-color: var(--app-accent-color);
-  color: var(--app-accent-text-color);
-  border-radius: 5px;
-  font-weight: 500;
-  &:hover {
-    cursor: pointer;
-  }
-}
-.log-out-btn {
-  @extend .log-in-btn;
-  position: absolute;
-  bottom: 50px;
-  right: 50px;
-}
+
 </style>

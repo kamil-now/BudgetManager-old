@@ -15,7 +15,8 @@ public class CreateFundCommandHandler : BudgetCommandHandler<CreateFundCommand, 
   {
   }
 
-  public override string ModifyBudget(CreateFundCommand command, Budget budget) => budget.AddFund(command.Name);
+  public override string ModifyBudget(CreateFundCommand command, Budget budget) 
+    => budget.AddFund(command.Name);
 }
 
 public class CreateFundCommandValidator : BudgetCommandValidator<CreateFundCommand>

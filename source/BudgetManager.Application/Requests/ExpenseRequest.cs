@@ -2,16 +2,6 @@ namespace BudgetManager.Application.Requests;
 
 using AutoMapper;
 
-public record ExpenseDto(
-    string Id,
-    string Title,
-    Money Value,
-    string Date,
-    string AccountId,
-    string FundId,
-    string Description,
-    bool IsConfirmed
-);
 public record ExpenseRequest(string UserId, string ExpenseId) : IBudgetRequest, IRequest<ExpenseDto>;
 
 public class ExpenseRequestHandler : BudgetRequestHandler<ExpenseRequest, ExpenseDto>
@@ -48,6 +38,6 @@ public class ExpenseRequestValidator : BudgetRequestValidator<ExpenseRequest>
       {
         var budget = await repository.Get(request.UserId);
         return budget!.Expenses?.Any(x => x.Id == request.ExpenseId) ?? false;
-      }).WithMessage("Expense with a given id does not exist in the budget");
+      }).WithMessage("Expense with a given id does not exist in the budget.");
   }
 }

@@ -24,20 +24,23 @@ public class DeleteFundCommandValidator : BudgetCommandValidator<DeleteFundComma
 {
   public DeleteFundCommandValidator(IUserBudgetRepository repository) : base(repository)
   {
+  }
+  protected override void RulesWhenBudgetExists()
+  {
     RuleFor(x => x)
-      .MustAsync(async (command, cancellation) =>
-      {
-        var budget = await repository.Get(command.UserId);
-        return budget!.Funds?.Any(x => x.Id == command.FundId) ?? false;
-      }).WithMessage("Fund with a given id does not exist in the budget");
-
-
-    RuleFor(x => x)
-      .MustAsync(async (command, cancellation) =>
-      {
-        var budget = await repository.Get(command.UserId);
-        return (budget!.Expenses is null || !budget!.Expenses.Any(x => x.FundId == command.FundId))
-        && (budget!.FundTransfers is null || !budget!.FundTransfers.Any(x => x.SourceFundId == command.FundId || x.TargetFundId == command.FundId));
-      }).WithMessage("Fund cannot be removed because there are budget operations referencing this fund");
+    .MustAsync(async (command, cancellation) =>
+    {
+      var budget = await repository.Get(command.UserId);
+      return budget!.Funds?.Any(x => x.Id == command.FundId) ?? false;
+    }).WithMessage("Fund with a given id does not exist in the budget.")
+    .DependentRules(() =>
+    {
+      RuleFor(x => x)
+        .MustAsync(async (command, cancellation) =>
+        {
+          var budget = await repository.Get(command.UserId);
+          return budget!.Funds!.First(x => x.Id == command.FundId)!.Balance!.Values.All(x => x == 0);
+        }).WithMessage("Fund must be empty in order to be deleted.");
+    });
   }
 }

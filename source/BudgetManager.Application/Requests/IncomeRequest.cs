@@ -2,15 +2,6 @@ namespace BudgetManager.Application.Requests;
 
 using AutoMapper;
 
-public record IncomeDto(
-    string Id,
-    string Title,
-    Money Value,
-    string Date,
-    string AccountId,
-    string FundId,
-    string Description
-);
 public record IncomeRequest(string UserId, string IncomeId) : IBudgetRequest, IRequest<IncomeDto>;
 
 public class IncomeRequestHandler : BudgetRequestHandler<IncomeRequest, IncomeDto>
@@ -47,6 +38,6 @@ public class IncomeRequestValidator : BudgetRequestValidator<IncomeRequest>
       {
         var budget = await repository.Get(request.UserId);
         return budget!.Incomes?.Any(x => x.Id == request.IncomeId) ?? false;
-      }).WithMessage("Income with a given id does not exist in the budget");
+      }).WithMessage("Income with a given id does not exist in the budget.");
   }
 }

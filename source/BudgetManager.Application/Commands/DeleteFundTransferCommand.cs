@@ -11,7 +11,7 @@ public class DeleteFundTransferCommandHandler : DeleteOperationCommandHandler<Fu
   }
 }
 
-public class DeleteFundTransferCommandValidator : FundTransferCommandValidator<DeleteOperationCommand<FundTransfer>>
+public class DeleteFundTransferCommandValidator : UpdateOperationCommandValidator<DeleteOperationCommand<FundTransfer>>
 {
   public DeleteFundTransferCommandValidator(IUserBudgetRepository repository) : base(repository)
   {

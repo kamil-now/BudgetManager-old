@@ -32,7 +32,7 @@ public class ShouldFail : BaseTest
       new CreateAccountCommand(
         userId,
         "mockAccount",
-        1,
+        0,
         ""
         ),
       "'Currency' must not be empty."
@@ -77,7 +77,7 @@ public class ShouldFail : BaseTest
       new CreateAccountCommand(
         userId,
         "",
-        1,
+        0,
         "EUR"
         ),
       "'Name' must not be empty."

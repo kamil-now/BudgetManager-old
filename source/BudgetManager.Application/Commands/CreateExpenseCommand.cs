@@ -27,7 +27,7 @@ public class CreateExpenseCommandHandler
   {
     var id = Guid.NewGuid().ToString();
     var now = DateOnly.FromDateTime(DateTime.Now);
-    var date = command.Date is null ? now : DateOnly.Parse(command.Date);
+    var date = command.Date is null ? now : DateOnly.FromDateTime(DateTime.Parse(command.Date));
 
     budget.AddOperation(
       new Expense(
@@ -38,8 +38,7 @@ public class CreateExpenseCommandHandler
         command.AccountId,
         command.FundId,
         command.Description ?? string.Empty,
-        DateTime.Now,
-        date <= now
+        DateTime.Now
         )
       );
 
@@ -69,20 +68,12 @@ public class CreateExpenseCommandValidator
     .MustAsync(async (command, cancellation) =>
     {
       var budget = await repository.Get(command.UserId);
-      return budget!.Accounts?.Any(x => x.Id == command.AccountId) ?? false;
-    }).WithMessage("Account does not exist.")
-      .DependentRules(() =>
-      {
-        RuleFor(x => x)
-        .MustAsync(async (command, cancellation)
-          => (await repository.Get(command.UserId)).Accounts!
-              .First(x => x.Id == command.AccountId).Currency == command.Value.Currency)
-        .WithMessage("Account currency does not match expense currency.");
-      });
+      return budget!.Accounts?.Any(x => x.Id == command.AccountId && !x.IsDeleted) ?? false;
+    }).WithMessage("Account is deleted or does not exist.");
 
     RuleFor(x => x)
     .MustAsync(async (command, cancellation)
-      => (await repository.Get(command.UserId)).Funds?.Any(x => x.Id == command.FundId) ?? false)
-    .WithMessage("Fund does not exist.");
+      => (await repository.Get(command.UserId)).Funds?.Any(x => x.Id == command.FundId && !x.IsDeleted) ?? false)
+    .WithMessage("Fund is deleted or does not exist.");
   }
 }

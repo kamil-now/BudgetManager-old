@@ -1,6 +1,5 @@
 namespace CreateExpenseCommandTests;
 
-using System.Threading.Tasks;
 using BudgetManager.Application.Commands;
 using BudgetManager.Domain.Models;
 using Xunit.Abstractions;
@@ -32,7 +31,7 @@ public class ShouldFail : BaseTest
   [Fact]
   public async void When_Account_Does_Not_Exist()
   {
-    await CreateBudget();
+    await CreateBudgetWithFund();
     var fundId = await CreateFund();
     await AssertFailsValidationAsync(
       new CreateExpenseCommand(
@@ -44,7 +43,28 @@ public class ShouldFail : BaseTest
         fundId,
         null
         ),
-      "Account does not exist."
+      "Account is deleted or does not exist."
+    );
+  }
+
+  [Fact]
+  public async void When_Account_Is_Deleted()
+  {
+    await CreateBudgetWithFund();
+    var fundId = await CreateFund();
+    var accountId = await CreateAccount();
+    await mediator.Send(new DeleteAccountCommand(userId, accountId));
+    await AssertFailsValidationAsync(
+      new CreateExpenseCommand(
+        userId,
+        "mockExpense",
+        new Money(1, "EUR"),
+        null,
+        accountId,
+        fundId,
+        null
+        ),
+      "Account is deleted or does not exist."
     );
   }
 
@@ -63,7 +83,28 @@ public class ShouldFail : BaseTest
         "",
         null
         ),
-      "Fund does not exist."
+      "Fund is deleted or does not exist."
+    );
+  }
+
+  [Fact]
+  public async void When_Fund_Is_Deleted()
+  {
+    await CreateBudget();
+    var accountId = await CreateAccount();
+    var fundId = await CreateFund();
+    await mediator.Send(new DeleteFundCommand(userId, fundId));
+    await AssertFailsValidationAsync(
+      new CreateExpenseCommand(
+        userId,
+        "mockExpense",
+        new Money(1, "EUR"),
+        null,
+        accountId,
+        fundId,
+        null
+        ),
+      "Fund is deleted or does not exist."
     );
   }
 

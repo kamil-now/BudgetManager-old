@@ -3,33 +3,33 @@ namespace BudgetManager.Application.Requests;
 using AutoMapper;
 
 public record BalanceRequest(string UserId)
-  : IBudgetRequest, IRequest<Dictionary<string, decimal>>;
+  : IBudgetRequest, IRequest<BudgetBalanceDto>;
 
 public class BalanceRequestHandler
-  : BudgetRequestHandler<BalanceRequest, Dictionary<string, decimal>>
+  : BudgetRequestHandler<BalanceRequest, BudgetBalanceDto>
 {
   public BalanceRequestHandler(IUserBudgetRepository repo, IMapper map)
    : base(repo, map)
   {
   }
 
-  public override Dictionary<string, decimal> Get(BalanceRequest request, Budget budget)
+  public override BudgetBalanceDto Get(BalanceRequest request, Budget budget)
   {
-    var balance = new Dictionary<string, decimal>();
+    var balance = new Balance();
 
     foreach (var accountBalance in budget.Accounts.Select(x => x.Balance))
     {
-      if (balance.ContainsKey(accountBalance.Currency))
-      {
-        balance[accountBalance.Currency] += accountBalance.Amount;
-      }
-      else
-      {
-        balance.Add(accountBalance.Currency, accountBalance.Amount);
-      }
+      balance.Add(accountBalance);
     }
 
-    return balance;
+    var unallocated = new Balance(balance);
+
+    foreach (var fundBalance in budget.Funds.Select(x => x.Balance))
+    {
+      unallocated.Deduct(fundBalance);
+    }
+
+    return new BudgetBalanceDto(balance, unallocated);
   }
 }
 

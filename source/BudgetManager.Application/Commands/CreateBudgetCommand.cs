@@ -1,6 +1,8 @@
 namespace BudgetManager.Application.Commands;
 
-public record CreateBudgetCommand(string UserId) : IRequest<Unit>;
+using System.Text.Json.Serialization;
+
+public record CreateBudgetCommand([property: JsonIgnore()] string UserId) : IRequest<Unit>;
 
 public class CreateBudgetCommandHandler : IRequestHandler<CreateBudgetCommand, Unit>
 {
@@ -13,7 +15,7 @@ public class CreateBudgetCommandHandler : IRequestHandler<CreateBudgetCommand, U
 
 public class CreateBudgetCommandValidator : AbstractValidator<CreateBudgetCommand>
 {
-  public CreateBudgetCommandValidator(IUserBudgetRepository repository)
+  public CreateBudgetCommandValidator(IUserBudgetRepository repository, AppConfig config)
   {
     RuleFor(x => x.UserId)
       .NotEmpty();

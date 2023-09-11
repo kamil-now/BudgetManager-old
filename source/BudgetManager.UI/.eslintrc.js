@@ -17,6 +17,7 @@ module.exports = {
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'linebreak-style': 'off',
+    'no-unused-vars': 'off',
     '@typescript-eslint/no-unused-vars': [
       'warn',
       {
@@ -24,7 +25,7 @@ module.exports = {
         varsIgnorePattern: '^_+$',
       },
     ],
-    'newline-per-chained-call': ['warn', { ignoreChainWithDepth: 1 }],
+    'newline-per-chained-call': ['warn', { ignoreChainWithDepth: 2 }],
     'no-multiple-empty-lines': 'warn',
     'padding-line-between-statements': [
       'warn',
@@ -56,7 +57,7 @@ module.exports = {
     'arrow-spacing': ['warn', { before: true, after: true }],
     'key-spacing': [2, { beforeColon: false, afterColon: true }],
     'semi': ['warn', 'always'],
-    'indent': ['warn', 2]
+    'indent': ['warn', 2],
   },
   overrides: [
     {

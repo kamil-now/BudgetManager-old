@@ -22,7 +22,7 @@ public static class WebApplicationExtensions
     var url = $"/{resource}";
     var name = resource.ToUpper();
 
-    app.MapGet(url.Last() == 'y' ? url.Substring(0, url.Length - 1) + "ies" : url + "s",
+    app.MapGet(url.Last() == 'y' ? url[..^1] + "ies" : url + "s",
       async (
         HttpContext context,
         IMediator mediator,
@@ -41,14 +41,10 @@ public static class WebApplicationExtensions
         [FromBody] TCreateCommand command,
         CancellationToken cancellationToken
       ) =>
-      Results.CreatedAtRoute(
-        name,
-        new
-        {
-          id = await mediator.Send(mapCreate(context, command)!, cancellationToken)
-        }, null
-        )
-      )
+      {
+        var id = await mediator.Send(mapCreate(context, command)!, cancellationToken);
+        return Results.Created($"{url}/{name.ToLower()}/{id}", id);
+      })
       .WithTags(tag)
       .RequireAuthorization();
 

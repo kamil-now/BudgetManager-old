@@ -12,7 +12,7 @@ public record CreateFundTransferCommand(
   string? Date,
   string? Description,
   string SourceFundId,
-  string? TargetFundId
+  string TargetFundId
   ) : IRequest<string>, IBudgetCommand;
 
 public class CreateFundTransferCommandHandler
@@ -27,7 +27,7 @@ public class CreateFundTransferCommandHandler
   {
     var id = Guid.NewGuid().ToString();
     var now = DateOnly.FromDateTime(DateTime.Now);
-    var date = command.Date is null ? now : DateOnly.Parse(command.Date);
+    var date = command.Date is null ? now : DateOnly.FromDateTime(DateTime.Parse(command.Date));
 
     budget.AddOperation(
       new FundTransfer(
@@ -52,7 +52,6 @@ public class CreateFundTransferCommandValidator
   public CreateFundTransferCommandValidator(IUserBudgetRepository repository, AppConfig appConfig) : base(repository)
   {
     RuleFor(x => x.Title)
-      .NotEmpty()
       .MaximumLength(appConfig.MaxTitleLength);
 
     RuleFor(x => x.Description)
@@ -60,14 +59,18 @@ public class CreateFundTransferCommandValidator
 
     RuleFor(x => x.Value.Amount)
       .GreaterThan(0);
+
+    RuleFor(x => x.Value.Currency)
+      .ISO_4217_Currency();
   }
 
   protected override void RulesWhenBudgetExists()
   {
     RuleFor(x => x)
-      .Must((command, cancellation) =>
-        !string.IsNullOrEmpty(command.SourceFundId) && !string.IsNullOrEmpty(command.TargetFundId)
-      ).WithMessage("Source fund id and target fund id must be defined.")
+      .Must((command, cancellation) => !string.IsNullOrEmpty(command.SourceFundId))
+        .WithMessage("Source id must be defined.")
+      .Must((command, cancellation) => !string.IsNullOrEmpty(command.TargetFundId))
+        .WithMessage("Target id must be defined.")
       .DependentRules(() =>
       {
         RuleFor(x => x)
@@ -75,18 +78,26 @@ public class CreateFundTransferCommandValidator
           {
             var budget = await repository.Get(command.UserId);
             return budget!.Funds?.Any(x => x.Id == command.SourceFundId) ?? false;
-          }).WithMessage("Source fund with a given id does not exist in the budget");
+          })
+          .WithMessage(command => $"Source Fund with id '{command.SourceFundId}' does not exist in the budget.")
+          .DependentRules(() =>
+          {
+            RuleFor(x => x)
+              .MustAsync(async (command, cancellation) =>
+              {
+                var budget = await repository.Get(command.UserId);
+                var fund = budget!.Funds!.First(x => x.Id == command.SourceFundId);
+                return fund!.Balance!.Keys.Contains(command.Value.Currency) && fund!.Balance![command.Value.Currency] >= command.Value.Amount;
+              })
+              .WithMessage("Insufficient funds.");
+          });
 
         RuleFor(x => x)
           .MustAsync(async (command, cancellation) =>
           {
-            if (command.TargetFundId is null)
-              return true;
             var budget = await repository.Get(command.UserId);
             return budget!.Funds?.Any(x => x.Id == command.TargetFundId) ?? false;
-          }).WithMessage("Target fund with a given id does not exist in the budget");
-
-        // TODO sufficient funds
+          }).WithMessage(command => $"Target fund with id '{command.TargetFundId}' does not exist in the budget.");
       });
   }
 }
