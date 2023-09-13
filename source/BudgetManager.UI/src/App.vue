@@ -36,7 +36,7 @@ const { isLoggedIn, isLoading } = storeToRefs(store);
       display: flex;
     }
   }
-  height: calc(100vh - 4rem);
+  height: calc(100vh - 2rem);
   margin: 0;
   display: flex;
   align-items: flex-start;

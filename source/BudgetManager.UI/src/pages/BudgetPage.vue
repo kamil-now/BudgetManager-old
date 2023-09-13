@@ -113,8 +113,8 @@ onMounted(() => {
 .budget-page {  
   height: 100%;
   width: 100%;
-  margin: 3rem;
-  padding: 1rem;
+  margin: 1rem;
+  padding: 0.5rem;
   @extend .card;
   max-height: 100%;
   display: flex;
