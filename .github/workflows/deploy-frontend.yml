@@ -38,23 +38,6 @@ jobs:
           npm run build -- -configuration --production --env-file .env.production
           cp -vr ./dist ./${{ env.AZURE_WEBAPP_PACKAGE_TARGET_DIRECTORY }}
 
-      - name: Setup Nginx Configuration
-        run: |
-          # Create a custom Nginx configuration file
-          echo 'server {
-              listen 80;
-              location / {
-                  root /usr/share/nginx/html;
-                  index index.html;
-                  try_files $uri $uri/ /index.html;
-              }
-              location /api/ {
-                  proxy_pass ${{ env.AZURE_AAD_REDIRECT }};
-                  proxy_set_header Host $host;
-                  proxy_set_header X-Real-IP $remote_addr;
-              }
-          }' > nginx.conf
-
       - name: Deploy
         uses: azure/webapps-deploy@v2
         with:

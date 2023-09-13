@@ -44,3 +44,7 @@ This will start process and should ouput 'Process Id: {your process id}' in the 
 
 Ctrl+Shift+D -> .NET Core Attach -> find your process by id and select it
 
+### Run in Docker
+
+```docker build -t budget-manager-app .```
+```docker run -p 8080:80 --name custom-container-name budget-manager-app```

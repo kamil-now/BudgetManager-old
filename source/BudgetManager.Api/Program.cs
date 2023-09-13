@@ -17,14 +17,14 @@ const string API_TITLE = "| Budget Manager API";
 
 var builder = WebApplication.CreateBuilder(args);
 
-#if DEBUG
-builder.Services.AddAuthentication("MockJwt")
-      .AddScheme<AuthenticationSchemeOptions, MockJwtAuthenticationHandler>("MockJwt", options => { });
+// #if DEBUG
+// builder.Services.AddAuthentication("MockJwt")
+//       .AddScheme<AuthenticationSchemeOptions, MockJwtAuthenticationHandler>("MockJwt", options => { });
 
-builder.Services.AddAuthorization();
-#else
+// builder.Services.AddAuthorization();
+// #else
 builder.Services.AddMicrosoftIdentityWebApiAuthentication(builder.Configuration);
-#endif
+// #endif
 var tenantIdUri = builder.Configuration["AzureAd:Instance"] + builder.Configuration["AzureAd:TenantId"];
 
 builder.Services.AddEndpointsApiExplorer();
