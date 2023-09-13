@@ -3,7 +3,7 @@ import axios, { AxiosResponse } from 'axios';
 
 export async function createFundRequest(fund:Fund): Promise<string> {
   return axios.post<string>(
-    'api/fund', 
+    'fund', 
     {
       name: fund.name,
     }
@@ -12,7 +12,7 @@ export async function createFundRequest(fund:Fund): Promise<string> {
 
 export async function updateFundRequest(fund: Fund): Promise<Fund> {
   return axios.put<Fund>(
-    'api/fund', 
+    'fund', 
     {
       fundId: fund.id,
       name: fund.name,
@@ -22,12 +22,12 @@ export async function updateFundRequest(fund: Fund): Promise<Fund> {
 
 export async function getFundRequest(fund: Fund): Promise<Fund> {
   return axios.get<Fund>(
-    `api/fund/${fund.id}`
+    `/fund/${fund.id}`
   ).then(res => res.data);
 }
 
 export async function deleteFundRequest(fund: Fund): Promise<void> {
   return axios.delete<void>(
-    `api/fund/${fund.id}`
+    `/fund/${fund.id}`
   ).then(res => res.data);
 }

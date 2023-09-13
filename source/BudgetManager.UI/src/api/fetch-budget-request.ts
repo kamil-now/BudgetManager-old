@@ -24,19 +24,19 @@ export function fetchBudgetRequest(): Promise<{
   currencyExchanges: CurrencyExchange[],
 } | null> {
 
-  return axios.get<{balance: Balance, unallocated: Balance}>('/api/balance')
+  return axios.get<{balance: Balance, unallocated: Balance}>('balance')
     .then(res => 
       Promise.all(
         [
-          axios.get<Account[]>('api/accounts').then(res => res?.data),
-          axios.get<Fund[]>('api/funds').then(res => res?.data),
-          axios.get<Income[]>('api/incomes').then(res => res?.data),
-          axios.get<Expense[]>('api/expenses').then(res => res?.data),
-          axios.get<Allocation[]>('api/allocations').then(res => res?.data),
-          axios.get<FundTransfer[]>('api/fund-transfers').then(res => res?.data),
-          axios.get<AccountTransfer[]>('api/account-transfers').then(res => res?.data),
-          axios.get<CurrencyExchange[]>('api/currency-exchanges').then(res => res?.data),
-          axios.get<{ accountsOrder: string[], fundsOrder: string[] }>('api/user-settings')
+          axios.get<Account[]>('accounts').then(res => res?.data),
+          axios.get<Fund[]>('funds').then(res => res?.data),
+          axios.get<Income[]>('incomes').then(res => res?.data),
+          axios.get<Expense[]>('expenses').then(res => res?.data),
+          axios.get<Allocation[]>('allocations').then(res => res?.data),
+          axios.get<FundTransfer[]>('fund-transfers').then(res => res?.data),
+          axios.get<AccountTransfer[]>('account-transfers').then(res => res?.data),
+          axios.get<CurrencyExchange[]>('currency-exchanges').then(res => res?.data),
+          axios.get<{ accountsOrder: string[], fundsOrder: string[] }>('user-settings')
             .then(res => res?.data, () => ({ accountsOrder: [], fundsOrder: [] }))
         ])
         .then(data => {

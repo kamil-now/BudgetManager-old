@@ -4,7 +4,7 @@ import axios, { AxiosResponse } from 'axios';
 
 export async function createCurrencyExchangeRequest(currencyExchange: CurrencyExchange): Promise<string> {
   return axios.post<string>(
-    'api/currency-exchange', 
+    'currency-exchange', 
     {
       title: currencyExchange.title,
       value: currencyExchange.value,
@@ -19,7 +19,7 @@ export async function createCurrencyExchangeRequest(currencyExchange: CurrencyEx
 
 export async function updateCurrencyExchangeRequest(currencyExchange: CurrencyExchange): Promise<CurrencyExchange> {
   return axios.put<CurrencyExchange>(
-    'api/currency-exchange', 
+    'currency-exchange', 
     {
       operationId: currencyExchange.id,
       title: currencyExchange.title,
@@ -35,12 +35,12 @@ export async function updateCurrencyExchangeRequest(currencyExchange: CurrencyEx
 
 export async function getCurrencyExchangeRequest(currencyExchange: CurrencyExchange): Promise<CurrencyExchange> {
   return axios.get<CurrencyExchange>(
-    `api/currency-exchange/${currencyExchange.id}`
+    `/currency-exchange/${currencyExchange.id}`
   ).then(res => MoneyOperationUtils.parseFromResponse(res.data));
 }
 
 export async function deleteCurrencyExchangeRequest(currencyExchange: CurrencyExchange): Promise<void> {
   return axios.delete<void>(
-    `api/currency-exchange/${currencyExchange.id}`
+    `/currency-exchange/${currencyExchange.id}`
   ).then(res => res.data);
 }

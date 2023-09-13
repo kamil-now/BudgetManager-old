@@ -42,6 +42,7 @@ import Colada, { PiniaColadaPlugin } from 'colada-plugin';
 
 if (
   !process.env.VUE_APP_AAD_REDIRECT
+  || !process.env.VUE_APP_API_URL
   || !process.env.VUE_APP_API_URL) {
 
   throw new Error('Invalid configuration');
@@ -49,6 +50,7 @@ if (
 
 axios.defaults.headers.common['Content-Type'] = 'application/json';
 axios.defaults.headers.common['Access-Control-Allow-Origin'] = process.env.VUE_APP_AAD_REDIRECT;
+axios.defaults.baseURL = process.env.VUE_APP_API_URL;
 
 const app = createApp(App);
 const pinia = createPinia();

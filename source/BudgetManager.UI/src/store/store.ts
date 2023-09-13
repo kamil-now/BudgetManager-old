@@ -132,10 +132,10 @@ export const APP_STORE: DefineStoreOptions<
       );
     },
     async createBudget() {
-      await Utils.runAsyncOperation(this, () => axios.post<void>('api/budget'));
+      await Utils.runAsyncOperation(this, () => axios.post<void>('budget'));
     },
     async updateUserSettings() {
-      await axios.put('api/user-settings', { 
+      await axios.put('user-settings', { 
         accountsOrder: this.accounts.map(x => x.id),
         fundsOrder: this.funds.map(x => x.id)
       });

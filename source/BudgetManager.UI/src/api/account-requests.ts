@@ -3,7 +3,7 @@ import axios, { AxiosResponse } from 'axios';
 
 export async function createAccountRequest(account: Account): Promise<string> {
   return axios.post<string>(
-    'api/account', 
+    'account', 
     {
       name: account.name,
       initialBalance: account.initialBalance,
@@ -13,7 +13,7 @@ export async function createAccountRequest(account: Account): Promise<string> {
 
 export async function updateAccountRequest(account: Account): Promise<Account> {
   return axios.put<Account>(
-    'api/account', 
+    'account', 
     {
       accountId: account.id,
       name: account.name,
@@ -24,12 +24,12 @@ export async function updateAccountRequest(account: Account): Promise<Account> {
 
 export async function getAccountRequest(account: Account): Promise<Account> {
   return axios.get<Account>(
-    `api/account/${account.id}`
+    `/account/${account.id}`
   ).then(res => res.data);
 }
 
 export async function deleteAccountRequest(account: Account): Promise<void> {
   return axios.delete<void>(
-    `api/account/${account.id}`
+    `/account/${account.id}`
   ).then(res => res.data);
 }

@@ -60,6 +60,7 @@ export class MsalAuthService implements IAuthService {
         console.warn(
           `Prevented unauthorized access to ${to.path}, redirecting to /login`
         );
+        next({ path: '/login' });
       } else if (to.path.includes('/login') && this.appStore.isLoggedIn) {
         next({ path: '/home' });
       } else next();
