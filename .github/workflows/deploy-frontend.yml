@@ -35,7 +35,7 @@ jobs:
         working-directory: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
         run: |
           echo "${{ secrets.ENV_FILE }}" > .env.production
-          npm run build -- -configuration --production --env-file .env.production
+          npm run build -- --env-file .env.production
           cp -vr ./dist ./${{ env.AZURE_WEBAPP_PACKAGE_TARGET_DIRECTORY }}
 
       - name: Deploy
