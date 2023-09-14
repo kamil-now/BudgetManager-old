@@ -235,22 +235,22 @@ public class MappingProfile : Profile
     CreateMap<Fund, FundDto>();
 
     CreateMap<Expense, ExpenseDto>()
-      .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString()));
+      .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString(DATE_FORMAT)));
 
     CreateMap<Income, IncomeDto>()
-      .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString()));
+      .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString(DATE_FORMAT)));
 
     CreateMap<FundTransfer, FundTransferDto>()
-      .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString()));
+      .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString(DATE_FORMAT)));
 
     CreateMap<AccountTransfer, AccountTransferDto>()
-      .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString()));
+      .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString(DATE_FORMAT)));
 
     CreateMap<Allocation, AllocationDto>()
-      .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString()));
+      .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString(DATE_FORMAT)));
 
     CreateMap<CurrencyExchange, CurrencyExchangeDto>()
-      .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString()));
+      .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString(DATE_FORMAT)));
 
     CreateMap<UserSettings, UserSettingsDto>();
   }
