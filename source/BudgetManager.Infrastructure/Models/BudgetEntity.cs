@@ -1,12 +1,13 @@
 namespace BudgetManager.Infrastructure.Models;
 
 using MongoDB.Bson.Serialization.Attributes;
+using MongoDB.Extensions.Migration;
 
-
-public class BudgetEntity
+public class BudgetEntity : IVersioned
 {
   [BsonId]
   public string? UserId { get; set; }
+  public int Version { get; set; }
   public UserSettingsEntity? UserSettings { get; set; }
   public IEnumerable<AccountEntity>? Accounts { get; set; }
   public IEnumerable<FundEntity>? Funds { get; set; }
@@ -16,5 +17,4 @@ public class BudgetEntity
   public IEnumerable<AccountTransferEntity>? AccountTransfers { get; set; }
   public IEnumerable<AllocationEntity>? Allocations { get; set; }
   public IEnumerable<CurrencyExchangeEntity>? CurrencyExchanges { get; set; }
-  public Dictionary<string, decimal>? Unallocated { get; set; }
 }

@@ -5,26 +5,30 @@ using BudgetManager.Application.Commands;
 using BudgetManager.Application.DependencyInjection;
 using BudgetManager.Application.Requests;
 using BudgetManager.Domain.Models;
+using BudgetManager.Infrastructure.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.FileProviders;
+#if RELEASE
 using Microsoft.Identity.Web;
+#endif
 using Microsoft.OpenApi.Models;
+using MongoDB.Extensions.Migration;
 using Swashbuckle.AspNetCore.Annotations;
 
 const string API_TITLE = "| Budget Manager API";
 
 var builder = WebApplication.CreateBuilder(args);
 
-// #if DEBUG
-// builder.Services.AddAuthentication("MockJwt")
-//       .AddScheme<AuthenticationSchemeOptions, MockJwtAuthenticationHandler>("MockJwt", options => { });
+#if DEBUG
+builder.Services.AddAuthentication("MockJwt")
+      .AddScheme<AuthenticationSchemeOptions, MockJwtAuthenticationHandler>("MockJwt", options => { });
 
-// builder.Services.AddAuthorization();
-// #else
+builder.Services.AddAuthorization();
+#else
 builder.Services.AddMicrosoftIdentityWebApiAuthentication(builder.Configuration);
-// #endif
+#endif
 var tenantIdUri = builder.Configuration["AzureAd:Instance"] + builder.Configuration["AzureAd:TenantId"];
 
 builder.Services.AddEndpointsApiExplorer();
@@ -96,6 +100,11 @@ app.UseSwaggerUI(c =>
   c.InjectStylesheet("/assets/swagger-dark.css");
   c.OAuthClientId(builder.Configuration["AzureAd:ClientId"]);
 });
+
+app.UseMongoMigration(m => m
+    .ForEntity<BudgetEntity>(e => e
+        .AtVersion(1)
+        .WithMigration(new RemoveBudgetEntityUnallocated())));
 
 app.MapGet("/", (HttpContext context) => context.Response.Redirect("/swagger", true)).ExcludeFromDescription();
 

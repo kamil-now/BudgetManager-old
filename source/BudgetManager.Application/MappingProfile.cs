@@ -23,8 +23,7 @@ public class MappingProfile : Profile
           ctx.Mapper.Map<UserSettings>(src.UserSettings),
           ctx.Mapper.Map<IEnumerable<Account>>(src.Accounts),
           ctx.Mapper.Map<IEnumerable<Fund>>(src.Funds),
-          operations,
-          new Balance(src.Unallocated ?? new Dictionary<string, decimal>())
+          operations
         );
         return budget;
       }).ForAllMembers(opt => opt.Ignore());

@@ -7,27 +7,23 @@ public class Budget
   public IReadOnlyCollection<Account> Accounts => _accounts.AsReadOnly();
   public IReadOnlyCollection<Fund> Funds => _funds.AsReadOnly();
   public IReadOnlyCollection<MoneyOperation> Operations => _operations.AsReadOnly();
-  public Balance Unallocated => _unallocated; // TODO make readonly
 
   private readonly List<MoneyOperation> _operations;
   private readonly List<Account> _accounts;
   private readonly List<Fund> _funds;
   private UserSettings _userSettings;
-  private Balance _unallocated;
 
   public Budget(
     UserSettings userSettings,
     IEnumerable<Account> accounts,
     IEnumerable<Fund> funds,
-    IEnumerable<MoneyOperation> operations,
-    Balance unallocated
+    IEnumerable<MoneyOperation> operations
     )
   {
     _userSettings = userSettings;
     _accounts = accounts.ToList();
     _funds = funds.ToList();
     _operations = operations.ToList();
-    _unallocated = unallocated;
   }
 
   public void UpdateUserSettings(IEnumerable<string> accountsOrder, IEnumerable<string> fundsOrder)
@@ -72,7 +68,6 @@ public class Budget
   {
     var id = Guid.NewGuid().ToString();
     var account = new Account(id, accountName, initialBalance);
-    _unallocated.Add(initialBalance);
     _accounts.Add(account);
     return id;
   }
@@ -88,18 +83,10 @@ public class Budget
     if (initialBalance is not null)
     {
       account.Balance.Deduct(account.InitialBalance);
-      _unallocated.Deduct(account.InitialBalance);
 
       account.InitialBalance = new Balance(initialBalance);
 
       account.Balance.Add(account.InitialBalance);
-      _unallocated.Add(account.InitialBalance);
-
-      var toRemove = _unallocated.Keys.Where(key => _unallocated[key] == 0);
-      foreach (var key in toRemove)
-      {
-        _unallocated.Remove(key);
-      }
     }
     return account;
   }
@@ -137,7 +124,6 @@ public class Budget
         break;
       case Income op:
         _accounts.First(x => x.Id == op.AccountId).Add(operation.Value);
-        _unallocated.Add(operation.Value);
         break;
       case FundTransfer op:
         _funds.First(x => x.Id == op.SourceFundId).Deduct(op.Value);
@@ -148,7 +134,6 @@ public class Budget
         _accounts.First(x => x.Id == op.TargetAccountId).Add(op.Value);
         break;
       case Allocation op:
-        _unallocated.Deduct(op.Value);
         _funds.First(x => x.Id == op.TargetFundId).Add(op.Value);
         break;
       case CurrencyExchange op:
@@ -171,7 +156,6 @@ public class Budget
         break;
       case Income op:
         _accounts.First(x => x.Id == op.AccountId).Deduct(operation.Value);
-        _unallocated.Deduct(operation.Value);
         break;
       case FundTransfer op:
         _funds.First(x => x.Id == op.SourceFundId).Add(op.Value);
@@ -182,7 +166,6 @@ public class Budget
         _accounts.First(x => x.Id == op.TargetAccountId).Deduct(op.Value);
         break;
       case Allocation op:
-        _unallocated.Add(op.Value);
         _funds.First(x => x.Id == op.TargetFundId).Deduct(op.Value);
         break;
       case CurrencyExchange op:
