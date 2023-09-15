@@ -2,7 +2,6 @@ namespace BudgetManager.Application.Requests;
 
 using AutoMapper;
 
-public record UserSettingsDto(IEnumerable<string> AccountsOrder, IEnumerable<string> FundsOrder);
 public record UserSettingsRequest(string UserId) : IBudgetRequest, IRequest<UserSettingsDto>;
 
 public class UserSettingsRequestHandler : BudgetRequestHandler<UserSettingsRequest, UserSettingsDto>

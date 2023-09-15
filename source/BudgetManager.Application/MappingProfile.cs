@@ -252,5 +252,62 @@ public class MappingProfile : Profile
       .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString(DATE_FORMAT)));
 
     CreateMap<UserSettings, UserSettingsDto>();
+    
+    // CreateMap<IReadOnlyCollection<object>, IEnumerable<object>>()
+    //         .ConvertUsing(rc => rc);
+    
+    CreateMap<Budget, BudgetSummaryDto>()
+      .ConstructUsing((src, ctx) =>
+      {
+        var balance = new Balance();
+
+        foreach (var accountBalance in src.Accounts.Select(x => x.Balance))
+        {
+          balance.Add(accountBalance);
+        }
+
+        var unallocated = new Balance(balance);
+
+        foreach (var fundBalance in src.Funds.Select(x => x.Balance))
+        {
+          unallocated.Deduct(fundBalance);
+        }
+
+        var budget = new BudgetSummaryDto(
+          ctx.Mapper.Map<UserSettingsDto>(src.UserSettings),
+          balance,
+          unallocated,
+          ctx.Mapper.Map<IEnumerable<FundDto>>(src.Funds.AsEnumerable()),
+          ctx.Mapper.Map<IEnumerable<AccountDto>>(src.Accounts.AsEnumerable()),
+          ctx.Mapper.Map<IEnumerable<MoneyOperationDto>>(src.Operations.AsEnumerable())
+        );
+        return budget;
+      }).ForAllMembers(opt => opt.Ignore());
+
+    CreateMap<Expense, MoneyOperationDto>()
+      .ForMember(x => x.Type, opt => opt.MapFrom(_ => MoneyOperationType.Expense))
+      .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString(DATE_FORMAT)));
+
+    CreateMap<Income, MoneyOperationDto>()
+      .ForMember(x => x.Type, opt => opt.MapFrom(_ => MoneyOperationType.Income))
+      .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString(DATE_FORMAT)));
+
+    CreateMap<FundTransfer, MoneyOperationDto>()
+      .ForMember(x => x.Type, opt => opt.MapFrom(_ => MoneyOperationType.FundTransfer))
+      .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString(DATE_FORMAT)))
+      .ForMember(x => x.FundId, opt => opt.MapFrom(scr => scr.SourceFundId));
+
+    CreateMap<AccountTransfer, MoneyOperationDto>()
+      .ForMember(x => x.Type, opt => opt.MapFrom(_ => MoneyOperationType.AccountTransfer))
+      .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString(DATE_FORMAT)))
+      .ForMember(x => x.AccountId, opt => opt.MapFrom(scr => scr.SourceAccountId));
+
+    CreateMap<Allocation, MoneyOperationDto>()
+      .ForMember(x => x.Type, opt => opt.MapFrom(_ => MoneyOperationType.Allocation))
+      .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString(DATE_FORMAT)));
+
+    CreateMap<CurrencyExchange, MoneyOperationDto>()
+      .ForMember(x => x.Type, opt => opt.MapFrom(_ => MoneyOperationType.CurrencyExchange))
+      .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString(DATE_FORMAT)));
   }
 }

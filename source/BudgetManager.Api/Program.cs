@@ -108,6 +108,20 @@ app.UseMongoMigration(m => m
 
 app.MapGet("/", (HttpContext context) => context.Response.Redirect("/swagger", true)).ExcludeFromDescription();
 
+app.MapGet("/budget",
+  [SwaggerOperation(Summary = "Returns budget summary for the authenticated user")]
+async (
+  HttpContext context,
+  IMediator mediator,
+  CancellationToken cancellationToken
+  ) =>
+  {
+    await mediator.Send(new BudgetSummaryRequest(context.GetUserId()));
+    return Results.Ok();
+  })
+.WithTags(API_TITLE)
+.RequireAuthorization();
+
 app.MapPost("/budget",
   [SwaggerOperation(Summary = "Creates budget for the authenticated user")]
 async (
