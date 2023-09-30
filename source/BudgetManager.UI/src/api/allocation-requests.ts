@@ -16,6 +16,6 @@ export async function getAllocationRequest(allocation: Allocation): Promise<Allo
     .then(res => MoneyOperationUtils.parseFromResponse(res.data));
 }
 
-export async function deleteAllocationRequest(allocation: Allocation): Promise<void> {
-  return axios.delete<void>(`/allocation/${allocation.id}`).then(res => res.data);
+export async function deleteAllocationRequest(allocationId: string): Promise<void> {
+  return axios.delete<void>(`/allocation/${allocationId}`).then(res => res.data);
 }

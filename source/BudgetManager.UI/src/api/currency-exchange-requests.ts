@@ -39,8 +39,8 @@ export async function getCurrencyExchangeRequest(currencyExchange: CurrencyExcha
   ).then(res => MoneyOperationUtils.parseFromResponse(res.data));
 }
 
-export async function deleteCurrencyExchangeRequest(currencyExchange: CurrencyExchange): Promise<void> {
+export async function deleteCurrencyExchangeRequest(currencyExchangeId: string): Promise<void> {
   return axios.delete<void>(
-    `/currency-exchange/${currencyExchange.id}`
+    `/currency-exchange/${currencyExchangeId}`
   ).then(res => res.data);
 }

@@ -31,14 +31,14 @@ export async function updateExpenseRequest(expense: Expense): Promise<Expense> {
   ).then(res => MoneyOperationUtils.parseFromResponse(res.data));
 }
 
-export async function getExpenseRequest(expense: Expense): Promise<Expense> {
+export async function getExpenseRequest(expenseId: string): Promise<Expense> {
   return axios.get<Expense>(
-    `/expense/${expense.id}`
+    `/expense/${expenseId}`
   ).then(res => MoneyOperationUtils.parseFromResponse(res.data));
 }
 
-export async function deleteExpenseRequest(expense: Expense): Promise<void> {
+export async function deleteExpenseRequest(expenseId: string): Promise<void> {
   return axios.delete<void>(
-    `/expense/${expense.id}`
+    `/expense/${expenseId}`
   ).then(res => res.data);
 }

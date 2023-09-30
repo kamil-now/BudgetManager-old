@@ -1,39 +1,45 @@
-import { createExpenseRequest, deleteExpenseRequest, updateExpenseRequest } from '@/api/expense-requests';
-import { createIncomeRequest, deleteIncomeRequest, updateIncomeRequest } from '@/api/income-requests';
+import { createAccountTransferRequest, deleteAccountTransferRequest, updateAccountTransferRequest } from '@/api/account-transfer-requests';
+import { createAllocationRequest, deleteAllocationRequest, updateAllocationRequest } from '@/api/allocation-requests';
+import { getBalanceRequest } from '@/api/balance-requests';
+import { createCurrencyExchangeRequest, deleteCurrencyExchangeRequest, updateCurrencyExchangeRequest } from '@/api/currency-exchange-requests';
+import { createExpenseRequest, deleteExpenseRequest, getExpenseRequest, updateExpenseRequest } from '@/api/expense-requests';
+import { createFundTransferRequest, deleteFundTransferRequest, updateFundTransferRequest } from '@/api/fund-transfer-requests';
+import { createIncomeRequest, deleteIncomeRequest, getIncomeRequest, updateIncomeRequest } from '@/api/income-requests';
 import { Account } from '@/models/account';
+import { AccountTransfer } from '@/models/account-transfer';
+import { Allocation } from '@/models/allocation';
 import { Balance } from '@/models/balance';
+import { BudgetSummary } from '@/models/budget-summary';
+import { CurrencyExchange } from '@/models/currency-exchange';
 import { Expense } from '@/models/expense';
 import { Fund } from '@/models/fund';
-import { Income } from '@/models/income';
-import axios from 'axios';
-import { defineStore, DefineStoreOptions, Store } from 'pinia';
-import { createAccountRequest, deleteAccountRequest, updateAccountRequest } from '../api/account-requests';
-import { fetchBudgetRequest } from '../api/fetch-budget-request';
-import { createFundRequest, deleteFundRequest, updateFundRequest } from '../api/fund-requests';
-import { Allocation } from '@/models/allocation';
-import { createAllocationRequest, deleteAllocationRequest, updateAllocationRequest } from '@/api/allocation-requests';
-import { AccountTransfer } from '@/models/account-transfer';
 import { FundTransfer } from '@/models/fund-transfer';
-import { createAccountTransferRequest, updateAccountTransferRequest, deleteAccountTransferRequest } from '@/api/account-transfer-requests';
-import { createFundTransferRequest, updateFundTransferRequest, deleteFundTransferRequest } from '@/api/fund-transfer-requests';
-import { CurrencyExchange } from '@/models/currency-exchange';
-import { createCurrencyExchangeRequest, updateCurrencyExchangeRequest, deleteCurrencyExchangeRequest } from '@/api/currency-exchange-requests';
+import { Income } from '@/models/income';
+import { MoneyOperation } from '@/models/money-operation';
+import { MoneyOperationType } from '@/models/money-operation-type.enum';
+import axios from 'axios';
+import { DefineStoreOptions, Store, defineStore } from 'pinia';
+import { createAccountRequest, deleteAccountRequest, getAccountRequest, updateAccountRequest } from '../api/account-requests';
+import { fetchBudgetSummary } from '../api/fetch-budget-request';
+import { createFundRequest, deleteFundRequest, getFundRequest, updateFundRequest } from '../api/fund-requests';
 
 export type AppState = {
   isLoading: boolean;
   isLoggedIn: boolean;
   isNewUser: boolean,
-  budgetBalance: { balance: Balance, unallocated: Balance },
-  accounts: Account[],
-  funds: Fund[],
-  incomes: Income[],
-  expenses: Expense[],
-  allocations: Allocation[],
-  fundTransfers: FundTransfer[],
-  accountTransfers: AccountTransfer[],
-  currencyExchanges: CurrencyExchange[]
+  budget: BudgetSummary,
 };
 export type AppGetters = {
+  balance: (state: AppState) => Balance,
+  unallocated: (state: AppState) => Balance,
+  funds: (state: AppState) => Fund[],
+  accounts: (state: AppState) => Account[],
+  incomes: (state: AppState) => MoneyOperation[],
+  allocations: (state: AppState) => MoneyOperation[],
+  expenses: (state: AppState) => MoneyOperation[],
+  currencyExchanges: (state: AppState) => MoneyOperation[],
+  fundTransfers: (state: AppState) => MoneyOperation[],
+  accountTransfers: (state: AppState) => MoneyOperation[],
   // findIndexById: (state: AppState) => (id: string) => number;
 };
 export type AppActions = {
@@ -44,35 +50,35 @@ export type AppActions = {
 
   createNewAccount(account: Account): void,
   updateAccount(account: Account): void;
-  deleteAccount(account:Account): void;
+  deleteAccount(accountId: string): void;
 
   createNewFund(fund: Fund): void,
   updateFund(fund: Fund): void;
-  deleteFund(fund: Fund): void;
+  deleteFund(fundId: string): void;
   
   createNewIncome(income: Income): void,
   updateIncome(income: Income): void;
-  deleteIncome(income: Income): void;
+  deleteIncome(incomeId: string): void;
 
   createNewExpense(expense: Expense): void,
   updateExpense(expense: Expense): void;
-  deleteExpense(expense: Expense): void;
+  deleteExpense(expenseId: string): void;
 
-  createNewAllocation(accountTransfer: Allocation): void,
-  updateAllocation(accountTransfer: Allocation): void;
-  deleteAllocation(accountTransfer: Allocation): void;
+  createNewAllocation(allocation: Allocation): void,
+  updateAllocation(allocation: Allocation): void;
+  deleteAllocation(allocationId: string): void;
 
   createNewFundTransfer(fundTransfer: FundTransfer): void,
   updateFundTransfer(fundTransfer: FundTransfer): void;
-  deleteFundTransfer(fundTransfer: FundTransfer): void;
+  deleteFundTransfer(fundTransferId: string): void;
   
   createNewAccountTransfer(accountTransfer: AccountTransfer): void,
   updateAccountTransfer(accountTransfer: AccountTransfer): void;
-  deleteAccountTransfer(accountTransfer: AccountTransfer): void;
+  deleteAccountTransfer(accountTransferId: string): void;
 
   createNewCurrencyExchange(currencyExchange: CurrencyExchange): void,
   updateCurrencyExchange(currencyExchange: CurrencyExchange): void;
-  deleteCurrencyExchange(currencyExchange: CurrencyExchange): void;
+  deleteCurrencyExchange(currencyExchangeId: string): void;
 };
 export type AppStore = Store<string, AppState, AppGetters, AppActions>;
 
@@ -80,15 +86,14 @@ export const getInitialAppState: () => AppState = () => ({
   isLoading: true,
   isLoggedIn: false,
   isNewUser: true,
-  accounts: [],
-  funds: [],
-  incomes: [],
-  expenses: [],
-  allocations: [],
-  fundTransfers: [],
-  accountTransfers: [],
-  currencyExchanges: [],
-  budgetBalance: { balance: {} as Balance, unallocated: {} as Balance }
+  budget: {
+    userSettings: { accountsOrder: [], fundsOrder: [] },
+    balance: {},
+    unallocated: {},
+    funds: [],
+    accounts: [],
+    operations: []
+  }
 });
 
 export const APP_STORE: DefineStoreOptions<
@@ -100,7 +105,16 @@ export const APP_STORE: DefineStoreOptions<
   id: 'app',
   state: () => getInitialAppState(),
   getters: {
-
+    balance: (state: AppState) => state.budget.balance,
+    unallocated: (state: AppState) => state.budget.unallocated,
+    funds: (state: AppState) => state.budget.funds.filter(x => !x.isDeleted),
+    accounts: (state: AppState) => state.budget.accounts.filter(x => !x.isDeleted),
+    incomes: (state: AppState) => state.budget.operations.filter(x => x.type === MoneyOperationType.Income),
+    allocations: (state: AppState) => state.budget.operations.filter(x => x.type === MoneyOperationType.Allocation),
+    expenses: (state: AppState) => state.budget.operations.filter(x => x.type === MoneyOperationType.Expense),
+    currencyExchanges: (state: AppState) => state.budget.operations.filter(x => x.type === MoneyOperationType.CurrencyExchange),
+    accountTransfers: (state: AppState) => state.budget.operations.filter(x => x.type === MoneyOperationType.AccountTransfer),
+    fundTransfers: (state: AppState) => state.budget.operations.filter(x => x.type === MoneyOperationType.FundTransfer)
   },
   actions: {
     async setLoggedIn(value: boolean) {
@@ -109,18 +123,10 @@ export const APP_STORE: DefineStoreOptions<
     },
     async fetchBudget() {
       await Utils.runAsyncOperation(this, () =>
-        fetchBudgetRequest()
+        fetchBudgetSummary()
           .then(res => {
             if (res !== null) {
-              this.budgetBalance = res.balance;
-              this.accounts = res.accounts;
-              this.funds = res.funds;
-              this.incomes = res.incomes;
-              this.expenses = res.expenses;
-              this.allocations = res.allocations;
-              this.fundTransfers = res.fundTransfers;
-              this.accountTransfers = res.accountTransfers;
-              this.currencyExchanges = res.currencyExchanges;
+              this.budget = res;
               this.isNewUser = false;
             } else {
               this.isNewUser = true;
@@ -136,37 +142,37 @@ export const APP_STORE: DefineStoreOptions<
     },
     async updateUserSettings() {
       await axios.put('user-settings', { 
-        accountsOrder: this.accounts.map(x => x.id),
-        fundsOrder: this.funds.map(x => x.id)
+        accountsOrder: this.budget.accounts.map(x => x.id),
+        fundsOrder: this.budget.funds.map(x => x.id)
       });
     },
     
     async createNewAccount(account: Account) {
       await Utils.runAsyncOperation(this, async (state) => {
         const id = await createAccountRequest(account);
-        state.accounts.unshift({ ...account, id });
-        this.fetchBudget(); // TODO fetch only affected funds/accounts 
+        const fromResponse = await getAccountRequest(id);
+        state.budget.accounts.unshift(fromResponse);
         this.updateUserSettings();
       });
     },
     async updateAccount(account: Account) {
       await Utils.runAsyncOperation(this, (state) => 
         updateAccountRequest(account)
-          .then(account => {
-            const fromState = state.accounts.find(x => x.id === account.id);
-            if (!fromState) {
-              throw new Error('Invalid operation - account does not exist');
+          .then(async account => {
+            const fromState = state.budget.accounts.find(x => x.id === account.id);
+            if (!fromState || !fromState.id) {
+              throw new Error('Invalid operation - account does not exist.');
             }
-            const index = state.accounts.indexOf(fromState);
-            state.accounts[index] = account; 
-            this.fetchBudget(); // TODO fetch only affected funds/accounts 
+            const index = state.budget.accounts.indexOf(fromState);
+            const res = await getAccountRequest(fromState.id);
+            state.budget.accounts[index] = res;
           })
       );
     },
-    async deleteAccount(account:Account) {
+    async deleteAccount(accountId: string) {
       await Utils.runAsyncOperation(this, (state) => 
-        deleteAccountRequest(account)
-          .then(() => state.accounts.splice(state.accounts.indexOf(account), 1))
+        deleteAccountRequest(accountId)
+          .then(() => state.budget.accounts = state.budget.accounts.filter(x => x.id !== accountId))
       );
     },
 
@@ -176,7 +182,7 @@ export const APP_STORE: DefineStoreOptions<
       await Utils.runAsyncOperation(this, (state) => 
         createFundRequest(fund)
           .then(id => {
-            state.funds.unshift({ ...fund, id });
+            state.budget.funds.unshift({ ...fund, id });
             this.updateUserSettings();
           })
       );
@@ -185,83 +191,106 @@ export const APP_STORE: DefineStoreOptions<
       await Utils.runAsyncOperation(this, (state) => 
         updateFundRequest(fund)
           .then(() => {
-            const fromState = state.funds.find(x => x.id === fund.id);
+            const fromState = state.budget.funds.find(x => x.id === fund.id);
             if (!fromState) {
-              throw new Error('Invalid operation - fund does not exist');
+              throw new Error('Invalid operation - fund does not exist.');
             }
-            const index = state.funds.indexOf(fromState);
-            state.funds[index] = fund; 
+            const index = state.budget.funds.indexOf(fromState);
+            state.budget.funds[index] = fund; 
           })
       );
     },
-    async deleteFund(fund: Fund) {
+    async deleteFund(fundId: string) {
       await Utils.runAsyncOperation(this, (state) => 
-        deleteFundRequest(fund)
-          .then(() => state.funds.splice(state.funds.indexOf(fund), 1))
+        deleteFundRequest(fundId)
+          .then(() => state.budget.funds = state.budget.funds.filter(x => x.id !== fundId))
       );
     },
 
     async createNewExpense(
       expense: Expense,
     ) {
-      await Utils.runAsyncOperation(this, (state) => 
-        createExpenseRequest(expense)
-          .then(id => {
-            state.expenses.unshift({ ...expense, id });
-            this.fetchBudget(); // TODO fetch only affected funds/accounts 
-          })
-      );
+      await Utils.runAsyncOperation(this, async (state) => {
+        const id = await createExpenseRequest(expense); 
+        const fromResponse = await getExpenseRequest(id);
+        state.budget.operations.unshift(fromResponse);
+
+        await Utils.reloadAccount(this, expense.accountId);
+        await Utils.reloadFund(this, expense.fundId);
+        await Utils.reloadBalance(this);
+      });
     },
     async updateExpense(expense: Expense) {
       await Utils.runAsyncOperation(this, (state) => 
         updateExpenseRequest(expense)
-          .then(expense => {
-            const fromState = state.expenses.find(x => x.id === expense.id);
+          .then(async expense => {
+            const fromState = state.budget.operations.find(x => x.id === expense.id);
             if (!fromState) {
-              throw new Error('Invalid operation - expense does not exist');
+              throw new Error('Invalid operation - expense does not exist.');
             }
-            const index = state.expenses.indexOf(fromState);
-            state.expenses[index] = expense; 
-            this.fetchBudget(); // TODO fetch only affected funds/accounts 
+            const index = state.budget.operations.indexOf(fromState);
+            state.budget.operations[index] = expense;
+            
+            await Utils.reloadAccount(this, expense.accountId);
+            await Utils.reloadFund(this, expense.fundId);
+            await Utils.reloadBalance(this);
           })
       );
     },
-    async deleteExpense(expense: Expense) {
+    async deleteExpense(expenseId: string) {
       await Utils.runAsyncOperation(this, () => 
-        deleteExpenseRequest(expense)
-          .then(() => this.fetchBudget())// TODO fetch only affected funds/accounts 
+        deleteExpenseRequest(expenseId)
+          .then(async () => {
+            const fromState = this.budget.operations.find(x => x.id === expenseId);
+            if (!fromState || !fromState.accountId || !fromState.fundId) {
+              throw new Error('Invalid operation - expense data is invalid.');
+            }
+            await Utils.reloadAccount(this, fromState.accountId);
+            await Utils.reloadFund(this, fromState.fundId);
+            await Utils.reloadBalance(this);
+          })
       );
     },
 
     async createNewIncome(
       income: Income,
     ) {
-      await Utils.runAsyncOperation(this, (state) => 
-        createIncomeRequest(income)
-          .then(id => {
-            state.incomes.unshift({ ...income, id }); 
-            this.fetchBudget(); // TODO fetch only affected funds/accounts 
-          })
-      );
+      await Utils.runAsyncOperation(this, async (state) => {
+        const id = await createIncomeRequest(income); 
+        const fromResponse = await getIncomeRequest(id);
+        state.budget.operations.unshift(fromResponse);
+
+        await Utils.reloadAccount(this, income.accountId);
+        await Utils.reloadBalance(this);
+      });
     },
     async updateIncome(income: Income) {
       await Utils.runAsyncOperation(this, (state) => 
         updateIncomeRequest(income)
-          .then(income => {
-            const fromState = state.incomes.find(x => x.id === income.id);
+          .then(async income => {
+            const fromState = state.budget.operations.find(x => x.id === income.id);
             if (!fromState) {
-              throw new Error('Invalid operation - income does not exist');
+              throw new Error('Invalid operation - income does not exist.');
             }
-            const index = state.incomes.indexOf(fromState);
-            state.incomes[index] = income; 
-            this.fetchBudget(); // TODO fetch only affected funds/accounts 
+            const index = state.budget.operations.indexOf(fromState);
+            state.budget.operations[index] = income;
+
+            await Utils.reloadAccount(this, income.accountId);
+            await Utils.reloadBalance(this);
           })
       );
     },
-    async deleteIncome(income: Income) {
+    async deleteIncome(incomeId: string) {
       await Utils.runAsyncOperation(this, () => 
-        deleteIncomeRequest(income)
-          .then(() => this.fetchBudget())// TODO fetch only affected funds/accounts 
+        deleteIncomeRequest(incomeId)
+          .then(async () => {
+            const fromState = this.budget.operations.find(x => x.id === incomeId);
+            if (!fromState || !fromState.accountId) {
+              throw new Error('Invalid operation - income data is invalid.');
+            }
+            await Utils.reloadAccount(this, fromState.accountId);
+            await Utils.reloadBalance(this);
+          })
       );
     },
     async createNewAllocation(
@@ -269,30 +298,44 @@ export const APP_STORE: DefineStoreOptions<
     ) {
       await Utils.runAsyncOperation(this, (state) => 
         createAllocationRequest(allocation)
-          .then(id => {
-            state.allocations.unshift({ ...allocation, id }); 
-            this.fetchBudget(); // TODO fetch only affected funds/accounts 
+          .then(async id => {
+            state.budget.operations.unshift({ ...allocation, id }); 
+            
+            await Utils.reloadFund(this, allocation.fundId);
+            await Utils.reloadFund(this, allocation.targetFundId);
+            await Utils.reloadBalance(this);
           })
       );
     },
     async updateAllocation(allocation: Allocation) {
       await Utils.runAsyncOperation(this, (state) => 
         updateAllocationRequest(allocation)
-          .then(allocation => {
-            const fromState = state.allocations.find(x => x.id === allocation.id);
+          .then(async allocation => {
+            const fromState = state.budget.operations.find(x => x.id === allocation.id);
             if (!fromState) {
-              throw new Error('Invalid operation - allocation does not exist');
+              throw new Error('Invalid operation - allocation does not exist.');
             }
-            const index = state.allocations.indexOf(fromState);
-            state.allocations[index] = allocation; 
-            this.fetchBudget(); // TODO fetch only affected funds/accounts 
+            const index = state.budget.operations.indexOf(fromState);
+            state.budget.operations[index] = allocation; 
+            
+            await Utils.reloadFund(this, allocation.fundId);
+            await Utils.reloadFund(this, allocation.targetFundId);
+            await Utils.reloadBalance(this);
           })
       );
     },
-    async deleteAllocation(allocation: Allocation) {
+    async deleteAllocation(allocationId: string) {
       await Utils.runAsyncOperation(this, () => 
-        deleteAllocationRequest(allocation)
-          .then(() => this.fetchBudget())// TODO fetch only affected funds/accounts 
+        deleteAllocationRequest(allocationId)
+          .then(async () => {
+            const fromState = this.budget.operations.find(x => x.id === allocationId);
+            if (!fromState || !fromState.fundId || !fromState.targetFundId) {
+              throw new Error('Invalid operation - allocation data is invalid.');
+            }
+            await Utils.reloadFund(this, fromState.fundId);
+            await Utils.reloadFund(this, fromState.targetFundId);
+            await Utils.reloadBalance(this);
+          })
       );
     },
     async createNewFundTransfer(
@@ -300,30 +343,45 @@ export const APP_STORE: DefineStoreOptions<
     ) {
       await Utils.runAsyncOperation(this, (state) => 
         createFundTransferRequest(fundTransfer)
-          .then(id => {
-            state.fundTransfers.unshift({ ...fundTransfer, id }); 
-            this.fetchBudget(); // TODO fetch only affected funds/accounts 
+          .then(async id => {
+            state.budget.operations.unshift({ ...fundTransfer, id }); 
+            
+            await Utils.reloadFund(this, fundTransfer.fundId);
+            await Utils.reloadFund(this, fundTransfer.targetFundId);
+            await Utils.reloadBalance(this);
           })
       );
     },
     async updateFundTransfer(fundTransfer: FundTransfer) {
       await Utils.runAsyncOperation(this, (state) => 
         updateFundTransferRequest(fundTransfer)
-          .then(fundTransfer => {
-            const fromState = state.fundTransfers.find(x => x.id === fundTransfer.id);
+          .then(async fundTransfer => {
+            const fromState = state.budget.operations.find(x => x.id === fundTransfer.id);
             if (!fromState) {
-              throw new Error('Invalid operation - fund transfer does not exist');
+              throw new Error('Invalid operation - fund transfer does not exist.');
             }
-            const index = state.fundTransfers.indexOf(fromState);
-            state.fundTransfers[index] = fundTransfer; 
-            this.fetchBudget(); // TODO fetch only affected funds/accounts 
+            const index = state.budget.operations.indexOf(fromState);
+            state.budget.operations[index] = fundTransfer; 
+            
+            await Utils.reloadFund(this, fundTransfer.fundId);
+            await Utils.reloadFund(this, fundTransfer.targetFundId);
+            await Utils.reloadBalance(this);
           })
       );
     },
-    async deleteFundTransfer(fundTransfer: FundTransfer) {
+    async deleteFundTransfer(fundTransferId: string) {
       await Utils.runAsyncOperation(this, () => 
-        deleteFundTransferRequest(fundTransfer)
-          .then(() => this.fetchBudget())// TODO fetch only affected funds/accounts 
+        deleteFundTransferRequest(fundTransferId)
+          .then(async () => {
+            const fromState = this.budget.operations.find(x => x.id === fundTransferId);
+            if (!fromState || !fromState.fundId || !fromState.targetFundId) {
+              throw new Error('Invalid operation - fund transfer data is invalid.');
+            }
+            
+            await Utils.reloadFund(this, fromState.fundId);
+            await Utils.reloadFund(this, fromState.targetFundId);
+            await Utils.reloadBalance(this);
+          })
       );
     },
     async createNewAccountTransfer(
@@ -331,30 +389,43 @@ export const APP_STORE: DefineStoreOptions<
     ) {
       await Utils.runAsyncOperation(this, (state) => 
         createAccountTransferRequest(accountTransfer)
-          .then(id => {
-            state.accountTransfers.unshift({ ...accountTransfer, id }); 
-            this.fetchBudget(); // TODO fetch only affected funds/accounts 
+          .then(async id => {
+            state.budget.operations.unshift({ ...accountTransfer, id }); 
+            await Utils.reloadAccount(this, accountTransfer.accountId);
+            await Utils.reloadAccount(this, accountTransfer.targetAccountId);
+            await Utils.reloadBalance(this);
           })
       );
     },
     async updateAccountTransfer(accountTransfer: AccountTransfer) {
       await Utils.runAsyncOperation(this, (state) => 
         updateAccountTransferRequest(accountTransfer)
-          .then(accountTransfer => {
-            const fromState = state.accountTransfers.find(x => x.id === accountTransfer.id);
+          .then(async accountTransfer => {
+            const fromState = state.budget.operations.find(x => x.id === accountTransfer.id);
             if (!fromState) {
-              throw new Error('Invalid operation - account transfer does not exist');
+              throw new Error('Invalid operation - account transfer does not exist.');
             }
-            const index = state.accountTransfers.indexOf(fromState);
-            state.accountTransfers[index] = accountTransfer; 
-            this.fetchBudget(); // TODO fetch only affected funds/accounts 
+            const index = state.budget.operations.indexOf(fromState);
+            state.budget.operations[index] = accountTransfer; 
+
+            await Utils.reloadAccount(this, accountTransfer.accountId);
+            await Utils.reloadAccount(this, accountTransfer.targetAccountId);
+            await Utils.reloadBalance(this);
           })
       );
     },
-    async deleteAccountTransfer(accountTransfer: AccountTransfer) {
+    async deleteAccountTransfer(accountTransferId: string) {
       await Utils.runAsyncOperation(this, () => 
-        deleteAccountTransferRequest(accountTransfer)
-          .then(() => this.fetchBudget())// TODO fetch only affected funds/accounts 
+        deleteAccountTransferRequest(accountTransferId)
+          .then(async () => {
+            const fromState = this.budget.operations.find(x => x.id === accountTransferId);
+            if (!fromState || !fromState.accountId || !fromState.targetAccountId) {
+              throw new Error('Invalid operation - account transfer data is invalid.');
+            }
+            await Utils.reloadAccount(this, fromState.accountId);
+            await Utils.reloadAccount(this, fromState.targetAccountId);
+            await Utils.reloadBalance(this);
+          })
       );
     },
     async createNewCurrencyExchange(
@@ -362,30 +433,39 @@ export const APP_STORE: DefineStoreOptions<
     ) {
       await Utils.runAsyncOperation(this, (state) => 
         createCurrencyExchangeRequest(currencyExchange)
-          .then(id => {
-            state.currencyExchanges.unshift({ ...currencyExchange, id }); 
-            this.fetchBudget(); // TODO fetch only affected funds/accounts 
+          .then(async id => {
+            state.budget.operations.unshift({ ...currencyExchange, id }); 
+            await Utils.reloadAccount(this, currencyExchange.accountId);
+            await Utils.reloadBalance(this);
           })
       );
     },
     async updateCurrencyExchange(currencyExchange: CurrencyExchange) {
       await Utils.runAsyncOperation(this, (state) => 
         updateCurrencyExchangeRequest(currencyExchange)
-          .then(currencyExchange => {
-            const fromState = state.currencyExchanges.find(x => x.id === currencyExchange.id);
+          .then(async currencyExchange => {
+            const fromState = state.budget.operations.find(x => x.id === currencyExchange.id);
             if (!fromState) {
-              throw new Error('Invalid operation - account transfer does not exist');
+              throw new Error('Invalid operation - currency exchange does not exist.');
             }
-            const index = state.currencyExchanges.indexOf(fromState);
-            state.currencyExchanges[index] = currencyExchange; 
-            this.fetchBudget(); // TODO fetch only affected funds/accounts 
+            const index = state.budget.operations.indexOf(fromState);
+            state.budget.operations[index] = currencyExchange; 
+            await Utils.reloadAccount(this, currencyExchange.accountId);
+            await Utils.reloadBalance(this);
           })
       );
     },
-    async deleteCurrencyExchange(currencyExchange: CurrencyExchange) {
+    async deleteCurrencyExchange(currencyExchangeId: string) {
       await Utils.runAsyncOperation(this, () => 
-        deleteCurrencyExchangeRequest(currencyExchange)
-          .then(() => this.fetchBudget())// TODO fetch only affected funds/accounts 
+        deleteCurrencyExchangeRequest(currencyExchangeId)
+          .then(async () => {
+            const fromState = this.budget.operations.find(x => x.id === currencyExchangeId);
+            if (!fromState || !fromState.accountId) {
+              throw new Error('Invalid operation - currency exchange data is invalid.');
+            }
+            await Utils.reloadAccount(this, fromState.accountId);
+            await Utils.reloadBalance(this);
+          })
       );
     },
   }
@@ -411,6 +491,24 @@ class Utils {
     } finally {
       state.isLoading = false;
     }
+  }
+
+  static async reloadBalance(state: AppState): Promise<void> {
+    const budgetBalance = await getBalanceRequest();
+    state.budget.balance = budgetBalance.balance;
+    state.budget.unallocated = budgetBalance.unallocated;
+  }
+
+  static async reloadAccount(state: AppState, accountId: string): Promise<void> {
+    const account = await getAccountRequest(accountId);
+    const accountIndex = state.budget.accounts.findIndex(x => x.id === account.id);
+    state.budget.accounts[accountIndex] = account;
+  }
+
+  static async reloadFund(state: AppState, fundId: string): Promise<void> {
+    const fund = await getFundRequest(fundId);
+    const fundIndex = state.budget.accounts.findIndex(x => x.id === fund.id);
+    state.budget.funds[fundIndex] = fund;
   }
 
   static ensureDefined(actionName: string, ...payload: unknown[]): boolean {

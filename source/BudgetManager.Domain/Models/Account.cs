@@ -8,12 +8,13 @@ public class Account
   public Balance InitialBalance { get; internal set; }
   public bool IsDeleted { get; internal set; }
 
-  public Account(string id, string name, Balance initialBalance)
+  public Account(string id, string name, Balance initialBalance, bool isDeleted = false)
   {
     Id = id;
     Name = name;
     Balance = new Balance(initialBalance);
     InitialBalance = new Balance(initialBalance);
+    IsDeleted = isDeleted;
   }
 
   public void Add(Money money) => Balance.Add(money);

@@ -16,6 +16,6 @@ export async function getAccountTransferRequest(accountTransfer: AccountTransfer
     .then(res => MoneyOperationUtils.parseFromResponse(res.data));
 }
 
-export async function deleteAccountTransferRequest(accountTransfer: AccountTransfer): Promise<void> {
-  return axios.delete<void>(`/account-transfer/${accountTransfer.id}`).then(res => res.data);
+export async function deleteAccountTransferRequest(accountTransferId: string): Promise<void> {
+  return axios.delete<void>(`/account-transfer/${accountTransferId}`).then(res => res.data);
 }

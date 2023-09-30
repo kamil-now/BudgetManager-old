@@ -20,14 +20,14 @@ export async function updateFundRequest(fund: Fund): Promise<Fund> {
   ).then(res => res.data);
 }
 
-export async function getFundRequest(fund: Fund): Promise<Fund> {
+export async function getFundRequest(fundId: string): Promise<Fund> {
   return axios.get<Fund>(
-    `/fund/${fund.id}`
+    `/fund/${fundId}`
   ).then(res => res.data);
 }
 
-export async function deleteFundRequest(fund: Fund): Promise<void> {
+export async function deleteFundRequest(fundId: string): Promise<void> {
   return axios.delete<void>(
-    `/fund/${fund.id}`
+    `/fund/${fundId}`
   ).then(res => res.data);
 }

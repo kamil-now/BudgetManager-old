@@ -1,61 +1,26 @@
 
 import { MoneyOperationUtils } from '@/helpers/money-operation-utils';
 import { Account } from '@/models/account';
-import { AccountTransfer } from '@/models/account-transfer';
-import { Allocation } from '@/models/allocation';
-import { Balance } from '@/models/balance';
-import { CurrencyExchange } from '@/models/currency-exchange';
-import { Expense } from '@/models/expense';
+import { BudgetSummary } from '@/models/budget-summary';
 import { Fund } from '@/models/fund';
-import { FundTransfer } from '@/models/fund-transfer';
-import { Income } from '@/models/income';
 import { MoneyOperation } from '@/models/money-operation';
 import axios from 'axios';
 
-export function fetchBudgetRequest(): Promise<{
-  accounts: Account[],
-  funds: Fund[],
-  balance: {balance: Balance, unallocated: Balance},
-  incomes: Income[],
-  expenses: Expense[],
-  allocations: Allocation[],
-  fundTransfers: FundTransfer[],
-  accountTransfers: AccountTransfer[],
-  currencyExchanges: CurrencyExchange[],
-} | null> {
+export function fetchBudgetSummary(): Promise<BudgetSummary> {
+  return axios.get<BudgetSummary>('budget')
+    .then(res => {
+      const budgetSummary = res?.data;
+      return applyBudgetSettings(budgetSummary);
+    });
+}
 
-  return axios.get<{balance: Balance, unallocated: Balance}>('balance')
-    .then(res => 
-      Promise.all(
-        [
-          axios.get<Account[]>('accounts').then(res => res?.data),
-          axios.get<Fund[]>('funds').then(res => res?.data),
-          axios.get<Income[]>('incomes').then(res => res?.data),
-          axios.get<Expense[]>('expenses').then(res => res?.data),
-          axios.get<Allocation[]>('allocations').then(res => res?.data),
-          axios.get<FundTransfer[]>('fund-transfers').then(res => res?.data),
-          axios.get<AccountTransfer[]>('account-transfers').then(res => res?.data),
-          axios.get<CurrencyExchange[]>('currency-exchanges').then(res => res?.data),
-          axios.get<{ accountsOrder: string[], fundsOrder: string[] }>('user-settings')
-            .then(res => res?.data, () => ({ accountsOrder: [], fundsOrder: [] }))
-        ])
-        .then(data => {
-          if (data.some(x => !x)) {
-            throw new Error('Failed to fetch budget data.');
-          }
-          const [accounts, funds, incomes, expenses, allocations, fundTransfers, accountTransfers, currencyExchanges, settings] = data;
-          return {
-            balance: res.data,
-            incomes: parseAndSortOperations(incomes),
-            expenses: parseAndSortOperations(expenses),
-            accounts: sortAccounts(accounts, settings),
-            funds: sortFunds(funds, settings),
-            allocations: parseAndSortOperations(allocations),
-            fundTransfers: parseAndSortOperations(fundTransfers),
-            accountTransfers: parseAndSortOperations(accountTransfers),
-            currencyExchanges: parseAndSortOperations(currencyExchanges),
-          };})
-    );
+function applyBudgetSettings(budgetSummary: BudgetSummary): BudgetSummary {
+  return {
+    ...budgetSummary,
+    operations: parseAndSortOperations(budgetSummary.operations),
+    accounts: sortAccounts(budgetSummary.accounts, budgetSummary.userSettings),
+    funds: sortFunds(budgetSummary.funds, budgetSummary.userSettings),
+  };
 }
 
 function parseAndSortOperations<T extends MoneyOperation>(operations: T[]):T[] {

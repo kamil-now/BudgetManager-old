@@ -16,6 +16,6 @@ export async function getFundTransferRequest(fundTransfer: FundTransfer): Promis
     .then(res => MoneyOperationUtils.parseFromResponse(res.data));
 }
 
-export async function deleteFundTransferRequest(fundTransfer: FundTransfer): Promise<void> {
-  return axios.delete<void>(`/fund-transfer/${fundTransfer.id}`).then(res => res.data);
+export async function deleteFundTransferRequest(fundTransferId: string): Promise<void> {
+  return axios.delete<void>(`/fund-transfer/${fundTransferId}`).then(res => res.data);
 }

@@ -1,5 +1,8 @@
+import { Balance } from './balance';
+
 export type Fund = {
   id?: string,
   name?: string,
-  balance: { [currency: string]: number},
+  balance: Balance,
+  isDeleted: boolean
 }

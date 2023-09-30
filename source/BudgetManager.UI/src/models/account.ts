@@ -5,4 +5,5 @@ export type Account = {
   name?: string,
   balance: Balance,
   initialBalance: Balance,
+  isDeleted: boolean
 }

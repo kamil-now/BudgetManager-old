@@ -1,15 +1,7 @@
 <template>
   <div class="accounts-view">
-    <ListView 
-      header="Accounts"
-      v-model="accounts"
-      :createNew="createAccountObject"
-      :save="createNewAccount"
-      :update="updateAccount"
-      :remove="deleteAccount"
-      :onReorder="updateUserSettings"
-      :allowAdd="true"
-    >
+    <ListView header="Accounts" v-model="accounts" :createNew="createAccountObject" :save="createNewAccount"
+      :update="updateAccount" :remove="deleteAccount" :onReorder="updateUserSettings" :allowAdd="true">
       <template #content="{ data }">
         <div class="accounts-view_body">
           <div class="accounts-view_body_balance">
@@ -21,10 +13,7 @@
         </div>
       </template>
       <template #editor="{ data }">
-        <AccountInput 
-          :account="data" 
-          @changed="onAccountChanged(data, $event)"
-        />
+        <AccountInput :account="data" @changed="onAccountChanged(data, $event)" />
       </template>
     </ListView>
   </div>
@@ -32,8 +21,8 @@
 <script setup lang="ts">
 import currencies from '@/assets/currencies.json';
 import AccountInput from '@/components/AccountInput.vue';
-import { DisplayFormat } from '@/helpers/display-format';
 import ListView from '@/components/ListView.vue';
+import { DisplayFormat } from '@/helpers/display-format';
 import { Account } from '@/models/account';
 import { useAppStore } from '@/store/store';
 import { storeToRefs } from 'pinia';
@@ -50,8 +39,12 @@ function onAccountChanged(account: Account, newValue: Account) {
 }
 
 function createAccountObject() {
-  const defaultCurrency = Object.keys(accounts.value[accounts.value.length - 1].initialBalance)[0] ?? Object.keys(currencies)[0];
-  return  {
+  let defaultCurrency = Object.keys(currencies)[0];
+  const acc = accounts.value[accounts.value.length - 1];
+  if (acc && acc.initialBalance) {
+    defaultCurrency = Object.keys(acc.initialBalance)[0];
+  }
+  return {
     balance: {
       [defaultCurrency]: 0
     },
@@ -67,9 +60,11 @@ function createAccountObject() {
 .accounts-view {
   width: 100%;
   max-height: 100%;
+
   &_body {
     display: flex;
     width: 100%;
+
     &_name {
       width: 50%;
       text-align: left;
@@ -78,12 +73,14 @@ function createAccountObject() {
       text-overflow: ellipsis;
       overflow: hidden;
     }
+
     &_balance {
       width: 50%;
       display: inline-block;
       text-overflow: ellipsis;
       overflow: hidden;
-      > div {
+
+      >div {
         display: flex;
         justify-content: end;
       }

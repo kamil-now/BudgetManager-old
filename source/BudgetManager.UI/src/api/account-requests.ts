@@ -22,14 +22,14 @@ export async function updateAccountRequest(account: Account): Promise<Account> {
   ).then(res => res.data);
 }
 
-export async function getAccountRequest(account: Account): Promise<Account> {
+export async function getAccountRequest(accountId: string): Promise<Account> {
   return axios.get<Account>(
-    `/account/${account.id}`
+    `/account/${accountId}`
   ).then(res => res.data);
 }
 
-export async function deleteAccountRequest(account: Account): Promise<void> {
+export async function deleteAccountRequest(accountId: string): Promise<void> {
   return axios.delete<void>(
-    `/account/${account.id}`
+    `/account/${accountId}`
   ).then(res => res.data);
 }

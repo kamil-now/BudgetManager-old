@@ -1,7 +1,6 @@
 namespace BudgetManager.Application;
 
 using AutoMapper;
-using BudgetManager.Application.Requests;
 
 public class MappingProfile : Profile
 {
@@ -48,7 +47,8 @@ public class MappingProfile : Profile
       .ConstructUsing(src =>
         new Fund(
           src.Id!,
-          src.Name!
+          src.Name!,
+          src.IsDeleted!
           )
         )
       .ForMember(x => x.Balance, opt => opt.MapFrom(src => new Balance(src.Balance!)));
@@ -58,7 +58,8 @@ public class MappingProfile : Profile
         new Account(
           src.Id!,
           src.Name!,
-          new Balance(src.InitialBalance!)
+          new Balance(src.InitialBalance!),
+          src.IsDeleted!
           )
         )
       .ForMember(x => x.Balance, opt => opt.MapFrom(src => new Balance(src.Balance!)))
@@ -252,10 +253,7 @@ public class MappingProfile : Profile
       .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString(DATE_FORMAT)));
 
     CreateMap<UserSettings, UserSettingsDto>();
-    
-    // CreateMap<IReadOnlyCollection<object>, IEnumerable<object>>()
-    //         .ConvertUsing(rc => rc);
-    
+
     CreateMap<Budget, BudgetSummaryDto>()
       .ConstructUsing((src, ctx) =>
       {

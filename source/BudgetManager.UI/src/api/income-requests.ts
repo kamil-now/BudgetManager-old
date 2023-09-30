@@ -29,14 +29,14 @@ export async function updateIncomeRequest(income: Income): Promise<Income> {
   ).then(res => MoneyOperationUtils.parseFromResponse(res.data));
 }
 
-export async function getIncomeRequest(income: Income): Promise<Income> {
+export async function getIncomeRequest(incomeId: string): Promise<Income> {
   return axios.get<Income>(
-    `/income/${income.id}`
+    `/income/${incomeId}`
   ).then(res => MoneyOperationUtils.parseFromResponse(res.data));
 }
 
-export async function deleteIncomeRequest(income: Income): Promise<void> {
+export async function deleteIncomeRequest(incomeId: string): Promise<void> {
   return axios.delete<void>(
-    `/income/${income.id}`
+    `/income/${incomeId}`
   ).then(res => res.data);
 }

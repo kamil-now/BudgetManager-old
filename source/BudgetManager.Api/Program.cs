@@ -175,7 +175,7 @@ async (
   CancellationToken cancellationToken
   )
   => Results.Ok(await mediator.Send(new BalanceRequest(context.GetUserId()), cancellationToken)))
-.Produces<Dictionary<string, decimal>>()
+.Produces<BudgetBalanceDto>()
 .WithTags(API_TITLE)
 .RequireAuthorization();
 
