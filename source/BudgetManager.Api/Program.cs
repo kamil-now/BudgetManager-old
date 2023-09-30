@@ -114,11 +114,8 @@ async (
   HttpContext context,
   IMediator mediator,
   CancellationToken cancellationToken
-  ) =>
-  {
-    await mediator.Send(new BudgetSummaryRequest(context.GetUserId()));
-    return Results.Ok();
-  })
+  ) => Results.Ok(await mediator.Send(new BudgetSummaryRequest(context.GetUserId())))
+  )
 .WithTags(API_TITLE)
 .RequireAuthorization();
 

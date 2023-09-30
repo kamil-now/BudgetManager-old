@@ -277,12 +277,19 @@ public class MappingProfile : Profile
           ctx.Mapper.Map<UserSettingsDto>(src.UserSettings),
           balance,
           unallocated,
-          ctx.Mapper.Map<IEnumerable<FundDto>>(src.Funds.AsEnumerable()),
-          ctx.Mapper.Map<IEnumerable<AccountDto>>(src.Accounts.AsEnumerable()),
-          ctx.Mapper.Map<IEnumerable<MoneyOperationDto>>(src.Operations.AsEnumerable())
+          ctx.Mapper.Map<IEnumerable<FundDto>>(src.Funds),
+          ctx.Mapper.Map<IEnumerable<AccountDto>>(src.Accounts),
+          ctx.Mapper.Map<IEnumerable<MoneyOperationDto>>(src.Operations)
         );
         return budget;
       }).ForAllMembers(opt => opt.Ignore());
+
+    CreateMap<IReadOnlyCollection<Expense>, IEnumerable<MoneyOperationDto>>();
+    CreateMap<IReadOnlyCollection<Income>, IEnumerable<MoneyOperationDto>>();
+    CreateMap<IReadOnlyCollection<Allocation>, IEnumerable<MoneyOperationDto>>();
+    CreateMap<IReadOnlyCollection<FundTransfer>, IEnumerable<MoneyOperationDto>>();
+    CreateMap<IReadOnlyCollection<AccountTransfer>, IEnumerable<MoneyOperationDto>>();
+    CreateMap<IReadOnlyCollection<CurrencyExchange>, IEnumerable<MoneyOperationDto>>();
 
     CreateMap<Expense, MoneyOperationDto>()
       .ForMember(x => x.Type, opt => opt.MapFrom(_ => MoneyOperationType.Expense))
