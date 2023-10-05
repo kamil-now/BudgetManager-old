@@ -5,7 +5,7 @@ export class DateUtils {
    */
   public static createFromDateOnlyString(dateString: string): Date {
     // TODO figure out the dates with different server and db culture
-    const [month, day, year] = dateString.split('/').map(Number);
+    const [day, month, year] = dateString.split('/').map(Number);
     return new Date(year, month - 1, day);
   }
 }
