@@ -12,12 +12,12 @@
   "dependencies": {
     "@azure/msal-browser": "^2.36.0",
     "axios": "^1.5.0",
-    "core-js": "^3.32.1",
+    "core-js": "^3.33.0",
     "pinia": "^2.1.6",
     "primeicons": "^6.0.1",
     "primevue": "^3.35.0",
     "vue": "^3.3.4",
-    "vue-router": "^4.2.4"
+    "vue-router": "^4.2.5"
   },
   "devDependencies": {
     "@babel/core": "^7.21.4",
@@ -30,7 +30,7 @@
     "@vue/cli-plugin-eslint": "~5.0.0",
     "@vue/cli-plugin-typescript": "~5.0.0",
     "@vue/cli-plugin-unit-jest": "~5.0.0",
-    "@vue/cli-service": "~5.0.0",
+    "@vue/cli-service": "^5.0.8",
     "@vue/eslint-config-typescript": "^9.1.0",
     "@vue/test-utils": "^2.3.2",
     "@vue/vue3-jest": "^27.0.0",
