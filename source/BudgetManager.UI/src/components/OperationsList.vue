@@ -194,11 +194,19 @@ import { useConfirm } from 'primevue/useconfirm';
 import { useDialog } from 'primevue/usedialog';
 import { ref } from 'vue';
 import InputDialog from './InputDialog.vue';
-
 const dialog = useDialog();
 const store = useAppStore();
 const confirm = useConfirm();
 const { operations } = storeToRefs(store);
+
+const {
+  deleteIncome,
+  deleteAllocation,
+  deleteExpense,
+  deleteCurrencyExchange,
+  deleteAccountTransfer,
+  deleteFundTransfer,
+} = store;
 
 const moneyOperationTypes = Object.keys(MoneyOperationType).filter(
   (item) => !isNaN(Number(item))
@@ -430,8 +438,36 @@ function removeAt(event: MouseEvent, index: number) {
     icon: 'pi pi-exclamation-triangle',
     acceptClass: 'p-button-danger',
     rejectClass: 'p-button-secondary',
-    accept: () => operations.value.splice(index, 1),
+    accept: () => removeOperation(operations.value[index])
   });
+}
+function removeOperation(operation: MoneyOperation) {
+  if (!operation.id) {
+    throw new Error();
+  }
+  switch (operation.type) {
+  case MoneyOperationType.Income:
+    deleteIncome(operation.id);
+    break;
+  case MoneyOperationType.Allocation:
+    deleteAllocation(operation.id);
+    break;
+  case MoneyOperationType.Expense:
+    deleteExpense(operation.id);
+    break;
+  case MoneyOperationType.CurrencyExchange:
+    deleteCurrencyExchange(operation.id);
+    break;
+  case MoneyOperationType.AccountTransfer:
+    deleteAccountTransfer(operation.id);
+    break;
+  case MoneyOperationType.FundTransfer:
+    deleteFundTransfer(operation.id);
+    break;
+  default:
+    throw new Error('Unknown operation.');
+  }
+ 
 }
 </script>
 

@@ -252,13 +252,14 @@ export const APP_STORE: DefineStoreOptions<
       );
     },
     async deleteExpense(expenseId: string) {
-      await Utils.runAsyncOperation(this, () => 
+      await Utils.runAsyncOperation(this, (state) => 
         deleteExpenseRequest(expenseId)
           .then(async () => {
             const fromState = this.budget.operations.find(x => x.id === expenseId);
             if (!fromState || !fromState.accountId || !fromState.fundId) {
               throw new Error('Invalid operation - expense data is invalid.');
             }
+            state.budget.operations = state.budget.operations.filter(x => x.id !== fromState.id);
             await Utils.reloadAccount(this, fromState.accountId);
             await Utils.reloadFund(this, fromState.fundId);
             await Utils.reloadBalance(this);
@@ -297,13 +298,14 @@ export const APP_STORE: DefineStoreOptions<
       );
     },
     async deleteIncome(incomeId: string) {
-      await Utils.runAsyncOperation(this, () => 
+      await Utils.runAsyncOperation(this, (state) => 
         deleteIncomeRequest(incomeId)
           .then(async () => {
             const fromState = this.budget.operations.find(x => x.id === incomeId);
             if (!fromState || !fromState.accountId) {
               throw new Error('Invalid operation - income data is invalid.');
             }
+            state.budget.operations = state.budget.operations.filter(x => x.id !== fromState.id);
             await Utils.reloadAccount(this, fromState.accountId);
             await Utils.reloadBalance(this);
           })
@@ -343,13 +345,14 @@ export const APP_STORE: DefineStoreOptions<
       );
     },
     async deleteAllocation(allocationId: string) {
-      await Utils.runAsyncOperation(this, () => 
+      await Utils.runAsyncOperation(this, (state) => 
         deleteAllocationRequest(allocationId)
           .then(async () => {
             const fromState = this.budget.operations.find(x => x.id === allocationId);
             if (!fromState || !fromState.fundId || !fromState.targetFundId) {
               throw new Error('Invalid operation - allocation data is invalid.');
             }
+            state.budget.operations = state.budget.operations.filter(x => x.id !== fromState.id);
             await Utils.reloadFund(this, fromState.fundId);
             await Utils.reloadFund(this, fromState.targetFundId);
             await Utils.reloadBalance(this);
@@ -390,14 +393,14 @@ export const APP_STORE: DefineStoreOptions<
       );
     },
     async deleteFundTransfer(fundTransferId: string) {
-      await Utils.runAsyncOperation(this, () => 
+      await Utils.runAsyncOperation(this, (state) => 
         deleteFundTransferRequest(fundTransferId)
           .then(async () => {
             const fromState = this.budget.operations.find(x => x.id === fundTransferId);
             if (!fromState || !fromState.fundId || !fromState.targetFundId) {
               throw new Error('Invalid operation - fund transfer data is invalid.');
             }
-            
+            state.budget.operations = state.budget.operations.filter(x => x.id !== fromState.id);
             await Utils.reloadFund(this, fromState.fundId);
             await Utils.reloadFund(this, fromState.targetFundId);
             await Utils.reloadBalance(this);
@@ -438,13 +441,14 @@ export const APP_STORE: DefineStoreOptions<
       );
     },
     async deleteAccountTransfer(accountTransferId: string) {
-      await Utils.runAsyncOperation(this, () => 
+      await Utils.runAsyncOperation(this, (state) => 
         deleteAccountTransferRequest(accountTransferId)
           .then(async () => {
             const fromState = this.budget.operations.find(x => x.id === accountTransferId);
             if (!fromState || !fromState.accountId || !fromState.targetAccountId) {
               throw new Error('Invalid operation - account transfer data is invalid.');
             }
+            state.budget.operations = state.budget.operations.filter(x => x.id !== fromState.id);
             await Utils.reloadAccount(this, fromState.accountId);
             await Utils.reloadAccount(this, fromState.targetAccountId);
             await Utils.reloadBalance(this);
@@ -483,13 +487,14 @@ export const APP_STORE: DefineStoreOptions<
       );
     },
     async deleteCurrencyExchange(currencyExchangeId: string) {
-      await Utils.runAsyncOperation(this, () => 
+      await Utils.runAsyncOperation(this, (state) => 
         deleteCurrencyExchangeRequest(currencyExchangeId)
           .then(async () => {
             const fromState = this.budget.operations.find(x => x.id === currencyExchangeId);
             if (!fromState || !fromState.accountId) {
               throw new Error('Invalid operation - currency exchange data is invalid.');
             }
+            state.budget.operations = state.budget.operations.filter(x => x.id !== fromState.id);
             await Utils.reloadAccount(this, fromState.accountId);
             await Utils.reloadBalance(this);
           })
