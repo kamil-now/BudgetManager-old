@@ -101,9 +101,10 @@ onMounted(() => {
     gap: 1rem;
     height: 100%;
     flex-wrap: wrap;
+    overflow: auto;
 
     &-items {
-      height: 100%;
+      height: calc(100% - 4rem);
       min-width: 300px;
       width: calc(25% - 0.5rem);
       >* {
@@ -117,7 +118,7 @@ onMounted(() => {
     
     }
     &-operations {
-      height: 100%;
+      height: calc(100% - 4rem);
       width: calc(75% - 0.5rem);
     }
   }
