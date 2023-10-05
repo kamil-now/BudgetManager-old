@@ -62,15 +62,16 @@ const { funds }  = useAppStore();
 const currencyCodeList = Object.keys(currencies);
 
 const selectedSourceFund = ref<Fund | undefined>(
-  props.fundTransfer.sourceFundId 
-    ? funds.find(x => x.id === props.fundTransfer.sourceFundId)
+  props.fundTransfer.fundId 
+    ? funds.find(x => x.id === props.fundTransfer.fundId)
     : undefined
 );
 
 watch(selectedSourceFund, async (fund) => {
   emit('changed', {
     ...props.fundTransfer, 
-    sourceFundId: fund?.id
+    fundId: fund?.id,
+    fundName: fund?.name
   });
 });
 
@@ -83,7 +84,8 @@ const selectedTargetFund = ref<Fund | undefined>(
 watch(selectedTargetFund, async (fund) => {
   emit('changed', {
     ...props.fundTransfer, 
-    targetFundId: fund?.id
+    targetFundId: fund?.id,
+    targetFundName: fund?.name
   });
 });
 

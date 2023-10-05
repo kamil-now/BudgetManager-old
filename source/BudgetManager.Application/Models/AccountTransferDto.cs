@@ -1,10 +1,13 @@
 public record AccountTransferDto(
-  string Id,
-  string CreatedDate,
-  string Title,
-  Money Value,
-  string Date,
-  string Description,
-  string SourceAccountId,
-  string TargetAccountId
+  string? Id = null,
+  string? CreatedDate = null,
+  string? Title = null,
+  Money? Value = null,
+  string? Date = null,
+  string? Description = null,
+  string? AccountId = null,
+  string? AccountName = null,
+  string? TargetAccountId = null,
+  string? TargetAccountName = null,
+  MoneyOperationType? Type = null
 );

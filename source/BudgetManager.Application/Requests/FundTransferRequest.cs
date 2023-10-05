@@ -14,7 +14,16 @@ public class FundTransferRequestHandler : BudgetRequestHandler<FundTransferReque
   public override FundTransferDto Get(FundTransferRequest request, Budget budget)
   {
     var fundTransfer = budget.Operations.First(x => x.Id == request.FundTransferId) as FundTransfer;
-    return _mapper.Map<FundTransferDto>(fundTransfer);
+    if(fundTransfer is null){
+      throw new Exception();
+    }
+    return _mapper.Map<FundTransferDto>(fundTransfer)
+     with
+    {
+      Type = MoneyOperationType.FundTransfer,
+      FundName = budget.Funds.First(x => x.Id == fundTransfer.SourceFundId).Name,
+      TargetFundName = budget.Funds.First(x => x.Id == fundTransfer.TargetFundId).Name,
+    };
   }
 }
 

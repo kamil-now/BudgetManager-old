@@ -13,8 +13,17 @@ public class IncomeRequestHandler : BudgetRequestHandler<IncomeRequest, IncomeDt
 
   public override IncomeDto Get(IncomeRequest request, Budget budget)
   {
-    var Income = budget.Operations.First(x => x.Id == request.IncomeId) as Income;
-    return _mapper.Map<IncomeDto>(Income);
+    var income = budget.Operations.First(x => x.Id == request.IncomeId) as Income;
+    if (income is null)
+    {
+      throw new Exception();
+    }
+    return _mapper.Map<IncomeDto>(income)
+     with
+    {
+      Type = MoneyOperationType.Income,
+      AccountName = budget.Accounts.First(x => x.Id == income.AccountId).Name,
+    };
   }
 }
 

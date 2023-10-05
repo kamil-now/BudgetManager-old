@@ -14,7 +14,16 @@ public class CurrencyExchangeRequestHandler : BudgetRequestHandler<CurrencyExcha
   public override CurrencyExchangeDto Get(CurrencyExchangeRequest request, Budget budget)
   {
     var currencyExchange = budget.Operations.First(x => x.Id == request.CurrencyExchangeId) as CurrencyExchange;
-    return _mapper.Map<CurrencyExchangeDto>(currencyExchange);
+    if (currencyExchange is null)
+    {
+      throw new Exception();
+    }
+    return _mapper.Map<CurrencyExchangeDto>(currencyExchange)
+     with
+    {
+      Type = MoneyOperationType.CurrencyExchange,
+      AccountName = budget.Accounts.First(x => x.Id == currencyExchange.AccountId).Name,
+    };
   }
 }
 

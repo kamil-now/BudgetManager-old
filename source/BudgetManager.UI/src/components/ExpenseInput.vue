@@ -72,6 +72,7 @@ watch(selectedAccount, async (account) => {
   emit('changed', {
     ...props.expense, 
     accountId: account?.id,
+    accountName: account?.name
   });
 });
 
@@ -84,7 +85,8 @@ const selectedFund = ref<Fund | undefined>(
 watch(selectedFund, async (fund) => {
   emit('changed', {
     ...props.expense, 
-    fundId: fund?.id
+    fundId: fund?.id,
+    fundName: fund?.name
   });
 });
 const expenseDate = computed({

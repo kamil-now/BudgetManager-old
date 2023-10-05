@@ -1,84 +1,35 @@
 <template>
   <ConfirmPopup></ConfirmPopup>
   <div class="list-view">
-    <DataTable 
-      :value="items" 
-      :editMode="'row'"
-      dataKey="id"
-      columnResizeMode="expand"
-      scrollable
-      scrollHeight="flex"
-      @rowReorder="onRowReorder" 
-    >
-      <template #header> 
-        <div class="list-view_header">
+    <DataTable :value="items" :editMode="'row'" dataKey="id" columnResizeMode="expand" scrollable scrollHeight="flex"
+      @rowReorder="onRowReorder">
+      <template #header>
+        <div class="list-view_header" v-if="createNew">
           <span>{{ header }}</span>
-          <Button
-            v-if="allowAdd && !editing"
-            icon="pi pi-plus" 
-            text 
-            rounded 
-            aria-label="Add" 
-            @click="add()" 
-          />
+          <Button v-if="allowAdd && !editing" icon="pi pi-plus" text rounded aria-label="Add" @click="add()" />
         </div>
       </template>
       <Column v-if="!!onReorder" rowReorder />
       <Column class="list-view_content-column">
         <template #body="{ data, index }">
-          <div 
-            class="list-view_body"
-            @mouseenter="hover = data"
-            @mouseleave="hover = null"
-          >
-            <div class="list-view_body-content" :class="{ blur: hover === data}" v-if="editing !== data">
+          <div class="list-view_body" @mouseenter="hover = data" @mouseleave="hover = null">
+            <div class="list-view_body-content" :class="{ blur: hover === data }" v-if="editing !== data">
               <slot name="content" :data="data"></slot>
             </div>
             <div class="list-view_body-editor" v-else>
               <slot name="editor" :data="data"></slot>
             </div>
             <div style="position: absolute; right: 0; display: flex;">
-              <Button
-                v-if="hover === data && editing !== data && !!copy"
-                icon="pi pi-copy" 
-                text 
-                rounded 
-                aria-label="Copy" 
-                @click="createCopy(data)" 
-              />
-              <Button
-                v-if="hover === data && editing !== data"
-                icon="pi pi-pencil" 
-                text 
-                rounded 
-                aria-label="Add" 
-                @click="editing = data" 
-              />
-              <Button 
-                v-if="data.id && hover === data && editing !== data"
-                icon="pi pi-times" 
-                severity="danger" 
-                text 
-                rounded 
-                aria-label="Remove" 
-                @click="removeAt($event, index)" 
-              />
-              <Button
-                v-if="editing === data"
-                icon="pi pi-check" 
-                text 
-                rounded 
-                aria-label="Save" 
-                @click="save(data, index)"  
-              />
-              <Button
-                v-if="editing === data"
-                icon="pi pi-times" 
-                text 
-                rounded 
-                aria-label="Discard" 
-                @click="discard(data)" 
-              />
+              <Button v-if="hover === data && editing !== data && !!copy" icon="pi pi-copy" text rounded aria-label="Copy"
+                @click="createCopy(data)" />
+              <Button v-if="hover === data && editing !== data" icon="pi pi-pencil" text rounded aria-label="Add"
+                @click="editing = data" />
+              <Button v-if="data.id && hover === data && editing !== data" icon="pi pi-times" severity="danger" text
+                rounded aria-label="Remove" @click="removeAt($event, index)" />
+              <Button v-if="editing === data" icon="pi pi-check" text rounded aria-label="Save"
+                @click="save(data, index)" />
+              <Button v-if="editing === data" icon="pi pi-times" text rounded aria-label="Discard"
+                @click="discard(data)" />
             </div>
           </div>
         </template>
@@ -98,13 +49,13 @@ type Props<T> = {
   modelValue: T[],
   allowAdd?: boolean,
   copy?: (item: T) => T,
-  createNew: () => T,
+  createNew?: () => T,
   save: (item: T) => void,
   update: (item: T) => void,
   onReorder?: () => void,
-  remove: (item: T) => void
+  remove: (itemId: string) => void
 }// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const props = defineProps<Props<any & {id?: string, name: string}>>();
+const props = defineProps<Props<any & { id?: string, name: string }>>();
 
 const emit = defineEmits(['update:modelValue']);
 const items = vueModel(props, emit);
@@ -148,17 +99,20 @@ function removeAt(event: MouseEvent, index: number) {
     icon: 'pi pi-exclamation-triangle',
     acceptClass: 'p-button-danger',
     rejectClass: 'p-button-secondary',
-    accept: () => props.remove(item)
+    accept: () => props.remove(item.id)
   });
 }
 
 function add() {
+  if (!props.createNew) {
+    throw new Error();
+  }
   const item = props.createNew();
   items.value.unshift(item);
   editing.value = item;
 }
 
-function onRowReorder(event: {dragIndex: number, dropIndex: number}) {
+function onRowReorder(event: { dragIndex: number, dropIndex: number }) {
   if (!props.onReorder) {
     throw new Error('Copy delegate is undefined.');
   }
@@ -178,48 +132,61 @@ $header-column-width: 2rem;
   .blur {
     filter: blur(1px);
   }
+
   width: 100%;
   height: 100%;
+
   &_header-column {
     width: $header-column-width;
     max-width: $header-column-width;
   }
+
   &_header {
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
   }
+
   &_body {
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
+
     &-content {
       width: 100%;
     }
+
     &-editor {
       padding-right: 6rem; // for 2 3rem width floating action buttons
     }
   }
+
   &_content-column {
     padding: 0.5rem !important;
+
     &_editor {
       display: flex;
     }
+
     &_body {
       display: flex;
     }
   }
+
   .p-datatable-wrapper {
     overflow-x: hidden;
   }
+
   .p-datatable-header {
     border-top: 0;
   }
+
   .p-button {
     min-width: 3rem;
   }
+
   th {
     display: none;
   }

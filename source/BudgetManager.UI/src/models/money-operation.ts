@@ -3,12 +3,12 @@ import { MoneyOperationType } from './money-operation-type.enum';
 
 export type MoneyOperation = {
   type: MoneyOperationType,
-  id: string,
+  id: string | undefined,
   createdDate: string,
   title: string,
   value: Money,
-  date: string,
-  description: string,
+  date: Date | string,
+  description?: string,
   accountId?: string,
   accountName?: string,
   targetAccountId?: string,

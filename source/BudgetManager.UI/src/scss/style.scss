@@ -45,13 +45,18 @@ body {
 
 .money {
   font-weight: bold;
+  width: 100%;
+  display: block;
+  text-align: end;
 }
 
 $date-width: 4rem;
+
 .date {
-  font-size: 0.75rem;
+  // font-size: 0.75rem;
   width: $date-width;
 }
+
 .operation-title {
   font-style: italic;
 }

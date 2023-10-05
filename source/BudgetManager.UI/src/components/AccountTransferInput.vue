@@ -63,14 +63,15 @@ const { accounts }  = useAppStore();
 const currencyCodeList = Object.keys(currencies);
 
 const selectedSourceAccount = ref<Account | undefined>(
-  props.accountTransfer.sourceAccountId 
-    ? accounts.find(x => x.id === props.accountTransfer.sourceAccountId)
+  props.accountTransfer.accountId 
+    ? accounts.find(x => x.id === props.accountTransfer.accountId)
     : undefined
 );
 watch(selectedSourceAccount, async (account) => {
   emit('changed', {
     ...props.accountTransfer, 
-    sourceAccountId: account?.id,
+    accountId: account?.id,
+    accountName: account?.name
   });
 });
 
@@ -83,6 +84,7 @@ watch(selectedTargetAccount, async (account) => {
   emit('changed', {
     ...props.accountTransfer, 
     targetAccountId: account?.id,
+    targetAccountName: account?.name
   });
 });
 

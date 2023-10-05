@@ -72,6 +72,7 @@ watch(selectedAccount, async (account) => {
   emit('changed', {
     ...props.currencyExchange, 
     accountId: account?.id,
+    accountName: account?.name
   });
 });
 

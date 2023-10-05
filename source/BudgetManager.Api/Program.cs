@@ -246,7 +246,7 @@ app.MapCRUD<CurrencyExchangeDto, CreateCurrencyExchangeCommand, CurrencyExchange
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 #if DEBUG
 app.RunDatabaseContainerProcess();
-app.Run("http://localhost:3000");
+app.Run("http://localhost:3001");
 #else
 app.Run();
 #endif

@@ -3,7 +3,6 @@
     <ListView
       header="Funds"
       v-model="funds"
-      :createNew="createFundObject"
       :save="createNewFund"
       :update="updateFund"
       :remove="deleteFund"
@@ -44,10 +43,6 @@ const { funds } = storeToRefs(store);
 
 function onFundChanged(fund: Fund, newValue: Fund) {
   fund.name = newValue.name;
-}
-
-function createFundObject() {
-  return  { };
 }
 </script>
 

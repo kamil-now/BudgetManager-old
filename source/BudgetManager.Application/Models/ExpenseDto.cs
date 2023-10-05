@@ -1,10 +1,13 @@
 public record ExpenseDto(
-  string Id,
-  string CreatedDate,
-  string Title,
-  Money Value,
-  string Date,
-  string Description,
-  string AccountId,
-  string FundId
+  string? Id = null,
+  string? CreatedDate = null,
+  string? Title = null,
+  Money? Value = null,
+  string? Date = null,
+  string? Description = null,
+  string? AccountId = null,
+  string? AccountName = null,
+  string? FundId = null,
+  string? FundName = null,
+  MoneyOperationType? Type = null
 );

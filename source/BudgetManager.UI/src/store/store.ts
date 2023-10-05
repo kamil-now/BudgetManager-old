@@ -22,6 +22,7 @@ import { DefineStoreOptions, Store, defineStore } from 'pinia';
 import { createAccountRequest, deleteAccountRequest, getAccountRequest, updateAccountRequest } from '../api/account-requests';
 import { fetchBudgetSummary } from '../api/fetch-budget-request';
 import { createFundRequest, deleteFundRequest, getFundRequest, updateFundRequest } from '../api/fund-requests';
+import { MoneyOperationUtils } from '@/helpers/money-operation-utils';
 
 export type AppState = {
   isLoading: boolean;
@@ -32,15 +33,17 @@ export type AppState = {
 export type AppGetters = {
   balance: (state: AppState) => Balance,
   unallocated: (state: AppState) => Balance,
+  operations: (state: AppState) => MoneyOperation[],
   funds: (state: AppState) => Fund[],
+  fundsNames: (state: AppState) => (string | undefined)[],
   accounts: (state: AppState) => Account[],
-  incomes: (state: AppState) => MoneyOperation[],
-  allocations: (state: AppState) => MoneyOperation[],
-  expenses: (state: AppState) => MoneyOperation[],
-  currencyExchanges: (state: AppState) => MoneyOperation[],
-  fundTransfers: (state: AppState) => MoneyOperation[],
-  accountTransfers: (state: AppState) => MoneyOperation[],
-  // findIndexById: (state: AppState) => (id: string) => number;
+  accountsNames: (state: AppState) => (string | undefined)[],
+  incomes: (state: AppState) => Income[],
+  allocations: (state: AppState) => Allocation[],
+  expenses: (state: AppState) => Expense[],
+  currencyExchanges: (state: AppState) => CurrencyExchange[],
+  fundTransfers: (state: AppState) => FundTransfer[],
+  accountTransfers: (state: AppState) => AccountTransfer[],
 };
 export type AppActions = {
   createBudget(): void;
@@ -107,14 +110,23 @@ export const APP_STORE: DefineStoreOptions<
   getters: {
     balance: (state: AppState) => state.budget.balance,
     unallocated: (state: AppState) => state.budget.unallocated,
+    operations: (state: AppState) => state.budget.operations, 
     funds: (state: AppState) => state.budget.funds.filter(x => !x.isDeleted),
+    fundsNames: (state: AppState) => state.budget.funds.filter(x => !x.isDeleted).map(x => x.name),
     accounts: (state: AppState) => state.budget.accounts.filter(x => !x.isDeleted),
-    incomes: (state: AppState) => state.budget.operations.filter(x => x.type === MoneyOperationType.Income),
-    allocations: (state: AppState) => state.budget.operations.filter(x => x.type === MoneyOperationType.Allocation),
-    expenses: (state: AppState) => state.budget.operations.filter(x => x.type === MoneyOperationType.Expense),
-    currencyExchanges: (state: AppState) => state.budget.operations.filter(x => x.type === MoneyOperationType.CurrencyExchange),
-    accountTransfers: (state: AppState) => state.budget.operations.filter(x => x.type === MoneyOperationType.AccountTransfer),
-    fundTransfers: (state: AppState) => state.budget.operations.filter(x => x.type === MoneyOperationType.FundTransfer)
+    accountsNames: (state: AppState) => state.budget.accounts.filter(x => !x.isDeleted).map(x => x.name),
+    incomes: (state: AppState) => state.budget.operations
+      .filter(x => x.type === MoneyOperationType.Income).map(x => x as Income),
+    allocations: (state: AppState) => state.budget.operations
+      .filter(x => x.type === MoneyOperationType.Allocation).map(x => x as Allocation),
+    expenses: (state: AppState) => state.budget.operations
+      .filter(x => x.type === MoneyOperationType.Expense).map(x => x as Expense),
+    currencyExchanges: (state: AppState) => state.budget.operations
+      .filter(x => x.type === MoneyOperationType.CurrencyExchange).map(x => x as CurrencyExchange),
+    accountTransfers: (state: AppState) => state.budget.operations
+      .filter(x => x.type === MoneyOperationType.AccountTransfer).map(x => x as AccountTransfer),
+    fundTransfers: (state: AppState) => state.budget.operations
+      .filter(x => x.type === MoneyOperationType.FundTransfer).map(x => x as FundTransfer),
   },
   actions: {
     async setLoggedIn(value: boolean) {
@@ -214,6 +226,7 @@ export const APP_STORE: DefineStoreOptions<
         const id = await createExpenseRequest(expense); 
         const fromResponse = await getExpenseRequest(id);
         state.budget.operations.unshift(fromResponse);
+        MoneyOperationUtils.sort(state.budget.operations);
 
         await Utils.reloadAccount(this, expense.accountId);
         await Utils.reloadFund(this, expense.fundId);
@@ -230,6 +243,7 @@ export const APP_STORE: DefineStoreOptions<
             }
             const index = state.budget.operations.indexOf(fromState);
             state.budget.operations[index] = expense;
+            MoneyOperationUtils.sort(state.budget.operations);
             
             await Utils.reloadAccount(this, expense.accountId);
             await Utils.reloadFund(this, expense.fundId);
@@ -259,6 +273,7 @@ export const APP_STORE: DefineStoreOptions<
         const id = await createIncomeRequest(income); 
         const fromResponse = await getIncomeRequest(id);
         state.budget.operations.unshift(fromResponse);
+        MoneyOperationUtils.sort(state.budget.operations);
 
         await Utils.reloadAccount(this, income.accountId);
         await Utils.reloadBalance(this);
@@ -274,6 +289,7 @@ export const APP_STORE: DefineStoreOptions<
             }
             const index = state.budget.operations.indexOf(fromState);
             state.budget.operations[index] = income;
+            MoneyOperationUtils.sort(state.budget.operations);
 
             await Utils.reloadAccount(this, income.accountId);
             await Utils.reloadBalance(this);
@@ -300,6 +316,7 @@ export const APP_STORE: DefineStoreOptions<
         createAllocationRequest(allocation)
           .then(async id => {
             state.budget.operations.unshift({ ...allocation, id }); 
+            MoneyOperationUtils.sort(state.budget.operations);
             
             await Utils.reloadFund(this, allocation.fundId);
             await Utils.reloadFund(this, allocation.targetFundId);
@@ -317,6 +334,7 @@ export const APP_STORE: DefineStoreOptions<
             }
             const index = state.budget.operations.indexOf(fromState);
             state.budget.operations[index] = allocation; 
+            MoneyOperationUtils.sort(state.budget.operations);
             
             await Utils.reloadFund(this, allocation.fundId);
             await Utils.reloadFund(this, allocation.targetFundId);
@@ -345,6 +363,7 @@ export const APP_STORE: DefineStoreOptions<
         createFundTransferRequest(fundTransfer)
           .then(async id => {
             state.budget.operations.unshift({ ...fundTransfer, id }); 
+            MoneyOperationUtils.sort(state.budget.operations);
             
             await Utils.reloadFund(this, fundTransfer.fundId);
             await Utils.reloadFund(this, fundTransfer.targetFundId);
@@ -362,6 +381,7 @@ export const APP_STORE: DefineStoreOptions<
             }
             const index = state.budget.operations.indexOf(fromState);
             state.budget.operations[index] = fundTransfer; 
+            MoneyOperationUtils.sort(state.budget.operations);
             
             await Utils.reloadFund(this, fundTransfer.fundId);
             await Utils.reloadFund(this, fundTransfer.targetFundId);
@@ -391,6 +411,8 @@ export const APP_STORE: DefineStoreOptions<
         createAccountTransferRequest(accountTransfer)
           .then(async id => {
             state.budget.operations.unshift({ ...accountTransfer, id }); 
+            MoneyOperationUtils.sort(state.budget.operations);
+
             await Utils.reloadAccount(this, accountTransfer.accountId);
             await Utils.reloadAccount(this, accountTransfer.targetAccountId);
             await Utils.reloadBalance(this);
@@ -407,6 +429,7 @@ export const APP_STORE: DefineStoreOptions<
             }
             const index = state.budget.operations.indexOf(fromState);
             state.budget.operations[index] = accountTransfer; 
+            MoneyOperationUtils.sort(state.budget.operations);
 
             await Utils.reloadAccount(this, accountTransfer.accountId);
             await Utils.reloadAccount(this, accountTransfer.targetAccountId);
@@ -435,6 +458,8 @@ export const APP_STORE: DefineStoreOptions<
         createCurrencyExchangeRequest(currencyExchange)
           .then(async id => {
             state.budget.operations.unshift({ ...currencyExchange, id }); 
+            MoneyOperationUtils.sort(state.budget.operations);
+
             await Utils.reloadAccount(this, currencyExchange.accountId);
             await Utils.reloadBalance(this);
           })
@@ -450,6 +475,8 @@ export const APP_STORE: DefineStoreOptions<
             }
             const index = state.budget.operations.indexOf(fromState);
             state.budget.operations[index] = currencyExchange; 
+            MoneyOperationUtils.sort(state.budget.operations);
+        
             await Utils.reloadAccount(this, currencyExchange.accountId);
             await Utils.reloadBalance(this);
           })

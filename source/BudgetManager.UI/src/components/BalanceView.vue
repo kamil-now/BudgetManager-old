@@ -31,6 +31,13 @@ const { balance, unallocated } = storeToRefs(store);
   width: 100%;
   max-height: 100%;
   display: flex;
+  span {
+    font-weight: bold;
+  }
+
+  .money {
+    text-align: start;
+  }
 
   &_left {
     width: 50%;

@@ -30,6 +30,8 @@ import TabPanel from 'primevue/tabpanel';
 import Toast from 'primevue/toast';
 import ToastService from 'primevue/toastservice';
 import Inplace from 'primevue/inplace';
+import DialogService from 'primevue/dialogservice';
+import DynamicDialog from 'primevue/dynamicdialog';
 // PrimeVue
 import App from '@/App.vue';
 import { AUTH, IAuthService, MsalAuthService, MsalConfiguration } from '@/auth';
@@ -58,6 +60,7 @@ app
   .use(PrimeVue)
   .use(ToastService)
   .use(ConfirmationService)
+  .use(DialogService)
   .use(pinia)
   .use(router);
 // pinia.use(PiniaColadaPlugin);
@@ -87,7 +90,8 @@ app
   .component('InputText', InputText)
   .component('InputNumber', InputNumber)
   .component('Toast', Toast)
-  .component('Inplace', Inplace);
+  .component('Inplace', Inplace)
+  .component('DynamicDialog', DynamicDialog);
 
 if (process.env.VUE_APP_ENV === 'production') {
   if (!process.env.VUE_APP_AAD_CLIENT_ID

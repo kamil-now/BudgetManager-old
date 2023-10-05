@@ -1,9 +1,11 @@
 public record IncomeDto(
-  string Id,
-  string CreatedDate,
-  string Title,
-  Money Value,
-  string Date,
-  string Description,
-  string AccountId
+  string? Id = null,
+  string? CreatedDate = null,
+  string? Title = null,
+  Money? Value = null,
+  string? Date = null,
+  string? Description = null,
+  string? AccountId = null,
+  string? AccountName = null,
+  MoneyOperationType? Type = null
 );

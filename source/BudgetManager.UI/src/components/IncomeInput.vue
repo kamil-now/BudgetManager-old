@@ -59,6 +59,7 @@ watch(selectedAccount, async (account) => {
   emit('changed', {
     ...props.income, 
     accountId: account?.id,
+    accountName: account?.name
   });
 });
 

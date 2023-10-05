@@ -1,11 +1,13 @@
 public record CurrencyExchangeDto(
-  string Id,
-  string CreatedDate,
-  string Title,
-  Money Value,
-  string Date,
-  string Description,
-  string AccountId,
-  string TargetCurrency,
-  decimal ExchangeRate
+  string? Id = null,
+  string? CreatedDate = null,
+  string? Title = null,
+  Money? Value = null,
+  string? Date = null,
+  string? Description = null,
+  string? AccountId = null,
+  string? AccountName = null,
+  string? TargetCurrency = null,
+  decimal? ExchangeRate = null,
+  MoneyOperationType? Type = null
 );

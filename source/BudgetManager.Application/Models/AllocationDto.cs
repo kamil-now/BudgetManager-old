@@ -1,9 +1,11 @@
 public record AllocationDto(
-  string Id,
-  string CreatedDate,
-  string Title,
-  Money Value,
-  string Date,
-  string Description,
-  string TargetFundId
+  string? Id = null,
+  string? CreatedDate = null,
+  string? Title = null,
+  Money? Value = null,
+  string? Date = null,
+  string? Description = null,
+  string? TargetFundId = null,
+  string? TargetFundName = null,
+  MoneyOperationType? Type = null
 );

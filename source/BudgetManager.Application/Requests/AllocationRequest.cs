@@ -13,8 +13,17 @@ public class AllocationRequestHandler : BudgetRequestHandler<AllocationRequest, 
 
   public override AllocationDto Get(AllocationRequest request, Budget budget)
   {
-    var Allocation = budget.Operations.First(x => x.Id == request.AllocationId) as Allocation;
-    return _mapper.Map<AllocationDto>(Allocation);
+    var allocation = budget.Operations.First(x => x.Id == request.AllocationId) as Allocation;
+    if (allocation is null)
+    {
+      throw new Exception();
+    }
+    return _mapper.Map<AllocationDto>(allocation)
+     with
+    {
+      Type = MoneyOperationType.Allocation,
+      TargetFundName = budget.Funds.First(x => x.Id == allocation.TargetFundId).Name,
+    };
   }
 }
 

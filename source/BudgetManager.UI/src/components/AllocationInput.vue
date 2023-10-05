@@ -20,7 +20,7 @@
       </template>
     </Dropdown>
     <InputNumber 
-      v-if="selectedFund && budgetBalance"
+      v-if="selectedFund"
       class="p-inputtext-sm"
       id="allocationValue"
       v-model="allocationValue" 
@@ -51,7 +51,7 @@ const props = defineProps<{ allocation: Allocation }>();
 const emit = defineEmits(['changed']);
 const input = ref();
 
-const { funds, budgetBalance }  = useAppStore();
+const { funds }  = useAppStore();
 
 const currencyCodeList = Object.keys(currencies);
 onMounted(() => nextTick(() => {
@@ -67,7 +67,8 @@ const selectedFund = ref<Fund | undefined>(
 watch(selectedFund, async (fund) => {
   emit('changed', {
     ...props.allocation, 
-    targetFundId: fund?.id
+    targetFundId: fund?.id,
+    targetFundName: fund?.name
   });
 });
 
