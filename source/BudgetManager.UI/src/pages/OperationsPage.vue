@@ -12,7 +12,7 @@ import OperationsList from '@/components/OperationsList.vue';
 .operations-page {
   height: 100%;
   width: 100%;
-  margin: 1rem;
+  margin: 0.5rem;
   padding: 0.5rem;
   @extend .card;
   max-height: 100%;
