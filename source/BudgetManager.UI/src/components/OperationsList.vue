@@ -34,7 +34,7 @@
           size="small"
           placeholder="yy/mm/dd"
           mask="9999/99/99"
-          @date-select="filterCallback()"
+          @date-select="filterModel.value = DateUtils.createDateOnlyString($event); filterCallback()"
         />
       </template>
     </Column>
