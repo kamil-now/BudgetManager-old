@@ -49,11 +49,16 @@ body {
   display: block;
   text-align: end;
 }
+.income {
+  color: limegreen;
+}
+.expense {
+  color: crimson;
+}
 
 $date-width: 4rem;
 
 .date {
-  // font-size: 0.75rem;
   width: $date-width;
 }
 

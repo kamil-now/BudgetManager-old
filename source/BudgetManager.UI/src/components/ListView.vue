@@ -50,10 +50,10 @@ type Props<T> = {
   allowAdd?: boolean,
   copy?: (item: T) => T,
   createNew?: () => T,
-  save: (item: T) => void,
-  update: (item: T) => void,
+  save?: (item: T) => void,
+  update?: (item: T) => void,
   onReorder?: (oldIndex: number, newIndex: number) => void,
-  remove: (itemId: string) => void
+  remove?: (itemId: string) => void
 }// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const props = defineProps<Props<any & { id?: string, name: string }>>();
 
@@ -74,6 +74,9 @@ function createCopy(item: any) {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function save(item: any, index: number) {
+  if (!props.update || !props.save) {
+    throw new Error();
+  }
   if (item.id) {
     props.update(item);
   } else {
@@ -99,7 +102,12 @@ function removeAt(event: MouseEvent, index: number) {
     icon: 'pi pi-exclamation-triangle',
     acceptClass: 'p-button-danger',
     rejectClass: 'p-button-secondary',
-    accept: () => props.remove(item.id)
+    accept: () => {
+      if (!props.remove) {
+        throw new Error();
+      }
+      props.remove(item.id);
+    }
   });
 }
 
@@ -127,7 +135,8 @@ $header-column-width: 2rem;
 
 .list-view {
   .blur {
-    filter: blur(1px);
+    opacity: 0.5;
+    // filter: blur(1px);
   }
 
   width: 100%;

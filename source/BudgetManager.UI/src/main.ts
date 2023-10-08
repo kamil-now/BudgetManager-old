@@ -130,7 +130,7 @@ if (process.env.VUE_APP_ENV === 'production') {
     },
   };
   app.provide(AUTH, mockAuthService);
-  router.push({ path: '/home' });
+  // router.push({ path: '/home' });
   app.mount('#app');
 }
 

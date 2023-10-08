@@ -15,7 +15,8 @@
       </div>
 
       <div class="budget-page_content-operations">
-        <OperationsList></OperationsList>
+        <!-- <OperationsList></OperationsList> -->
+        <OperationsView></OperationsView>
       </div>
     </div>
   </div>
@@ -30,7 +31,7 @@ import { storeToRefs } from 'pinia';
 import { onMounted, ref } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import axios, { AxiosError } from 'axios';
-import OperationsList from '@/components/OperationsList.vue';
+import OperationsView from '@/components/OperationsView.vue';
 
 const store = useAppStore();
 const { isNewUser } = storeToRefs(store);
@@ -106,7 +107,7 @@ onMounted(() => {
     &-items {
       height: calc(100% - 4rem);
       min-width: 300px;
-      width: calc(25% - 0.5rem);
+      width: calc(50% - 0.5rem);
       >* {
         overflow: auto;
         max-height: 33%;
@@ -116,10 +117,19 @@ onMounted(() => {
         max-height: 100%;
       }
     
+      @include media-breakpoint(lg, down) {
+        height: auto;
+        width: calc(100% - 0.5rem);
+      }
     }
     &-operations {
       height: calc(100% - 4rem);
-      width: calc(75% - 0.5rem);
+      width: calc(50% - 0.5rem);
+      
+      @include media-breakpoint(lg, down) {
+        height: auto;
+        width: calc(100% - 0.5rem);
+      }
     }
   }
 
