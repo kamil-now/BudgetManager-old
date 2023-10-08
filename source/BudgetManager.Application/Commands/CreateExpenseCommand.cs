@@ -26,8 +26,18 @@ public class CreateExpenseCommandHandler
   public override string ModifyBudget(CreateExpenseCommand command, Budget budget)
   {
     var id = Guid.NewGuid().ToString();
-    var now = DateOnly.FromDateTime(DateTime.Now);
-    var date = command.Date is null ? now : DateOnly.FromDateTime(DateTime.Parse(command.Date));
+    var date = DateTime.Now;
+    if (command.Date is not null)
+    {
+      if (DateTime.TryParse(command.Date, out var commandDate))
+      {
+        date = commandDate;
+      }
+      else
+      {
+        throw new Exception("Invalid date.");
+      }
+    }
 
     budget.AddOperation(
       new Expense(

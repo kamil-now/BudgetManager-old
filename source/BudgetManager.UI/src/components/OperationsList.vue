@@ -25,7 +25,7 @@
       header="Date"
     >
       <template #body="{ data }">
-        <span class="date">{{ DisplayFormat.dateOnly(data.date) }}</span>
+        <span class="date">{{ data.date.toLocaleDateString() }}</span>
       </template>
       <template #filter="{ filterModel, filterCallback }">
         <Calendar
@@ -149,7 +149,7 @@
       </template>
     </Column>
     <Column>
-      <template #body="{ data, index }">
+      <template #body="{ data }">
         <div style="display: flex">
           <Button
             icon="pi pi-copy"
@@ -174,7 +174,7 @@
             rounded
             size="small"
             aria-label="Remove"
-            @click="removeAt($event, index)"
+            @click="remove($event, data)"
           />
         </div>
       </template>
@@ -399,19 +399,19 @@ function createNewMoneyOperation(): MoneyOperation {
     id: undefined,
     title: '',
     type: MoneyOperationType.Undefined,
-    date: DisplayFormat.dateOnly(new Date()),
+    date: new Date(),
     value: {
       currency: Object.keys(currencies)[0],
       amount: 0,
     },
-    createdDate: new Date().toISOString(),
+    createdDate: new Date(),
   };
 }
 
 function createCopy(operation: MoneyOperation) {
   const copy = {
     ...operation,
-    date: DisplayFormat.dateOnly(new Date()),
+    date: new Date(),
     id: undefined,
   };
   edit(copy, 'Create');
@@ -430,7 +430,7 @@ function edit(operation: MoneyOperation, action: 'Edit' | 'Create' = 'Edit') {
     },
   });
 }
-function removeAt(event: MouseEvent, index: number) {
+function remove(event: MouseEvent, operation: MoneyOperation) {
   confirm.require({
     target: event.target as HTMLElement,
     message:
@@ -438,7 +438,7 @@ function removeAt(event: MouseEvent, index: number) {
     icon: 'pi pi-exclamation-triangle',
     acceptClass: 'p-button-danger',
     rejectClass: 'p-button-secondary',
-    accept: () => removeOperation(operations.value[index])
+    accept: () => removeOperation(operation)
   });
 }
 function removeOperation(operation: MoneyOperation) {

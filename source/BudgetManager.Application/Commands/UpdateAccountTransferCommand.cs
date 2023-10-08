@@ -11,7 +11,7 @@ public record UpdateAccountTransferCommand(
   Money Value,
   string? Date,
   string? Description,
-  string? SourceAccountId,
+  string? AccountId,
   string? TargetAccountId
   ) : UpdateOperationCommand<AccountTransfer, AccountTransferDto>(UserId, OperationId);
 public class UpdateAccountTransferCommandHandler : UpdateOperationCommandHandler<UpdateAccountTransferCommand, AccountTransfer, AccountTransferDto>
@@ -22,7 +22,7 @@ public class UpdateAccountTransferCommandHandler : UpdateOperationCommandHandler
   }
   protected override void Update(AccountTransfer operation, UpdateAccountTransferCommand command)
     => operation.Update(
-        command.SourceAccountId,
+        command.AccountId,
         command.TargetAccountId,
         command.Title,
         command.Value,
@@ -42,12 +42,12 @@ public class UpdateAccountTransferCommandValidator : UpdateOperationCommandValid
     RuleFor(x => x)
       .MustAsync(async (command, cancellation) =>
       {
-        if (command.SourceAccountId is null)
+        if (command.AccountId is null)
           return true;
         var budget = await repository.Get(command.UserId);
-        return budget!.Accounts?.Any(x => x.Id == command.SourceAccountId) ?? false;
+        return budget!.Accounts?.Any(x => x.Id == command.AccountId) ?? false;
       })
-      .WithMessage(command => $"Source Account with id {command.SourceAccountId} does not exist in the budget");
+      .WithMessage(command => $"Source Account with id {command.AccountId} does not exist in the budget");
 
     RuleFor(x => x)
       .MustAsync(async (command, cancellation) =>

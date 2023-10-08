@@ -9,7 +9,7 @@ public class Expense : MoneyOperation
     string id,
     string title,
     Money value,
-    DateOnly date,
+    DateTime date,
     string accountId,
     string fundId,
     string description,

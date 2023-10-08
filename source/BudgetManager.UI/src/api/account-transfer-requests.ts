@@ -11,8 +11,8 @@ export async function updateAccountTransferRequest(accountTransfer: AccountTrans
     .then(res => MoneyOperationUtils.parseFromResponse(res.data));
 }
 
-export async function getAccountTransferRequest(accountTransfer: AccountTransfer): Promise<AccountTransfer> {
-  return axios.get<AccountTransfer>(`/account-transfer/${accountTransfer.id}`)
+export async function getAccountTransferRequest(accountTransferId: string): Promise<AccountTransfer> {
+  return axios.get<AccountTransfer>(`/account-transfer/${accountTransferId}`)
     .then(res => MoneyOperationUtils.parseFromResponse(res.data));
 }
 

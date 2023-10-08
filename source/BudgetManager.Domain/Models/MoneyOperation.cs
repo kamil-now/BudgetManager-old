@@ -6,14 +6,14 @@ public abstract class MoneyOperation
   public DateTime CreatedDate { get; }
   public string Title { get; private set; }
   public Money Value { get; private set; }
-  public DateOnly Date { get; private set; }
+  public DateTime Date { get; private set; }
   public string Description { get; private set; }
 
   public MoneyOperation(
     string id,
     string title,
     Money value,
-    DateOnly date,
+    DateTime date,
     string description,
     DateTime createdDate
     )
@@ -39,12 +39,12 @@ public abstract class MoneyOperation
 
     if (value is not null)
     {
-      Value = (Money)value;
+      Value = value.Value;
     }
 
-    if (date is not null)
+    if (date is not null && DateTime.TryParse(date, out var datetime))
     {
-      Date = DateOnly.FromDateTime(DateTime.Parse(date));
+      Date = datetime;
     }
 
     if (description is not null)

@@ -11,8 +11,8 @@ export async function updateAllocationRequest(allocation: Allocation): Promise<A
     .then(res => MoneyOperationUtils.parseFromResponse(res.data));
 }
 
-export async function getAllocationRequest(allocation: Allocation): Promise<Allocation> {
-  return axios.get<Allocation>(`/allocation/${allocation.id}`)
+export async function getAllocationRequest(allocationId: string): Promise<Allocation> {
+  return axios.get<Allocation>(`/allocation/${allocationId}`)
     .then(res => MoneyOperationUtils.parseFromResponse(res.data));
 }
 

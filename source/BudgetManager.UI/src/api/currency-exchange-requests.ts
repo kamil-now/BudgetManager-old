@@ -33,9 +33,9 @@ export async function updateCurrencyExchangeRequest(currencyExchange: CurrencyEx
   ).then(res => MoneyOperationUtils.parseFromResponse(res.data));
 }
 
-export async function getCurrencyExchangeRequest(currencyExchange: CurrencyExchange): Promise<CurrencyExchange> {
+export async function getCurrencyExchangeRequest(currencyExchangeId: string): Promise<CurrencyExchange> {
   return axios.get<CurrencyExchange>(
-    `/currency-exchange/${currencyExchange.id}`
+    `/currency-exchange/${currencyExchangeId}`
   ).then(res => MoneyOperationUtils.parseFromResponse(res.data));
 }
 

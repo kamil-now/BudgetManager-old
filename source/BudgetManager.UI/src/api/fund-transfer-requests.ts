@@ -11,8 +11,8 @@ export async function updateFundTransferRequest(fundTransfer: FundTransfer): Pro
     .then(res => MoneyOperationUtils.parseFromResponse(res.data));
 }
 
-export async function getFundTransferRequest(fundTransfer: FundTransfer): Promise<FundTransfer> {
-  return axios.get<FundTransfer>(`/fund-transfer/${fundTransfer.id}`)
+export async function getFundTransferRequest(fundTransferId: string): Promise<FundTransfer> {
+  return axios.get<FundTransfer>(`/fund-transfer/${fundTransferId}`)
     .then(res => MoneyOperationUtils.parseFromResponse(res.data));
 }
 

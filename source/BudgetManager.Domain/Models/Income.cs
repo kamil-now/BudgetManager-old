@@ -8,7 +8,7 @@ public class Income : MoneyOperation
     string accountId,
     string title,
     Money value,
-    DateOnly date,
+    DateTime date,
     string description,
     DateTime createdDate
     ) : base(id, title, value, date, description, createdDate)

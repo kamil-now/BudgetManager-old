@@ -1,9 +1,9 @@
-import { createAccountTransferRequest, deleteAccountTransferRequest, updateAccountTransferRequest } from '@/api/account-transfer-requests';
-import { createAllocationRequest, deleteAllocationRequest, updateAllocationRequest } from '@/api/allocation-requests';
+import { createAccountTransferRequest, deleteAccountTransferRequest, getAccountTransferRequest, updateAccountTransferRequest } from '@/api/account-transfer-requests';
+import { createAllocationRequest, deleteAllocationRequest, getAllocationRequest, updateAllocationRequest } from '@/api/allocation-requests';
 import { getBalanceRequest } from '@/api/balance-requests';
-import { createCurrencyExchangeRequest, deleteCurrencyExchangeRequest, updateCurrencyExchangeRequest } from '@/api/currency-exchange-requests';
+import { createCurrencyExchangeRequest, deleteCurrencyExchangeRequest, getCurrencyExchangeRequest, updateCurrencyExchangeRequest } from '@/api/currency-exchange-requests';
 import { createExpenseRequest, deleteExpenseRequest, getExpenseRequest, updateExpenseRequest } from '@/api/expense-requests';
-import { createFundTransferRequest, deleteFundTransferRequest, updateFundTransferRequest } from '@/api/fund-transfer-requests';
+import { createFundTransferRequest, deleteFundTransferRequest, getFundTransferRequest, updateFundTransferRequest } from '@/api/fund-transfer-requests';
 import { createIncomeRequest, deleteIncomeRequest, getIncomeRequest, updateIncomeRequest } from '@/api/income-requests';
 import { Account } from '@/models/account';
 import { AccountTransfer } from '@/models/account-transfer';
@@ -314,17 +314,17 @@ export const APP_STORE: DefineStoreOptions<
     async createNewAllocation(
       allocation: Allocation,
     ) {
-      await Utils.runAsyncOperation(this, (state) => 
-        createAllocationRequest(allocation)
-          .then(async id => {
-            state.budget.operations.unshift({ ...allocation, id }); 
-            MoneyOperationUtils.sort(state.budget.operations);
+      await Utils.runAsyncOperation(this, async (state) => 
+      {
+        const id = await createAllocationRequest(allocation); 
+        const fromResponse = await getAllocationRequest(id);
+        state.budget.operations.unshift(fromResponse);
+        MoneyOperationUtils.sort(state.budget.operations);
             
-            await Utils.reloadFund(this, allocation.fundId);
-            await Utils.reloadFund(this, allocation.targetFundId);
-            await Utils.reloadBalance(this);
-          })
-      );
+        await Utils.reloadFund(this, allocation.fundId);
+        await Utils.reloadFund(this, allocation.targetFundId);
+        await Utils.reloadBalance(this);
+      });
     },
     async updateAllocation(allocation: Allocation) {
       await Utils.runAsyncOperation(this, (state) => 
@@ -362,17 +362,15 @@ export const APP_STORE: DefineStoreOptions<
     async createNewFundTransfer(
       fundTransfer: FundTransfer,
     ) {
-      await Utils.runAsyncOperation(this, (state) => 
-        createFundTransferRequest(fundTransfer)
-          .then(async id => {
-            state.budget.operations.unshift({ ...fundTransfer, id }); 
-            MoneyOperationUtils.sort(state.budget.operations);
-            
-            await Utils.reloadFund(this, fundTransfer.fundId);
-            await Utils.reloadFund(this, fundTransfer.targetFundId);
-            await Utils.reloadBalance(this);
-          })
-      );
+      await Utils.runAsyncOperation(this, async (state) => {
+        const id = await createFundTransferRequest(fundTransfer); 
+        const fromResponse = await getFundTransferRequest(id);
+        state.budget.operations.unshift(fromResponse);
+        MoneyOperationUtils.sort(state.budget.operations);
+        await Utils.reloadFund(this, fundTransfer.fundId);
+        await Utils.reloadFund(this, fundTransfer.targetFundId);
+        await Utils.reloadBalance(this);
+      });
     },
     async updateFundTransfer(fundTransfer: FundTransfer) {
       await Utils.runAsyncOperation(this, (state) => 
@@ -410,17 +408,15 @@ export const APP_STORE: DefineStoreOptions<
     async createNewAccountTransfer(
       accountTransfer: AccountTransfer,
     ) {
-      await Utils.runAsyncOperation(this, (state) => 
-        createAccountTransferRequest(accountTransfer)
-          .then(async id => {
-            state.budget.operations.unshift({ ...accountTransfer, id }); 
-            MoneyOperationUtils.sort(state.budget.operations);
-
-            await Utils.reloadAccount(this, accountTransfer.accountId);
-            await Utils.reloadAccount(this, accountTransfer.targetAccountId);
-            await Utils.reloadBalance(this);
-          })
-      );
+      await Utils.runAsyncOperation(this, async (state) => {
+        const id = await createAccountTransferRequest(accountTransfer); 
+        const fromResponse = await getAccountTransferRequest(id);
+        state.budget.operations.unshift(fromResponse);
+        MoneyOperationUtils.sort(state.budget.operations);
+        await Utils.reloadAccount(this, accountTransfer.accountId);
+        await Utils.reloadAccount(this, accountTransfer.targetAccountId);
+        await Utils.reloadBalance(this);
+      });
     },
     async updateAccountTransfer(accountTransfer: AccountTransfer) {
       await Utils.runAsyncOperation(this, (state) => 
@@ -458,16 +454,15 @@ export const APP_STORE: DefineStoreOptions<
     async createNewCurrencyExchange(
       currencyExchange: CurrencyExchange,
     ) {
-      await Utils.runAsyncOperation(this, (state) => 
-        createCurrencyExchangeRequest(currencyExchange)
-          .then(async id => {
-            state.budget.operations.unshift({ ...currencyExchange, id }); 
-            MoneyOperationUtils.sort(state.budget.operations);
+      await Utils.runAsyncOperation(this, async (state) => {
+        const id = await createCurrencyExchangeRequest(currencyExchange); 
+        const fromResponse = await getCurrencyExchangeRequest(id);
+        state.budget.operations.unshift(fromResponse);
+        MoneyOperationUtils.sort(state.budget.operations);
 
-            await Utils.reloadAccount(this, currencyExchange.accountId);
-            await Utils.reloadBalance(this);
-          })
-      );
+        await Utils.reloadAccount(this, currencyExchange.accountId);
+        await Utils.reloadBalance(this);
+      });
     },
     async updateCurrencyExchange(currencyExchange: CurrencyExchange) {
       await Utils.runAsyncOperation(this, (state) => 

@@ -1,9 +1,9 @@
 public record AllocationDto(
   string? Id = null,
-  string? CreatedDate = null,
+  DateTime? CreatedDate = null,
   string? Title = null,
   Money? Value = null,
-  string? Date = null,
+  DateTime? Date = null,
   string? Description = null,
   string? TargetFundId = null,
   string? TargetFundName = null,

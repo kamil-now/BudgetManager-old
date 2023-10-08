@@ -182,65 +182,65 @@ async (
 app.MapCRUD<AccountDto, CreateAccountCommand, AccountRequest, UpdateAccountCommand, DeleteAccountCommand>(
   "account",
   (ctx, create) => create with { UserId = ctx.GetUserId() },
-  (ctx, accountId) => new AccountRequest(ctx.GetUserId(), accountId),
+  (ctx, id) => new AccountRequest(ctx.GetUserId(), id),
   (ctx, update) => update with { UserId = ctx.GetUserId() },
-  (ctx, accountId) => new DeleteAccountCommand(ctx.GetUserId(), accountId)
+  (ctx, id) => new DeleteAccountCommand(ctx.GetUserId(), id)
 );
 
 app.MapCRUD<FundDto, CreateFundCommand, FundRequest, UpdateFundCommand, DeleteFundCommand>(
   "fund",
   (ctx, create) => create with { UserId = ctx.GetUserId() },
-  (ctx, accountId) => new FundRequest(ctx.GetUserId(), accountId),
+  (ctx, id) => new FundRequest(ctx.GetUserId(), id),
   (ctx, update) => update with { UserId = ctx.GetUserId() },
-  (ctx, accountId) => new DeleteFundCommand(ctx.GetUserId(), accountId)
+  (ctx, id) => new DeleteFundCommand(ctx.GetUserId(), id)
 );
 
 app.MapCRUD<IncomeDto, CreateIncomeCommand, IncomeRequest, UpdateIncomeCommand, DeleteOperationCommand<Income>>(
   "income",
   (ctx, create) => create with { UserId = ctx.GetUserId() },
-  (ctx, accountId) => new IncomeRequest(ctx.GetUserId(), accountId),
+  (ctx, id) => new IncomeRequest(ctx.GetUserId(), id),
   (ctx, update) => update with { UserId = ctx.GetUserId() },
-  (ctx, accountId) => new DeleteOperationCommand<Income>(ctx.GetUserId(), accountId)
+  (ctx, id) => new DeleteOperationCommand<Income>(ctx.GetUserId(), id)
 );
 
 app.MapCRUD<ExpenseDto, CreateExpenseCommand, ExpenseRequest, UpdateExpenseCommand, DeleteOperationCommand<Expense>>(
   "expense",
   (ctx, create) => create with { UserId = ctx.GetUserId() },
-  (ctx, accountId) => new ExpenseRequest(ctx.GetUserId(), accountId),
+  (ctx, id) => new ExpenseRequest(ctx.GetUserId(), id),
   (ctx, update) => update with { UserId = ctx.GetUserId() },
-  (ctx, accountId) => new DeleteOperationCommand<Expense>(ctx.GetUserId(), accountId)
+  (ctx, id) => new DeleteOperationCommand<Expense>(ctx.GetUserId(), id)
 );
 
 app.MapCRUD<FundTransferDto, CreateFundTransferCommand, FundTransferRequest, UpdateFundTransferCommand, DeleteOperationCommand<FundTransfer>>(
   "fund-transfer",
   (ctx, create) => create with { UserId = ctx.GetUserId() },
-  (ctx, accountId) => new FundTransferRequest(ctx.GetUserId(), accountId),
+  (ctx, id) => new FundTransferRequest(ctx.GetUserId(), id),
   (ctx, update) => update with { UserId = ctx.GetUserId() },
-  (ctx, accountId) => new DeleteOperationCommand<FundTransfer>(ctx.GetUserId(), accountId)
+  (ctx, id) => new DeleteOperationCommand<FundTransfer>(ctx.GetUserId(), id)
 );
 
 app.MapCRUD<AccountTransferDto, CreateAccountTransferCommand, AccountTransferRequest, UpdateAccountTransferCommand, DeleteOperationCommand<AccountTransfer>>(
   "account-transfer",
   (ctx, create) => create with { UserId = ctx.GetUserId() },
-  (ctx, accountId) => new AccountTransferRequest(ctx.GetUserId(), accountId),
+  (ctx, id) => new AccountTransferRequest(ctx.GetUserId(), id),
   (ctx, update) => update with { UserId = ctx.GetUserId() },
-  (ctx, accountId) => new DeleteOperationCommand<AccountTransfer>(ctx.GetUserId(), accountId)
+  (ctx, id) => new DeleteOperationCommand<AccountTransfer>(ctx.GetUserId(), id)
 );
 
 app.MapCRUD<AllocationDto, CreateAllocationCommand, AllocationRequest, UpdateAllocationCommand, DeleteOperationCommand<Allocation>>(
   "allocation",
   (ctx, create) => create with { UserId = ctx.GetUserId() },
-  (ctx, accountId) => new AllocationRequest(ctx.GetUserId(), accountId),
+  (ctx, id) => new AllocationRequest(ctx.GetUserId(), id),
   (ctx, update) => update with { UserId = ctx.GetUserId() },
-  (ctx, accountId) => new DeleteOperationCommand<Allocation>(ctx.GetUserId(), accountId)
+  (ctx, id) => new DeleteOperationCommand<Allocation>(ctx.GetUserId(), id)
 );
 
 app.MapCRUD<CurrencyExchangeDto, CreateCurrencyExchangeCommand, CurrencyExchangeRequest, UpdateCurrencyExchangeCommand, DeleteOperationCommand<CurrencyExchange>>(
   "currency-exchange",
   (ctx, create) => create with { UserId = ctx.GetUserId() },
-  (ctx, accountId) => new CurrencyExchangeRequest(ctx.GetUserId(), accountId),
+  (ctx, id) => new CurrencyExchangeRequest(ctx.GetUserId(), id),
   (ctx, update) => update with { UserId = ctx.GetUserId() },
-  (ctx, accountId) => new DeleteOperationCommand<CurrencyExchange>(ctx.GetUserId(), accountId)
+  (ctx, id) => new DeleteOperationCommand<CurrencyExchange>(ctx.GetUserId(), id)
 );
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();

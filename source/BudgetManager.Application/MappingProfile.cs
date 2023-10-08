@@ -4,7 +4,6 @@ using AutoMapper;
 
 public class MappingProfile : Profile
 {
-  const string DATE_FORMAT = "dd/MM/yyyy";
   public MappingProfile()
   {
     CreateMap<BudgetEntity, Budget>()
@@ -35,7 +34,7 @@ public class MappingProfile : Profile
           src.Id!,
           src.Title!,
           new Money(src.Amount, src.Currency!),
-          DateOnly.ParseExact(src.Date!, DATE_FORMAT),
+          src.Date!,
           src.AccountId!,
           src.FundId!,
           src.Description!,
@@ -74,7 +73,7 @@ public class MappingProfile : Profile
           new Money(src.Amount, src.Currency!),
           src.SourceFundId!,
           src.TargetFundId!,
-          DateOnly.ParseExact(src.Date!, DATE_FORMAT),
+          src.Date!,
           src.Description!,
           src.CreatedDate
           )
@@ -89,7 +88,7 @@ public class MappingProfile : Profile
           new Money(src.Amount, src.Currency!),
           src.SourceAccountId!,
           src.TargetAccountId!,
-          DateOnly.ParseExact(src.Date!, DATE_FORMAT),
+          src.Date!,
           src.Description!,
           src.CreatedDate
           )
@@ -102,7 +101,7 @@ public class MappingProfile : Profile
           src.AccountId!,
           src.Title!,
           new Money(src.Amount, src.Currency!),
-          DateOnly.ParseExact(src.Date!, DATE_FORMAT),
+          src.Date!,
           src.Description!,
           src.CreatedDate
           )
@@ -115,7 +114,7 @@ public class MappingProfile : Profile
           src.Title!,
           new Money(src.Amount, src.Currency!),
           src.TargetFundId!,
-          DateOnly.ParseExact(src.Date!, DATE_FORMAT),
+          src.Date!,
           src.Description!,
           src.CreatedDate
           )
@@ -130,7 +129,7 @@ public class MappingProfile : Profile
           src.AccountId!,
           src.TargetCurrency!,
           src.ExchangeRate,
-          DateOnly.ParseExact(src.Date!, DATE_FORMAT),
+          src.Date!,
           src.Description!,
           src.CreatedDate
           )
@@ -194,7 +193,6 @@ public class MappingProfile : Profile
     CreateMap<UserSettings, UserSettingsEntity>();
 
     CreateMap<Expense, ExpenseEntity>()
-      .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString(DATE_FORMAT)))
       .ForMember(x => x.Amount, opt => opt.MapFrom(src => src.Value.Amount))
       .ForMember(x => x.Currency, opt => opt.MapFrom(src => src.Value.Currency));
 
@@ -206,27 +204,22 @@ public class MappingProfile : Profile
       .ForMember(x => x.InitialBalance, opt => opt.MapFrom(src => new Dictionary<string, decimal>(src.InitialBalance)));
 
     CreateMap<FundTransfer, FundTransferEntity>()
-      .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString(DATE_FORMAT)))
       .ForMember(x => x.Amount, opt => opt.MapFrom(src => src.Value.Amount))
       .ForMember(x => x.Currency, opt => opt.MapFrom(src => src.Value.Currency));
 
     CreateMap<AccountTransfer, AccountTransferEntity>()
-      .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString(DATE_FORMAT)))
       .ForMember(x => x.Amount, opt => opt.MapFrom(src => src.Value.Amount))
       .ForMember(x => x.Currency, opt => opt.MapFrom(src => src.Value.Currency));
 
     CreateMap<Income, IncomeEntity>()
-      .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString(DATE_FORMAT)))
       .ForMember(x => x.Amount, opt => opt.MapFrom(src => src.Value.Amount))
       .ForMember(x => x.Currency, opt => opt.MapFrom(src => src.Value.Currency));
 
     CreateMap<Allocation, AllocationEntity>()
-      .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString(DATE_FORMAT)))
       .ForMember(x => x.Amount, opt => opt.MapFrom(src => src.Value.Amount))
       .ForMember(x => x.Currency, opt => opt.MapFrom(src => src.Value.Currency));
 
     CreateMap<CurrencyExchange, CurrencyExchangeEntity>()
-      .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString(DATE_FORMAT)))
       .ForMember(x => x.Amount, opt => opt.MapFrom(src => src.Value.Amount))
       .ForMember(x => x.Currency, opt => opt.MapFrom(src => src.Value.Currency));
 
@@ -237,37 +230,31 @@ public class MappingProfile : Profile
     CreateMap<Expense, ExpenseDto>()
       .ForMember(x => x.Type, opt => opt.Ignore())
       .ForMember(x => x.FundName, opt => opt.Ignore())
-      .ForMember(x => x.AccountName, opt => opt.Ignore())
-      .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString(DATE_FORMAT)));
+      .ForMember(x => x.AccountName, opt => opt.Ignore());
 
     CreateMap<Income, IncomeDto>()
       .ForMember(x => x.Type, opt => opt.Ignore())
-      .ForMember(x => x.AccountName, opt => opt.Ignore())
-      .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString(DATE_FORMAT)));
+      .ForMember(x => x.AccountName, opt => opt.Ignore());
 
     CreateMap<FundTransfer, FundTransferDto>()
       .ForMember(x => x.Type, opt => opt.Ignore())
       .ForMember(x => x.FundId, opt => opt.MapFrom(src => src.SourceFundId))
       .ForMember(x => x.FundName, opt => opt.Ignore())
-      .ForMember(x => x.TargetFundName, opt => opt.Ignore())
-      .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString(DATE_FORMAT)));
+      .ForMember(x => x.TargetFundName, opt => opt.Ignore());
 
     CreateMap<AccountTransfer, AccountTransferDto>()
       .ForMember(x => x.Type, opt => opt.Ignore())
       .ForMember(x => x.AccountId, opt => opt.MapFrom(src => src.SourceAccountId))
       .ForMember(x => x.AccountName, opt => opt.Ignore())
-      .ForMember(x => x.TargetAccountName, opt => opt.Ignore())
-      .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString(DATE_FORMAT)));
+      .ForMember(x => x.TargetAccountName, opt => opt.Ignore());
 
     CreateMap<Allocation, AllocationDto>()
       .ForMember(x => x.Type, opt => opt.Ignore())
-      .ForMember(x => x.TargetFundName, opt => opt.Ignore())
-      .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString(DATE_FORMAT)));
+      .ForMember(x => x.TargetFundName, opt => opt.Ignore());
 
     CreateMap<CurrencyExchange, CurrencyExchangeDto>()
       .ForMember(x => x.Type, opt => opt.Ignore())
-      .ForMember(x => x.AccountName, opt => opt.Ignore())
-      .ForMember(x => x.Date, opt => opt.MapFrom(src => src.Date.ToString(DATE_FORMAT)));
+      .ForMember(x => x.AccountName, opt => opt.Ignore());
 
     CreateMap<UserSettings, UserSettingsDto>();
 
@@ -299,10 +286,10 @@ public class MappingProfile : Profile
             var dto = new MoneyOperationDto(
             MoneyOperationType.Undefined,
             operation.Id,
-            operation.CreatedDate.ToString(),
+            operation.CreatedDate,
             operation.Title,
             operation.Value,
-            operation.Date.ToString(DATE_FORMAT),
+            operation.Date,
             operation.Description
           );
             return operation switch

@@ -11,7 +11,7 @@ public record UpdateFundTransferCommand(
   Money Value,
   string? Date,
   string? Description,
-  string? SourceFundId,
+  string? FundId,
   string? TargetFundId
   ) : UpdateOperationCommand<FundTransfer, FundTransferDto>(UserId, OperationId);
 public class UpdateFundTransferCommandHandler : UpdateOperationCommandHandler<UpdateFundTransferCommand, FundTransfer, FundTransferDto>
@@ -22,7 +22,7 @@ public class UpdateFundTransferCommandHandler : UpdateOperationCommandHandler<Up
   }
   protected override void Update(FundTransfer operation, UpdateFundTransferCommand command)
     => operation.Update(
-        command.SourceFundId,
+        command.FundId,
         command.TargetFundId,
         command.Title,
         command.Value,
@@ -42,12 +42,12 @@ public class UpdateFundTransferCommandValidator : UpdateOperationCommandValidato
     RuleFor(x => x)
       .MustAsync(async (command, cancellation) =>
       {
-        if (command.SourceFundId is null)
+        if (command.FundId is null)
           return true;
         var budget = await repository.Get(command.UserId);
-        return budget!.Funds?.Any(x => x.Id == command.SourceFundId) ?? false;
+        return budget!.Funds?.Any(x => x.Id == command.FundId) ?? false;
       })
-      .WithMessage(command => $"Source Fund with id {command.SourceFundId} does not exist in the budget");
+      .WithMessage(command => $"Source Fund with id {command.FundId} does not exist in the budget");
 
     RuleFor(x => x)
       .MustAsync(async (command, cancellation) =>
