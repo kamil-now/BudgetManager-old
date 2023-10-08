@@ -11,7 +11,7 @@ public class FundTransfer : MoneyOperation
     Money value,
     string sourceFundId,
     string targetFundId,
-    DateTime date,
+    string date,
     string description,
     DateTime createdDate
     ) : base(id, title, value, date, description, createdDate)

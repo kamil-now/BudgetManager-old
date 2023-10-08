@@ -1,6 +1,6 @@
 <template>
   <div class="income-input">
-    <Calendar v-model="incomeDate" dateFormat="dd/mm/yy" />
+    <Calendar v-model="incomeDate" dateFormat="yy/mm/dd" />
     <InputText
       class="p-inputtext-sm"
       placeholder="Income title"

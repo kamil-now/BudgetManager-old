@@ -1,6 +1,6 @@
 <template>
   <div class="accountTransfer-input">
-    <Calendar v-model="accountTransferDate" dateFormat="dd/mm/yy" />
+    <Calendar v-model="accountTransferDate" dateFormat="yy/mm/dd" />
     <InputText
       class="p-inputtext-sm"
       placeholder="AccountTransfer title"

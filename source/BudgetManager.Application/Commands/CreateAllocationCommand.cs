@@ -9,7 +9,7 @@ public record CreateAllocationCommand(
   [property: JsonIgnore()] string UserId,
   string Title,
   Money Value,
-  string? Date,
+  string Date,
   string TargetFundId,
   string? Description
   ) : IRequest<string>, IBudgetCommand;
@@ -25,18 +25,6 @@ public class CreateAllocationCommandHandler
   public override string ModifyBudget(CreateAllocationCommand command, Budget budget)
   {
     var id = Guid.NewGuid().ToString();
-    var date = DateTime.Now;
-    if (command.Date is not null)
-    {
-      if (DateTime.TryParse(command.Date, out var commandDate))
-      {
-        date = commandDate;
-      }
-      else
-      {
-        throw new Exception("Invalid date.");
-      }
-    }
 
     budget.AddOperation(
       new Allocation(
@@ -44,7 +32,7 @@ public class CreateAllocationCommandHandler
         command.Title,
         command.Value,
         command.TargetFundId,
-        date,
+        command.Date,
         command.Description ?? string.Empty,
         DateTime.Now
         )

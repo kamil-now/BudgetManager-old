@@ -9,7 +9,7 @@ public record CreateAccountTransferCommand(
   [property: JsonIgnore()] string UserId,
   string Title,
   Money Value,
-  string? Date,
+  string Date,
   string? Description,
   string AccountId,
   string TargetAccountId
@@ -26,18 +26,6 @@ public class CreateAccountTransferCommandHandler
   public override string ModifyBudget(CreateAccountTransferCommand command, Budget budget)
   {
     var id = Guid.NewGuid().ToString();
-    var date = DateTime.Now;
-    if (command.Date is not null)
-    {
-      if (DateTime.TryParse(command.Date, out var commandDate))
-      {
-        date = commandDate;
-      }
-      else
-      {
-        throw new Exception("Invalid date.");
-      }
-    }
 
     budget.AddOperation(
       new AccountTransfer(
@@ -46,7 +34,7 @@ public class CreateAccountTransferCommandHandler
         command.Value,
         command.AccountId,
         command.TargetAccountId,
-        date,
+        command.Date,
         command.Description ?? string.Empty,
         DateTime.Now
         )

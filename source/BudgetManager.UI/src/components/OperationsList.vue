@@ -25,15 +25,15 @@
       header="Date"
     >
       <template #body="{ data }">
-        <span class="date">{{ data.date.toLocaleDateString() }}</span>
+        <span class="date">{{ data.date }}</span>
       </template>
       <template #filter="{ filterModel, filterCallback }">
         <Calendar
           v-model="filterModel.value"
-          dateFormat="dd/mm/yy"
+          dateFormat="yy/mm/dd"
           size="small"
-          placeholder="dd/mm/yyyy"
-          mask="99/99/9999"
+          placeholder="yy/mm/dd"
+          mask="9999/99/99"
           @date-select="filterCallback()"
         />
       </template>
@@ -194,6 +194,7 @@ import { useConfirm } from 'primevue/useconfirm';
 import { useDialog } from 'primevue/usedialog';
 import { ref } from 'vue';
 import InputDialog from './InputDialog.vue';
+import { DateUtils } from '@/helpers/date-utils';
 const dialog = useDialog();
 const store = useAppStore();
 const confirm = useConfirm();
@@ -399,19 +400,19 @@ function createNewMoneyOperation(): MoneyOperation {
     id: undefined,
     title: '',
     type: MoneyOperationType.Undefined,
-    date: new Date(),
+    date: DateUtils.createDateOnlyString(new Date()),
     value: {
       currency: Object.keys(currencies)[0],
       amount: 0,
     },
-    createdDate: new Date(),
+    createdDate: new Date().toString(),
   };
 }
 
 function createCopy(operation: MoneyOperation) {
   const copy = {
     ...operation,
-    date: new Date(),
+    date: DateUtils.createDateOnlyString(new Date()),
     id: undefined,
   };
   edit(copy, 'Create');

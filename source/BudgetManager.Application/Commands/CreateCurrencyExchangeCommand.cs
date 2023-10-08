@@ -9,7 +9,7 @@ public record CreateCurrencyExchangeCommand(
   [property: JsonIgnore()] string UserId,
   string Title,
   Money Value,
-  string? Date,
+  string Date,
   string AccountId,
   string TargetCurrency,
   decimal ExchangeRate,
@@ -27,18 +27,6 @@ public class CreateCurrencyExchangeCommandHandler
   public override string ModifyBudget(CreateCurrencyExchangeCommand command, Budget budget)
   {
     var id = Guid.NewGuid().ToString();
-    var date = DateTime.Now;
-    if (command.Date is not null)
-    {
-      if (DateTime.TryParse(command.Date, out var commandDate))
-      {
-        date = commandDate;
-      }
-      else
-      {
-        throw new Exception("Invalid date.");
-      }
-    }
 
     budget.AddOperation(
       new CurrencyExchange(
@@ -48,7 +36,7 @@ public class CreateCurrencyExchangeCommandHandler
         command.AccountId,
         command.TargetCurrency,
         command.ExchangeRate,
-        date,
+        command.Date,
         command.Description ?? string.Empty,
         DateTime.Now
         )

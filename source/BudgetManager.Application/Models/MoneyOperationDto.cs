@@ -1,10 +1,10 @@
 public record MoneyOperationDto(
   MoneyOperationType Type,
   string Id,
-  DateTime CreatedDate,
+  string CreatedDate,
   string Title,
   Money Value,
-  DateTime Date,
+  string Date,
   string Description,
   string? AccountId = null,
   string? AccountName = null,

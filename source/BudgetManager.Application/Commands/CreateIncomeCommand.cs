@@ -9,7 +9,7 @@ public record CreateIncomeCommand(
   [property: JsonIgnore()] string UserId,
   string Title,
   Money Value,
-  string? Date,
+  string Date,
   string AccountId,
   string? Description
   ) : IRequest<string>, IBudgetCommand;
@@ -25,18 +25,6 @@ public class CreateIncomeCommandHandler
   public override string ModifyBudget(CreateIncomeCommand command, Budget budget)
   {
     var id = Guid.NewGuid().ToString();
-    var date = DateTime.Now;
-    if (command.Date is not null)
-    {
-      if (DateTime.TryParse(command.Date, out var commandDate))
-      {
-        date = commandDate;
-      }
-      else
-      {
-        throw new Exception("Invalid date.");
-      }
-    }
 
     budget.AddOperation(
       new Income(
@@ -44,7 +32,7 @@ public class CreateIncomeCommandHandler
         command.AccountId,
         command.Title,
         command.Value,
-        date,
+        command.Date,
         command.Description ?? string.Empty,
         DateTime.Now
         )

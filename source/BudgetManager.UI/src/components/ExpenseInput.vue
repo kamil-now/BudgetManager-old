@@ -1,6 +1,6 @@
 <template>
   <div class="expense-input">
-    <Calendar v-model="expenseDate" dateFormat="dd/mm/yy" />
+    <Calendar v-model="expenseDate" dateFormat="yy/mm/dd" />
     <InputText
       class="p-inputtext-sm"
       placeholder="Expense title"

@@ -15,7 +15,7 @@ public class CurrencyExchange : MoneyOperation
     string accountId,
     string targetCurrency,
     decimal exchangeRate,
-    DateTime date,
+    string date,
     string description,
     DateTime createdDate
     ) : base(id, title, value, date, description, createdDate)

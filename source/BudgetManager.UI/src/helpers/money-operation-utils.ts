@@ -5,7 +5,6 @@ export class MoneyOperationUtils {
     return {
       ...data,
       createdDate: new Date(data.createdDate),
-      date: new Date(data.date)
     };
   }
   public static sort<T extends MoneyOperation>(data: T[]): T[] {

@@ -1,6 +1,6 @@
 <template>
   <div class="allocation-input">
-    <Calendar v-model="allocationDate" dateFormat="dd/mm/yy" />
+    <Calendar v-model="allocationDate" dateFormat="yy/mm/dd" />
     <InputText
       ref="input"
       class="p-inputtext-sm"

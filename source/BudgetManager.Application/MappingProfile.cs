@@ -4,6 +4,7 @@ using AutoMapper;
 
 public class MappingProfile : Profile
 {
+  const string DATE_FORMAT = "yyyy/MM/dd";
   public MappingProfile()
   {
     CreateMap<BudgetEntity, Budget>()
@@ -286,7 +287,7 @@ public class MappingProfile : Profile
             var dto = new MoneyOperationDto(
             MoneyOperationType.Undefined,
             operation.Id,
-            operation.CreatedDate,
+            operation.CreatedDate.ToString(),
             operation.Title,
             operation.Value,
             operation.Date,

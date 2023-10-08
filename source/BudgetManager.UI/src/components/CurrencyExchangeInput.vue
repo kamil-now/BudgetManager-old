@@ -1,6 +1,6 @@
 <template>
   <div class="currencyExchange-input">
-    <Calendar v-model="currencyExchangeDate" dateFormat="dd/mm/yy" />
+    <Calendar v-model="currencyExchangeDate" dateFormat="yy/mm/dd" />
     <InputText
       class="p-inputtext-sm"
       placeholder="CurrencyExchange title"

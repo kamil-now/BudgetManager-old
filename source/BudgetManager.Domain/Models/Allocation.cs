@@ -9,7 +9,7 @@ public class Allocation : MoneyOperation
     string title,
     Money value,
     string targetFundId,
-    DateTime date,
+    string date,
     string description,
     DateTime createdDate
     ) : base(id, title, value, date, description, createdDate)

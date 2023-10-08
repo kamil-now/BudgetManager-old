@@ -1,6 +1,6 @@
 <template>
   <div class="fundTransfer-input">
-    <Calendar v-model="fundTransferDate" dateFormat="dd/mm/yy" />
+    <Calendar v-model="fundTransferDate" dateFormat="yy/mm/dd" />
     <InputText
       class="p-inputtext-sm"
       placeholder="Fund transfer title"

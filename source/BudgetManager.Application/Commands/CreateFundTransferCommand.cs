@@ -9,7 +9,7 @@ public record CreateFundTransferCommand(
   [property: JsonIgnore()] string UserId,
   string Title,
   Money Value,
-  string? Date,
+  string Date,
   string? Description,
   string FundId,
   string TargetFundId
@@ -26,18 +26,7 @@ public class CreateFundTransferCommandHandler
   public override string ModifyBudget(CreateFundTransferCommand command, Budget budget)
   {
     var id = Guid.NewGuid().ToString();
-    var date = DateTime.Now;
-    if (command.Date is not null)
-    {
-      if (DateTime.TryParse(command.Date, out var commandDate))
-      {
-        date = commandDate;
-      }
-      else
-      {
-        throw new Exception("Invalid date.");
-      }
-    }
+
     budget.AddOperation(
       new FundTransfer(
         id,
@@ -45,7 +34,7 @@ public class CreateFundTransferCommandHandler
         command.Value,
         command.FundId,
         command.TargetFundId,
-        date,
+        command.Date,
         command.Description ?? string.Empty,
         DateTime.Now
         )

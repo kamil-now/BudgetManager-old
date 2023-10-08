@@ -9,7 +9,7 @@ public record CreateExpenseCommand(
   [property: JsonIgnore()] string UserId,
   string Title,
   Money Value,
-  string? Date,
+  string Date,
   string AccountId,
   string FundId,
   string? Description
@@ -26,25 +26,13 @@ public class CreateExpenseCommandHandler
   public override string ModifyBudget(CreateExpenseCommand command, Budget budget)
   {
     var id = Guid.NewGuid().ToString();
-    var date = DateTime.Now;
-    if (command.Date is not null)
-    {
-      if (DateTime.TryParse(command.Date, out var commandDate))
-      {
-        date = commandDate;
-      }
-      else
-      {
-        throw new Exception("Invalid date.");
-      }
-    }
 
     budget.AddOperation(
       new Expense(
         id,
         command.Title,
         command.Value,
-        date,
+        command.Date,
         command.AccountId,
         command.FundId,
         command.Description ?? string.Empty,

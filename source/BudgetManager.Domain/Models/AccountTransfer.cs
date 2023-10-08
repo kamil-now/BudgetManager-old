@@ -11,7 +11,7 @@ public class AccountTransfer : MoneyOperation
     Money value,
     string sourceAccountId,
     string targetAccountId,
-    DateTime date,
+    string date,
     string description,
     DateTime createdDate
     ) : base(id, title, value, date, description, createdDate)
