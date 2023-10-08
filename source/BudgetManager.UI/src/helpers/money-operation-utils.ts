@@ -4,7 +4,7 @@ export class MoneyOperationUtils {
   public static parseFromResponse<T extends MoneyOperation>(data: T): T {
     return {
       ...data,
-      createdDate: new Date(data.createdDate),
+      createdDate: new Date(data.createdDate).toDateString(),
     };
   }
   public static sort<T extends MoneyOperation>(data: T[]): T[] {

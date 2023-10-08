@@ -57,6 +57,7 @@ import { Fund } from '@/models/fund';
 import { Expense } from '@/models/expense';
 import { useAppStore } from '@/store/store';
 import { computed, ref, watch } from 'vue';
+import { DateUtils } from '@/helpers/date-utils';
 const props = defineProps<{ expense: Expense }>();
 const emit = defineEmits(['changed']);
 const { accounts, funds }  = useAppStore();
@@ -94,7 +95,7 @@ const expenseDate = computed({
   set: (newValue) => {
     emit('changed', {
       ...props.expense, 
-      date: new Date(newValue)
+      date: DateUtils.createDateOnlyString(new Date(newValue))
     });
   }
 });

@@ -40,6 +40,7 @@
 </template>
 <script setup lang="ts">
 import currencies from '@/assets/currencies.json';
+import { DateUtils } from '@/helpers/date-utils';
 import { Account } from '@/models/account';
 import { Income } from '@/models/income';
 import { useAppStore } from '@/store/store';
@@ -68,7 +69,7 @@ const incomeDate = computed({
   set: (newValue) => {
     emit('changed', {
       ...props.income, 
-      date: new Date(newValue)
+      date: DateUtils.createDateOnlyString(new Date(newValue))
     });
   }
 });

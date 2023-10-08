@@ -42,6 +42,7 @@
 </template>
 <script setup lang="ts">
 import currencies from '@/assets/currencies.json';
+import { DateUtils } from '@/helpers/date-utils';
 import { Allocation } from '@/models/allocation';
 import { Fund } from '@/models/fund';
 import { useAppStore } from '@/store/store';
@@ -77,7 +78,7 @@ const allocationDate = computed({
   set: (newValue) => {
     emit('changed', {
       ...props.allocation, 
-      date: new Date(newValue)
+      date: DateUtils.createDateOnlyString(new Date(newValue))
     });
   }
 });

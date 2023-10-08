@@ -53,6 +53,7 @@
 </template>
 <script setup lang="ts">
 import currencies from '@/assets/currencies.json';
+import { DateUtils } from '@/helpers/date-utils';
 import { Account } from '@/models/account';
 import { AccountTransfer } from '@/models/account-transfer';
 import { useAppStore } from '@/store/store';
@@ -93,7 +94,7 @@ const accountTransferDate = computed({
   set: (newValue) => {
     emit('changed', {
       ...props.accountTransfer, 
-      date: new Date(newValue)
+      date: DateUtils.createDateOnlyString(new Date(newValue))
     });
   }
 });

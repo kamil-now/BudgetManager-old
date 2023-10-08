@@ -165,7 +165,7 @@
             rounded
             size="small"
             aria-label="Edit"
-            @click="edit(data)"
+            @click="edit(data, 'Edit')"
           />
           <Button
             icon="pi pi-times"
@@ -311,7 +311,7 @@ const items = ref([
       const defaultTargetAccount = store.accounts.filter((x) => !!x.id)[0];
       edit({
         ...createNewMoneyOperation(),
-        type: MoneyOperationType.FundTransfer,
+        type: MoneyOperationType.AccountTransfer,
         accountId: defaultSourceAccount.id,
         accountName: defaultSourceAccount.name,
         targetAccountId: defaultTargetAccount.id,
@@ -417,7 +417,7 @@ function createCopy(operation: MoneyOperation) {
   };
   edit(copy, 'Create');
 }
-function edit(operation: MoneyOperation, action: 'Edit' | 'Create' = 'Edit') {
+function edit(operation: MoneyOperation, action: 'Edit' | 'Create' = 'Create') {
   dialog.open(InputDialog, {
     data: {
       operation,
