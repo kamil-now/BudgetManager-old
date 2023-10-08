@@ -11,7 +11,7 @@
 
 <script setup lang="ts">
 import { AUTH, IAuthService } from '@/auth';
-import { inject } from 'vue';
+import { inject, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 const auth = inject<IAuthService>(AUTH);
 if (!auth) {
@@ -19,6 +19,7 @@ if (!auth) {
 }
 const router = useRouter();
 const login = () => auth.login().then(() => router.push('/home'));
+onMounted(() => login());
 
 </script>
 
