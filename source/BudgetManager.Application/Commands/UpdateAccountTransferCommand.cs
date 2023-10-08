@@ -29,6 +29,13 @@ public class UpdateAccountTransferCommandHandler : UpdateOperationCommandHandler
         command.Date,
         command.Description
       );
+  protected override AccountTransferDto CompleteDto(AccountTransferDto dto, Budget budget)
+    => dto with
+    {
+      Type = MoneyOperationType.AccountTransfer,
+      AccountName = budget.Accounts.First(x => x.Id == dto.AccountId).Name,
+      TargetAccountName = budget.Accounts.First(x => x.Id == dto.TargetAccountId).Name,
+    };
 }
 
 

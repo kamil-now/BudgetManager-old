@@ -29,6 +29,12 @@ public class UpdateAllocationCommandHandler : UpdateOperationCommandHandler<Upda
         command.Date,
         command.Description
       );
+  protected override AllocationDto CompleteDto(AllocationDto dto, Budget budget)
+    => dto with
+    {
+      Type = MoneyOperationType.Allocation,
+      TargetFundName = budget.Funds.First(x => x.Id == dto.TargetFundId).Name,
+    };
 }
 
 public class UpdateAllocationCommandValidator : UpdateOperationCommandValidator<UpdateAllocationCommand>

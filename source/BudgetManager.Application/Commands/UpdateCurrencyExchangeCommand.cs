@@ -33,6 +33,12 @@ public class UpdateCurrencyExchangeCommandHandler : UpdateOperationCommandHandle
         command.Date,
         command.Description
       );
+  protected override CurrencyExchangeDto CompleteDto(CurrencyExchangeDto dto, Budget budget)
+    => dto with
+    {
+      Type = MoneyOperationType.CurrencyExchange,
+      AccountName = budget.Accounts.First(x => x.Id == dto.AccountId).Name,
+    };
 }
 
 public class UpdateCurrencyExchangeCommandValidator : UpdateOperationCommandValidator<UpdateCurrencyExchangeCommand>

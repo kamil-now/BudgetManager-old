@@ -249,21 +249,20 @@ export const APP_STORE: DefineStoreOptions<
       });
     },
     async updateExpense(expense: Expense) {
-      await Utils.runAsyncOperation(this, (state) => 
-        updateExpenseRequest(expense)
-          .then(async expense => {
-            const fromState = state.budget.operations.find(x => x.id === expense.id);
-            if (!fromState) {
-              throw new Error('Invalid operation - expense does not exist.');
-            }
-            const index = state.budget.operations.indexOf(fromState);
-            state.budget.operations[index] = expense;
-            MoneyOperationUtils.sort(state.budget.operations);
+      await Utils.runAsyncOperation(this, async (state) => {
+        const fromResponse = await updateExpenseRequest(expense);
+        const fromState = state.budget.operations.find(x => x.id === expense.id);
+        if (!fromState) {
+          throw new Error('Invalid operation - expense does not exist.');
+        }
+        const index = state.budget.operations.indexOf(fromState);
+        state.budget.operations[index] = fromResponse;
+        MoneyOperationUtils.sort(state.budget.operations);
             
-            await Utils.reloadAccount(this, expense.accountId);
-            await Utils.reloadFund(this, expense.fundId);
-            await Utils.reloadBalance(this);
-          })
+        await Utils.reloadAccount(this, fromResponse.accountId);
+        await Utils.reloadFund(this, fromResponse.fundId);
+        await Utils.reloadBalance(this);
+      }
       );
     },
     async deleteExpense(expenseId: string) {

@@ -31,6 +31,14 @@ public class UpdateExpenseCommandHandler : UpdateOperationCommandHandler<UpdateE
         command.Date,
         command.Description
       );
+
+  protected override ExpenseDto CompleteDto(ExpenseDto dto, Budget budget)
+    => dto with
+    {
+      Type = MoneyOperationType.Expense,
+      AccountName = budget.Accounts.First(x => x.Id == dto.AccountId).Name,
+      FundName = budget.Funds.First(x => x.Id == dto.FundId).Name,
+    };
 }
 
 public class UpdateExpenseCommandValidator : UpdateOperationCommandValidator<UpdateExpenseCommand>

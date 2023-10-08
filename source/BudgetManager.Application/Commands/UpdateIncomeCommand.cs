@@ -24,6 +24,13 @@ public class UpdateIncomeCommandHandler
 
   protected override void Update(Income operation, UpdateIncomeCommand command)
   => operation.Update(command.AccountId, command.Title, command.Value, command.Date, command.Description);
+  protected override IncomeDto CompleteDto(IncomeDto dto, Budget budget)
+    => dto
+     with
+    {
+      Type = MoneyOperationType.Income,
+      AccountName = budget.Accounts.First(x => x.Id == dto.AccountId).Name,
+    };
 }
 
 public class UpdateIncomeCommandValidator : UpdateOperationCommandValidator<UpdateIncomeCommand>

@@ -29,6 +29,13 @@ public class UpdateFundTransferCommandHandler : UpdateOperationCommandHandler<Up
         command.Date,
         command.Description
       );
+  protected override FundTransferDto CompleteDto(FundTransferDto dto, Budget budget)
+    => dto with
+    {
+      Type = MoneyOperationType.FundTransfer,
+      FundName = budget.Funds.First(x => x.Id == dto.FundId).Name,
+      TargetFundName = budget.Funds.First(x => x.Id == dto.TargetFundId).Name,
+    };
 }
 
 

@@ -18,9 +18,15 @@ public abstract class UpdateOperationCommandHandler<TCommand, T, TDto>
   }
 
   public override TDto ModifyBudget(TCommand command, Budget budget)
-    => _mapper.Map<TDto>(budget.UpdateOperation<T>(command.Id, o => Update(o, command)));
+  {
+    var operation = budget.UpdateOperation<T>(command.Id, o => Update(o, command));
+    var dto = _mapper.Map<TDto>(operation);
+    return CompleteDto(dto, budget);
+  }
 
   protected abstract void Update(T operation, TCommand command);
+
+  protected abstract TDto CompleteDto(TDto dto, Budget budget);
 }
 public class UpdateOperationCommandValidator<T>
   : BudgetCommandValidator<T> where T : IOperationCommand
