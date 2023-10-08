@@ -47,7 +47,9 @@ export type AppGetters = {
 };
 export type AppActions = {
   createBudget(): void;
-  updateUserSettings(): void,
+  updateUserSettings(): void;
+  reorderFunds(oldIndex: number, newIndex: number): void;
+  reorderAccounts(oldIndex: number, newIndex: number): void;
   setLoggedIn(value: boolean): void;
   fetchBudget(): void;
 
@@ -152,10 +154,23 @@ export const APP_STORE: DefineStoreOptions<
     async createBudget() {
       await Utils.runAsyncOperation(this, () => axios.post<void>('budget'));
     },
+    async reorderAccounts(oldIndex: number, newIndex: number) {
+      const account = this.budget.accounts.splice(oldIndex, 1)[0];
+      this.budget.accounts.splice(newIndex, 0, account);
+      this.updateUserSettings();
+
+    },
+    async reorderFunds(oldIndex: number, newIndex: number) {
+      oldIndex = this.budget.funds.indexOf(this.funds[oldIndex]);
+      newIndex = this.budget.funds.indexOf(this.funds[newIndex]);
+      const fund = this.budget.funds.splice(oldIndex, 1)[0];
+      this.budget.funds.splice(newIndex, 0, fund);
+      this.updateUserSettings();
+    },
     async updateUserSettings() {
       await axios.put('user-settings', { 
-        accountsOrder: this.budget.accounts.map(x => x.id),
-        fundsOrder: this.budget.funds.map(x => x.id)
+        accountsOrder: this.budget.accounts.filter(x => !x.isDeleted).map(x => x.id),
+        fundsOrder: this.budget.funds.filter(x => !x.isDeleted).map(x => x.id)
       });
     },
     
@@ -534,7 +549,7 @@ class Utils {
 
   static async reloadFund(state: AppState, fundId: string): Promise<void> {
     const fund = await getFundRequest(fundId);
-    const fundIndex = state.budget.accounts.findIndex(x => x.id === fund.id);
+    const fundIndex = state.budget.funds.findIndex(x => x.id === fund.id);
     state.budget.funds[fundIndex] = fund;
   }
 

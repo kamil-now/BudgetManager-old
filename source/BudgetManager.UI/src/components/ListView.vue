@@ -52,7 +52,7 @@ type Props<T> = {
   createNew?: () => T,
   save: (item: T) => void,
   update: (item: T) => void,
-  onReorder?: () => void,
+  onReorder?: (oldIndex: number, newIndex: number) => void,
   remove: (itemId: string) => void
 }// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const props = defineProps<Props<any & { id?: string, name: string }>>();
@@ -117,10 +117,7 @@ function onRowReorder(event: { dragIndex: number, dropIndex: number }) {
     throw new Error('Copy delegate is undefined.');
   }
   const { dragIndex, dropIndex } = event;
-  const element = items.value[dragIndex];
-  items.value.splice(dragIndex, 1);
-  items.value.splice(dropIndex, 0, element);
-  props.onReorder();
+  props.onReorder(dragIndex, dropIndex);
 }
 </script>
 

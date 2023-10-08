@@ -6,7 +6,7 @@
       :save="createNewAccount"
       :update="updateAccount"
       :remove="deleteAccount"
-      :onReorder="updateUserSettings"
+      :onReorder="reorderAccounts"
       :allowAdd="true"
     >
       <template #content="{ data }">
@@ -46,7 +46,7 @@ import { useAppStore } from '@/store/store';
 import { storeToRefs } from 'pinia';
 
 const store = useAppStore();
-const { createNewAccount, updateAccount, deleteAccount, updateUserSettings } =
+const { createNewAccount, updateAccount, deleteAccount, reorderAccounts } =
   store;
 
 const { accounts } = storeToRefs(store);
