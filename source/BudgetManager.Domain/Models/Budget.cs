@@ -114,6 +114,23 @@ public class Budget
     fund.IsDeleted = true;
   }
 
+  public void Recalculate()
+  {
+    foreach (var fund in _funds)
+    {
+      fund.Balance.Deduct(fund.Balance);
+    }
+    foreach (var account in _accounts)
+    {
+      account.Balance.Deduct(account.Balance);
+      account.Balance.Add(account.InitialBalance);
+    }
+    foreach (var operation in _operations)
+    {
+      ApplyOperation(operation);
+    }
+  }
+
   private void ApplyOperation<T>(T operation) where T : MoneyOperation
   {
     switch (operation)
@@ -137,7 +154,7 @@ public class Budget
         _funds.First(x => x.Id == op.TargetFundId).Add(op.Value);
         break;
       case CurrencyExchange op:
-        var account =_accounts.First(x => x.Id == op.AccountId);
+        var account = _accounts.First(x => x.Id == op.AccountId);
         account.Deduct(op.Value);
         account.Add(op.Result);
         break;
@@ -169,7 +186,7 @@ public class Budget
         _funds.First(x => x.Id == op.TargetFundId).Deduct(op.Value);
         break;
       case CurrencyExchange op:
-        var account =_accounts.First(x => x.Id == op.AccountId);
+        var account = _accounts.First(x => x.Id == op.AccountId);
         account.Deduct(op.Result);
         account.Add(op.Value);
         break;

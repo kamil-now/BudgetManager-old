@@ -134,6 +134,21 @@ async (
 .WithTags(API_TITLE)
 .RequireAuthorization();
 
+app.MapPost("/recalculate-budget",
+  [SwaggerOperation(Summary = "Clear funds and accounts balance and reapply all operations.")]
+async (
+  HttpContext context,
+  IMediator mediator,
+  CancellationToken cancellationToken
+  ) =>
+  {
+    await mediator.Send(new RecalculateBudgetCommand(context.GetUserId()));
+    return Results.Ok();
+  })
+.Produces((int)HttpStatusCode.Created)
+.WithTags(API_TITLE)
+.RequireAuthorization();
+
 app.MapGet("/user-settings",
 async (
   HttpContext context,
