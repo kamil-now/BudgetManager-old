@@ -1,9 +1,15 @@
 <template>
   <div class="operations-view">
+    <BudgetSpeedDial />
+    <ConfirmPopup />
+    <DynamicDialog />
     <ListView
       header="Operations"
       v-model="operations"
     >
+    <template #actions="{ data }">
+      <MoneyOperationActions :operation="data"/>
+    </template>
       <template #content="{ data }">
         <div class="operations-view_body">
           <div class="operations-view_body_left">
@@ -60,10 +66,12 @@
 </template>
 <script setup lang="ts">
 import ListView from '@/components/ListView.vue';
+import BudgetSpeedDial from '@/components/BudgetSpeedDial.vue';
 import { DisplayFormat } from '@/helpers/display-format';
 import { MoneyOperationType } from '@/models/money-operation-type.enum';
 import { useAppStore } from '@/store/store';
 import { storeToRefs } from 'pinia';
+import MoneyOperationActions from './MoneyOperationActions.vue';
 
 const store = useAppStore();
 const { operations } = storeToRefs(store);
@@ -76,10 +84,9 @@ const { operations } = storeToRefs(store);
   display: flex;
   align-items: center;
   @include media-breakpoint(lg, down) {
-   .date{
-    
-    font-size: 0.75rem;
-   }
+    .date {
+      font-size: 0.75rem;
+    }
   }
   &_body {
     display: flex;
@@ -102,7 +109,7 @@ const { operations } = storeToRefs(store);
       justify-content: start;
       text-overflow: ellipsis;
       overflow: hidden;
-      flex-wrap: wrap
+      flex-wrap: wrap;
     }
   }
 }
