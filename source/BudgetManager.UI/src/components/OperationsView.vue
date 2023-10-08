@@ -13,6 +13,7 @@
               :class="{
                 income: data.type === MoneyOperationType.Income,
                 expense: data.type === MoneyOperationType.Expense,
+                allocation: data.type === MoneyOperationType.Allocation
               }"
             >
               <i
@@ -24,8 +25,8 @@
                 class="pi pi-plus"
               ></i>
               <i
-                v-else
-                class="pi pi-arrow-right-arrow-left"
+                v-else-if="data.type === MoneyOperationType.Allocation"
+                class="pi pi-file-import"
               ></i>
               {{ DisplayFormat.money(data.value) }}
             </div>
@@ -34,14 +35,19 @@
             <span v-if="data.title">{{ data.title }}</span>
             <span v-if="data.fundName">{{ data.fundName }}</span>
             <span v-if="data.accountName">{{ data.accountName }}</span>
-            
+
             <i
-            v-if="
-                data.type !== MoneyOperationType.Income &&
-                data.type !== MoneyOperationType.Expense
-                "
-              class="pi pi-arrow-right"
-              ></i>
+              v-if="data.type === MoneyOperationType.FundTransfer"
+              class="pi pi-forward transfer"
+            ></i>
+            <i
+              v-else-if="data.type === MoneyOperationType.AccountTransfer"
+              class="pi pi-arrows-h transfer"
+            ></i>
+            <i
+              v-else-if="data.type === MoneyOperationType.CurrencyExchange"
+              class="pi pi-arrow-right-arrow-left"
+            ></i>
             <span v-if="data.targetFundName">{{ data.targetFundName }}</span>
             <span v-if="data.targetAccountName">
               {{ data.targetAccountName }}
