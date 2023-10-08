@@ -186,7 +186,7 @@ $header-column-width: 2rem;
   }
 
   .p-datatable-header {
-    border-top: 0;
+    display: none;
   }
 
   .p-button {
