@@ -5,7 +5,7 @@ public record MoneyOperationDto(
   string Title,
   Money Value,
   string Date,
-  string Description,
+  string? Description,
   string? AccountId = null,
   string? AccountName = null,
   string? FundId = null,

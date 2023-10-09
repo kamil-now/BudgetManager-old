@@ -20,8 +20,7 @@ public class BudgetSummaryRequestHandler : IRequestHandler<BudgetSummaryRequest,
 
   public async Task<BudgetSummaryDto> Handle(BudgetSummaryRequest request, CancellationToken cancellationToken)
   {
-    var src = await _repository.Get(request.UserId);
-    var budget = _mapper.Map<Budget>(src); // TODO map directly
+    var budget = await _repository.Get(request.UserId);
     return _mapper.Map<BudgetSummaryDto>(budget);
   }
 }
