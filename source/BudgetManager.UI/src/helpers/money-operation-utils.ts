@@ -29,7 +29,7 @@ export class MoneyOperationUtils {
   public static parseFromResponse<T extends MoneyOperation>(data: T): T {
     return {
       ...data,
-      createdDate: new Date(data.createdDate).toDateString(),
+      createdDate: new Date(data.createdDate).toLocaleString(),
     };
   }
   public static sort<T extends MoneyOperation>(data: T[]): T[] {
