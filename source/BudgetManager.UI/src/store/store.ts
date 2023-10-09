@@ -334,8 +334,7 @@ export const APP_STORE: DefineStoreOptions<
         const fromResponse = await getAllocationRequest(id);
         state.budget.operations.unshift(fromResponse);
         MoneyOperationUtils.sort(state.budget.operations);
-            
-        await Utils.reloadFund(this, allocation.fundId);
+
         await Utils.reloadFund(this, allocation.targetFundId);
         await Utils.reloadBalance(this);
       });
@@ -351,8 +350,7 @@ export const APP_STORE: DefineStoreOptions<
             const index = state.budget.operations.indexOf(fromState);
             state.budget.operations[index] = allocation; 
             MoneyOperationUtils.sort(state.budget.operations);
-            
-            await Utils.reloadFund(this, allocation.fundId);
+
             await Utils.reloadFund(this, allocation.targetFundId);
             await Utils.reloadBalance(this);
           })
