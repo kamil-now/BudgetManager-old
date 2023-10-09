@@ -18,5 +18,5 @@ export type MoneyOperation = {
   targetFundId?: string,
   targetFundName?: string,
   targetCurrency?: string,
-  exchangeRate?: string
+  exchangeRate?: number
 }

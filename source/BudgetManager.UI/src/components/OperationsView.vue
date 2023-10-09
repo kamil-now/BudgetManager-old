@@ -7,9 +7,9 @@
       header="Operations"
       v-model="operations"
     >
-    <template #actions="{ data }">
-      <MoneyOperationActions :operation="data"/>
-    </template>
+      <template #actions="{ data }">
+        <MoneyOperationActions :operation="data" />
+      </template>
       <template #content="{ data }">
         <div class="operations-view_body">
           <div class="operations-view_body_left">
@@ -19,7 +19,8 @@
               :class="{
                 income: data.type === MoneyOperationType.Income,
                 expense: data.type === MoneyOperationType.Expense,
-                allocation: data.type === MoneyOperationType.Allocation
+                allocation: data.type === MoneyOperationType.Allocation,
+                exchange: data.type === MoneyOperationType.CurrencyExchange,
               }"
             >
               <i
@@ -33,6 +34,10 @@
               <i
                 v-else-if="data.type === MoneyOperationType.Allocation"
                 class="pi pi-file-import"
+              ></i>
+              <i
+                v-else-if="data.type === MoneyOperationType.CurrencyExchange"
+                class="pi pi-arrow-right-arrow-left exchange"
               ></i>
               {{ DisplayFormat.money(data.value) }}
             </div>
@@ -52,11 +57,18 @@
             ></i>
             <i
               v-else-if="data.type === MoneyOperationType.CurrencyExchange"
-              class="pi pi-arrow-right-arrow-left"
+              class="pi pi-arrow-right-arrow-left exchange"
             ></i>
             <span v-if="data.targetFundName">{{ data.targetFundName }}</span>
             <span v-if="data.targetAccountName">
               {{ data.targetAccountName }}
+            </span>
+            <span v-if="data.targetCurrency">
+              {{
+                Math.round(data.value.amount / data.exchangeRate, 2) +
+                " " +
+                data.targetCurrency
+              }}
             </span>
           </div>
         </div>
