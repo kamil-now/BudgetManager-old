@@ -15,7 +15,6 @@
       </div>
 
       <div class="budget-page_content-operations">
-        <!-- <OperationsList></OperationsList> -->
         <OperationsView></OperationsView>
       </div>
     </div>

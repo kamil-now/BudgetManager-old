@@ -75,3 +75,6 @@ $date-width: 4rem;
 .operation-title {
   font-style: italic;
 }
+.p-button:focus {
+  box-shadow: 0 0 0 0px #ffffff, 0 0 0 2px #b1b3f8, 0 0px 0 black;
+}

@@ -3,9 +3,46 @@
     <BudgetSpeedDial />
     <ConfirmPopup />
     <DynamicDialog />
+    <div class="operations-view_filters">
+      <Calendar
+          v-model="dateFilter"
+          dateFormat="yy/mm/dd"
+          size="small"
+          placeholder="yy/mm/dd"
+          mask="9999/99/99"
+          @date-select="dateFilter = DateUtils.createDateOnlyString($event);"
+        />
+      <span class="p-input-icon-left">
+        <i class="pi pi-search" />
+        <InputText
+          ref="input"
+          v-model="filter"
+          placeholder="Search"
+        />
+      </span>
+      <Dropdown
+        v-model="typeFilter"
+        :options="moneyOperationTypes"
+      >
+        <template #value="{ value }">
+          <span>{{ MoneyOperationType[value] }}</span>
+        </template>
+        <template #option="{ option }">
+          <span>{{ MoneyOperationType[option] }}</span>
+        </template>
+      </Dropdown>
+
+      <Button
+        icon="pi pi-times"
+        text
+        rounded
+        aria-label="Clear"
+        @click="clearFilters()"
+      />
+    </div>
     <ListView
       header="Operations"
-      v-model="operations"
+      v-model="filteredOperations"
     >
       <template #actions="{ data }">
         <MoneyOperationActions :operation="data" />
@@ -78,15 +115,57 @@
 </template>
 <script setup lang="ts">
 import ListView from '@/components/ListView.vue';
+import { DateUtils } from '@/helpers/date-utils';
 import BudgetSpeedDial from '@/components/BudgetSpeedDial.vue';
 import { DisplayFormat } from '@/helpers/display-format';
 import { MoneyOperationType } from '@/models/money-operation-type.enum';
 import { useAppStore } from '@/store/store';
 import { storeToRefs } from 'pinia';
+import { computed,  nextTick, onMounted, ref } from 'vue';
 import MoneyOperationActions from './MoneyOperationActions.vue';
 
 const store = useAppStore();
-const { operations } = storeToRefs(store);
+const input = ref();
+
+const { filteredOperations, operationsFilter, operationsTypeFilter, operationsDateFilter } =
+  storeToRefs(store);
+const moneyOperationTypes = Object.keys(MoneyOperationType).filter(
+  (item) => !isNaN(Number(item))
+);
+const filter = computed({
+  get: () => operationsFilter.value,
+  set: (newValue) => {
+    operationsFilter.value = newValue;
+  },
+});
+const typeFilter = computed({
+  get: () => operationsTypeFilter.value,
+  set: (newValue) => {
+    operationsTypeFilter.value =
+      MoneyOperationType[MoneyOperationType[newValue]];
+  },
+});
+const dateFilter = computed({
+  get: () => operationsDateFilter.value,
+  set: (newValue) => {
+    operationsDateFilter.value = newValue;
+  },
+});
+
+onMounted(() => focusInput());
+
+function focusInput() {
+  nextTick(() => {
+    input.value.$el.focus();
+  });
+}
+
+function clearFilters() {
+  typeFilter.value = MoneyOperationType.Undefined;
+  filter.value = '';
+  dateFilter.value = '';
+  focusInput();
+}
 </script>
 
 <style lang="scss">
@@ -95,10 +174,20 @@ const { operations } = storeToRefs(store);
   height: 100%;
   display: flex;
   align-items: center;
+  flex-direction: column;
   @include media-breakpoint(lg, down) {
     .date {
       font-size: 0.75rem;
     }
+  }
+  &_filters {
+    padding: 0.5rem;
+    display: flex;
+    width: 100%;
+    gap: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: start;
   }
   &_body {
     display: flex;

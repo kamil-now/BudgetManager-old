@@ -29,10 +29,14 @@ export type AppState = {
   isLoggedIn: boolean;
   isNewUser: boolean,
   budget: BudgetSummary,
+  operationsFilter: string,
+  operationsTypeFilter: MoneyOperationType,
+  operationsDateFilter: string
 };
 export type AppGetters = {
   balance: (state: AppState) => Balance,
   unallocated: (state: AppState) => Balance,
+  filteredOperations: (state: AppState) => MoneyOperation[],
   operations: (state: AppState) => MoneyOperation[],
   funds: (state: AppState) => Fund[],
   fundsNames: (state: AppState) => (string | undefined)[],
@@ -98,7 +102,10 @@ export const getInitialAppState: () => AppState = () => ({
     funds: [],
     accounts: [],
     operations: []
-  }
+  },
+  operationsFilter: '',
+  operationsTypeFilter: MoneyOperationType.Undefined,
+  operationsDateFilter: ''
 });
 
 export const APP_STORE: DefineStoreOptions<
@@ -112,6 +119,21 @@ export const APP_STORE: DefineStoreOptions<
   getters: {
     balance: (state: AppState) => state.budget.balance,
     unallocated: (state: AppState) => state.budget.unallocated,
+    filteredOperations: (state: AppState) => {
+      let operations = [...state.budget.operations];
+      if (state.operationsFilter.length > 1) {
+        const filterValue = state.operationsFilter.toLowerCase();
+        operations = state.budget.operations.filter(x => (x.title + x.accountName + x.fundName + x.targetFundName + x.targetAccountName).toLowerCase().includes(filterValue));
+      }
+      if (state.operationsTypeFilter !== MoneyOperationType.Undefined) {
+        operations = operations.filter(x => x.type === state.operationsTypeFilter);
+      }
+      if (state.operationsDateFilter.length > 0) {
+        console.warn(state.operationsDateFilter)
+        operations = operations.filter(x => x.date === state.operationsDateFilter);
+      }
+      return operations;
+    }, 
     operations: (state: AppState) => state.budget.operations, 
     funds: (state: AppState) => state.budget.funds.filter(x => !x.isDeleted),
     fundsNames: (state: AppState) => state.budget.funds.filter(x => !x.isDeleted).map(x => x.name),
