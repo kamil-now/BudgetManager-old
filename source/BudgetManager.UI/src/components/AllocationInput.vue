@@ -19,8 +19,13 @@
         <span>{{ option?.name }}</span>
       </template>
     </Dropdown>
+    <Dropdown
+      class="p-inputtext-sm"
+      id="allocationCurrency" 
+      v-model="allocationCurrency" 
+      :options="currencyCodeList" 
+    />
     <InputNumber 
-      v-if="selectedFund"
       class="p-inputtext-sm"
       id="allocationValue"
       v-model="allocationValue" 
@@ -31,12 +36,6 @@
       :min="-1000000"
       :maxFractionDigits="2"
       :max="1000000"
-    />
-    <Dropdown
-      class="p-inputtext-sm"
-      id="allocationCurrency" 
-      v-model="allocationCurrency" 
-      :options="currencyCodeList" 
     />
   </div>
 </template>

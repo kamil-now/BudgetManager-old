@@ -18,6 +18,12 @@
         <span>{{ option?.name }}</span>
       </template>
     </Dropdown>
+    <Dropdown
+      class="p-inputtext-sm"
+      id="selectedCurrency" 
+      v-model="incomeCurrency" 
+      :options="currencyCodeList" 
+    />
     <InputNumber 
       class="p-inputtext-sm"
       id="accountBalance"
@@ -29,12 +35,6 @@
       :min="0"
       :maxFractionDigits="2"
       :max="1000000000"
-    />
-    <Dropdown
-      class="p-inputtext-sm"
-      id="selectedCurrency" 
-      v-model="incomeCurrency" 
-      :options="currencyCodeList" 
     />
   </div>
 </template>
