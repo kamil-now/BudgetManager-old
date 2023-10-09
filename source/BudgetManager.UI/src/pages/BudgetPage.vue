@@ -117,7 +117,7 @@ onMounted(() => {
       }
     
       @include media-breakpoint(lg, down) {
-        height: auto;
+        height: 100%;
         width: calc(100% - 0.5rem);
       }
     }
@@ -126,7 +126,7 @@ onMounted(() => {
       width: calc(50% - 0.5rem);
       
       @include media-breakpoint(lg, down) {
-        height: auto;
+        height: 100%;
         width: calc(100% - 0.5rem);
       }
     }
