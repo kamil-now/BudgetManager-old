@@ -6,8 +6,8 @@
       :editMode="'row'"
       dataKey="id"
       columnResizeMode="expand"
-      scrollable
-      scrollHeight="flex"
+      scrollable scrollHeight="flex" 
+      :virtualScrollerOptions="{ itemSize: 40 }"
       @rowReorder="onRowReorder"
     >
       <template #header>
