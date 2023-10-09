@@ -6,7 +6,7 @@ public class CurrencyExchange : MoneyOperation
   public string TargetCurrency { get; private set; }
   public decimal ExchangeRate { get; private set; }
 
-  public Money Result => new(Value.Amount / ExchangeRate, TargetCurrency);
+  public Money Result => new(Math.Round(Value.Amount / ExchangeRate, 2), TargetCurrency);
 
   public CurrencyExchange(
     string id,
