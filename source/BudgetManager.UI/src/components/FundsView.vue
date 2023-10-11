@@ -3,11 +3,9 @@
     <ListView
       header="Funds"
       v-model="funds"
-      :save="createNewFund"
       :update="updateFund"
       :remove="deleteFund"
       :onReorder="reorderFunds"
-      :allowAdd="true"
     >
       <template #content="{ data }">
         <div class="funds-view_body">
@@ -37,7 +35,7 @@ import { useAppStore } from '@/store/store';
 import { storeToRefs } from 'pinia';
 
 const store = useAppStore();
-const { createNewFund, updateFund, deleteFund, reorderFunds } = store;
+const { updateFund, deleteFund, reorderFunds } = store;
 
 const { funds } = storeToRefs(store);
 

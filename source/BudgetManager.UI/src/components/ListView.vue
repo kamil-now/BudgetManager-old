@@ -10,22 +10,6 @@
       :virtualScrollerOptions="{ itemSize: 40 }"
       @rowReorder="onRowReorder"
     >
-      <template #header>
-        <div
-          class="list-view_header"
-          v-if="createNew"
-        >
-          <span>{{ header }}</span>
-          <Button
-            v-if="allowAdd && !editing"
-            icon="pi pi-plus"
-            text
-            rounded
-            aria-label="Add"
-            @click="add()"
-          />
-        </div>
-      </template>
       <Column
         v-if="!!onReorder"
         rowReorder
@@ -125,9 +109,7 @@ const slots = useSlots();
 type Props<T> = {
   header: string;
   modelValue: T[];
-  allowAdd?: boolean;
   copy?: (item: T) => T;
-  createNew?: () => T;
   save?: (item: T) => void;
   update?: (item: T) => void;
   onReorder?: (oldIndex: number, newIndex: number) => void;
@@ -187,15 +169,6 @@ function removeAt(event: MouseEvent, index: number) {
       props.remove(item.id);
     },
   });
-}
-
-function add() {
-  if (!props.createNew) {
-    throw new Error();
-  }
-  const item = props.createNew();
-  items.value.unshift(item);
-  editing.value = item;
 }
 
 function onRowReorder(event: { dragIndex: number; dropIndex: number }) {
