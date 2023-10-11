@@ -156,7 +156,7 @@ onMounted(() => focusInput());
 
 function focusInput() {
   nextTick(() => {
-    input.value.$el.focus();
+    input.value?.$el.focus();
   });
 }
 
