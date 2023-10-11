@@ -120,17 +120,19 @@ async (
 .RequireAuthorization();
 
 app.MapPost("/budget",
-  [SwaggerOperation(Summary = "Creates budget for the authenticated user")]
+  [SwaggerOperation(Summary = "Creates budget for the authenticated user (does nothing if budget already exists)")]
 async (
   HttpContext context,
   IMediator mediator,
   CancellationToken cancellationToken
   ) =>
   {
-    await mediator.Send(new CreateBudgetCommand(context.GetUserId()));
-    return Results.Ok();
+    var userId = context.GetUserId();
+    var created = await mediator.Send(new CreateBudgetCommand(userId));
+    return created ? Results.CreatedAtRoute(userId) : Results.Ok();
   })
 .Produces((int)HttpStatusCode.Created)
+.Produces((int)HttpStatusCode.OK)
 .WithTags(API_TITLE)
 .RequireAuthorization();
 
