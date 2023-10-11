@@ -7,7 +7,7 @@
       dataKey="id"
       columnResizeMode="expand"
       scrollable scrollHeight="flex" 
-      :virtualScrollerOptions="{ itemSize: 40 }"
+      :virtualScrollerOptions="virtualScrollerOptions"
       @rowReorder="onRowReorder"
     >
       <Column
@@ -102,6 +102,7 @@
 import { vueModel } from '@/helpers/vue-model';
 import { ref, useSlots } from 'vue';
 import { useConfirm } from 'primevue/useconfirm';
+import { VirtualScrollerProps } from 'primevue/virtualscroller';
 
 const confirm = useConfirm();
 const slots = useSlots();
@@ -109,6 +110,7 @@ const slots = useSlots();
 type Props<T> = {
   header: string;
   modelValue: T[];
+  virtualScrollerOptions?: VirtualScrollerProps,
   copy?: (item: T) => T;
   save?: (item: T) => void;
   update?: (item: T) => void;

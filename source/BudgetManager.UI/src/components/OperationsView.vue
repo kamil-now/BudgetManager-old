@@ -43,6 +43,7 @@
     <ListView
       header="Operations"
       v-model="filteredOperations"
+      :virtualScrollerOptions="{ itemSize: 40 }"
     >
       <template #actions="{ data }">
         <MoneyOperationActions :operation="data" />
