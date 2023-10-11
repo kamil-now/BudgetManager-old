@@ -93,6 +93,7 @@ app
   .component('Inplace', Inplace)
   .component('DynamicDialog', DynamicDialog);
 
+const appStore = useAppStore();
 if (process.env.VUE_APP_ENV === 'production') {
   if (!process.env.VUE_APP_AAD_CLIENT_ID
     || !process.env.VUE_APP_AAD_TENANT) {
@@ -110,12 +111,14 @@ if (process.env.VUE_APP_ENV === 'production') {
     .then(success => {
       axios.defaults.headers.common.Authorization = 'Bearer ' + service.accessToken;
       app.provide(AUTH, service);
-      router.push({ path: success ? '/home' : '/login' });
+      if (success) {
+        appStore.setLoggedIn(true);
+        router.push({ path: success ? '/home' : '/login' });
+      }
 
       app.mount('#app');
     });
 } else {
-  const appStore = useAppStore();
   appStore.setLoggedIn(['true', null].includes(window.localStorage.getItem('isLoggedIn')));
   const mockAuthService: IAuthService = {
     login(): Promise<void> {

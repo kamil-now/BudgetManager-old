@@ -11,9 +11,21 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
 import { useAppStore } from './store/store';
+import { AUTH, IAuthService } from '@/auth';
+import { inject, onBeforeMount } from 'vue';
 
+const auth = inject<IAuthService>(AUTH);
+if (!auth) {
+  throw new Error('No provider for IAuthService');
+}
 const store = useAppStore();
+
 const { isLoggedIn, isLoading } = storeToRefs(store);
+onBeforeMount(() => {
+  if (!isLoggedIn.value) {
+    auth.login();
+  }
+});
 
 </script>
 
