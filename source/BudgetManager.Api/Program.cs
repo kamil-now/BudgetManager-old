@@ -1,9 +1,8 @@
 using System.Net;
 using BudgetManager.Api;
 using BudgetManager.Api.Extensions;
-using BudgetManager.Application.Commands;
-using BudgetManager.Application.DependencyInjection;
-using BudgetManager.Application.Requests;
+using BudgetManager.Application.Extensions;
+using BudgetManager.Application.Features.BudgetManagement;
 using BudgetManager.Domain.Models;
 using BudgetManager.Infrastructure.Models;
 using MediatR;
@@ -212,52 +211,52 @@ app.MapCRUD<FundDto, CreateFundCommand, FundRequest, UpdateFundCommand, DeleteFu
   (ctx, id) => new DeleteFundCommand(ctx.GetUserId(), id)
 );
 
-app.MapCRUD<IncomeDto, CreateIncomeCommand, IncomeRequest, UpdateIncomeCommand, DeleteOperationCommand<Income>>(
+app.MapCRUD<IncomeDto, CreateIncomeCommand, IncomeRequest, UpdateIncomeCommand, DeleteMoneyOperationCommand<Income>>(
   "income",
   (ctx, create) => create with { UserId = ctx.GetUserId() },
   (ctx, id) => new IncomeRequest(ctx.GetUserId(), id),
   (ctx, update) => update with { UserId = ctx.GetUserId() },
-  (ctx, id) => new DeleteOperationCommand<Income>(ctx.GetUserId(), id)
+  (ctx, id) => new DeleteMoneyOperationCommand<Income>(ctx.GetUserId(), id)
 );
 
-app.MapCRUD<ExpenseDto, CreateExpenseCommand, ExpenseRequest, UpdateExpenseCommand, DeleteOperationCommand<Expense>>(
+app.MapCRUD<ExpenseDto, CreateExpenseCommand, ExpenseRequest, UpdateExpenseCommand, DeleteMoneyOperationCommand<Expense>>(
   "expense",
   (ctx, create) => create with { UserId = ctx.GetUserId() },
   (ctx, id) => new ExpenseRequest(ctx.GetUserId(), id),
   (ctx, update) => update with { UserId = ctx.GetUserId() },
-  (ctx, id) => new DeleteOperationCommand<Expense>(ctx.GetUserId(), id)
+  (ctx, id) => new DeleteMoneyOperationCommand<Expense>(ctx.GetUserId(), id)
 );
 
-app.MapCRUD<FundTransferDto, CreateFundTransferCommand, FundTransferRequest, UpdateFundTransferCommand, DeleteOperationCommand<FundTransfer>>(
+app.MapCRUD<FundTransferDto, CreateFundTransferCommand, FundTransferRequest, UpdateFundTransferCommand, DeleteMoneyOperationCommand<FundTransfer>>(
   "fund-transfer",
   (ctx, create) => create with { UserId = ctx.GetUserId() },
   (ctx, id) => new FundTransferRequest(ctx.GetUserId(), id),
   (ctx, update) => update with { UserId = ctx.GetUserId() },
-  (ctx, id) => new DeleteOperationCommand<FundTransfer>(ctx.GetUserId(), id)
+  (ctx, id) => new DeleteMoneyOperationCommand<FundTransfer>(ctx.GetUserId(), id)
 );
 
-app.MapCRUD<AccountTransferDto, CreateAccountTransferCommand, AccountTransferRequest, UpdateAccountTransferCommand, DeleteOperationCommand<AccountTransfer>>(
+app.MapCRUD<AccountTransferDto, CreateAccountTransferCommand, AccountTransferRequest, UpdateAccountTransferCommand, DeleteMoneyOperationCommand<AccountTransfer>>(
   "account-transfer",
   (ctx, create) => create with { UserId = ctx.GetUserId() },
   (ctx, id) => new AccountTransferRequest(ctx.GetUserId(), id),
   (ctx, update) => update with { UserId = ctx.GetUserId() },
-  (ctx, id) => new DeleteOperationCommand<AccountTransfer>(ctx.GetUserId(), id)
+  (ctx, id) => new DeleteMoneyOperationCommand<AccountTransfer>(ctx.GetUserId(), id)
 );
 
-app.MapCRUD<AllocationDto, CreateAllocationCommand, AllocationRequest, UpdateAllocationCommand, DeleteOperationCommand<Allocation>>(
+app.MapCRUD<AllocationDto, CreateAllocationCommand, AllocationRequest, UpdateAllocationCommand, DeleteMoneyOperationCommand<Allocation>>(
   "allocation",
   (ctx, create) => create with { UserId = ctx.GetUserId() },
   (ctx, id) => new AllocationRequest(ctx.GetUserId(), id),
   (ctx, update) => update with { UserId = ctx.GetUserId() },
-  (ctx, id) => new DeleteOperationCommand<Allocation>(ctx.GetUserId(), id)
+  (ctx, id) => new DeleteMoneyOperationCommand<Allocation>(ctx.GetUserId(), id)
 );
 
-app.MapCRUD<CurrencyExchangeDto, CreateCurrencyExchangeCommand, CurrencyExchangeRequest, UpdateCurrencyExchangeCommand, DeleteOperationCommand<CurrencyExchange>>(
+app.MapCRUD<CurrencyExchangeDto, CreateCurrencyExchangeCommand, CurrencyExchangeRequest, UpdateCurrencyExchangeCommand, DeleteMoneyOperationCommand<CurrencyExchange>>(
   "currency-exchange",
   (ctx, create) => create with { UserId = ctx.GetUserId() },
   (ctx, id) => new CurrencyExchangeRequest(ctx.GetUserId(), id),
   (ctx, update) => update with { UserId = ctx.GetUserId() },
-  (ctx, id) => new DeleteOperationCommand<CurrencyExchange>(ctx.GetUserId(), id)
+  (ctx, id) => new DeleteMoneyOperationCommand<CurrencyExchange>(ctx.GetUserId(), id)
 );
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();

@@ -3,7 +3,7 @@ namespace BudgetManager.Api;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using BudgetManager.Api.Extensions;
-using BudgetManager.Application.Requests;
+using BudgetManager.Application.Features.BudgetManagement;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
