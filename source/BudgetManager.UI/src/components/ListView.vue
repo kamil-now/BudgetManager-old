@@ -80,7 +80,7 @@
                   text
                   rounded
                   aria-label="Save"
-                  @click="save(data, index)"
+                  @click="saveItem(data, index)"
                 />
                 <Button
                   v-if="editing === data"
@@ -135,7 +135,7 @@ function createCopy(item: any) {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function save(item: any, index: number) {
+function saveItem(item: any, index: number) {
   if (!props.update || !props.save) {
     throw new Error();
   }

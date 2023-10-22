@@ -1,4 +1,4 @@
-import { ArrayUtils } from '@/helpers/array-utils';
+import { ArrayUtils } from '../src/helpers/array-utils';
 
 describe(ArrayUtils.name, () => {
   describe(ArrayUtils.move.name, () => {

@@ -1,4 +1,4 @@
 module.exports = {
-  preset: '@vue/cli-plugin-unit-jest/presets/typescript-and-babel',
+  preset: './node_modules/ts-jest/presets/default-esm/jest-preset.js',
   testMatch: ['**/*.spec.ts']
 };
