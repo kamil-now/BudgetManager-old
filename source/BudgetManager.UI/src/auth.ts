@@ -31,13 +31,17 @@ export class MsalAuthService implements IAuthService {
   }
 
   private readonly msal: PublicClientApplication;
-  private readonly redirectRequest: RedirectRequest;
+  private redirectRequest?: RedirectRequest;
+  private router: Router;
+  private config: MsalConfiguration;
   private readonly appStore: AppStore;
 
   private _accessToken: string | undefined;
 
   constructor(config: MsalConfiguration, router: Router) {
     this.appStore = useAppStore();
+    this.router = router;
+    this.config = config;
     this.msal = new PublicClientApplication({
       auth: {
         clientId: config.clientId,
@@ -52,10 +56,11 @@ export class MsalAuthService implements IAuthService {
         storeAuthStateInCookie: true,
       },
     });
+  }
 
-    this.msal.initialize();
-
-    router.beforeEach((to, _, next) => {
+  async initialize(): Promise<void> {
+    await this.msal.initialize();
+    this.router.beforeEach((to, _, next) => {
       if (!to.path.includes('/login') && !this.appStore.isLoggedIn) {
         console.warn(
           `Prevented unauthorized access to ${to.path}, redirecting to /login`
@@ -66,8 +71,8 @@ export class MsalAuthService implements IAuthService {
       } else next();
     });
     this.redirectRequest = {
-      scopes: config.scopeNames.map(
-        (scope) => `api://${config.clientId}/${scope}`
+      scopes: this.config.scopeNames.map(
+        (scope) => `api://${this.config.clientId}/${scope}`
       ),
     };
   }
@@ -97,7 +102,7 @@ export class MsalAuthService implements IAuthService {
             this.msal.setActiveAccount(accounts[0]);
 
             const request = {
-              ...this.redirectRequest,
+              ...this.redirectRequest!,
               account: accounts[0],
             };
 

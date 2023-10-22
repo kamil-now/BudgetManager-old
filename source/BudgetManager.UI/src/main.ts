@@ -107,7 +107,8 @@ if (process.env.VUE_APP_ENV === 'production') {
   };
 
   const service = new MsalAuthService(msalConfig, router);
-  service.acquireTokenSilent()
+  service.initialize().then(()=>{
+    service.acquireTokenSilent()
     .then(success => {
       axios.defaults.headers.common.Authorization = 'Bearer ' + service.accessToken;
       app.provide(AUTH, service);
@@ -118,6 +119,7 @@ if (process.env.VUE_APP_ENV === 'production') {
 
       app.mount('#app');
     });
+  })
 } else {
   appStore.setLoggedIn(['true', null].includes(window.localStorage.getItem('isLoggedIn')));
   const mockAuthService: IAuthService = {
