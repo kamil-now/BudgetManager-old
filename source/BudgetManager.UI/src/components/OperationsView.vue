@@ -5,16 +5,18 @@
     <DynamicDialog />
     <div class="operations-view_filters">
       <Calendar
-          v-model="dateFilter"
-          dateFormat="yy/mm/dd"
-          size="small"
-          placeholder="yy/mm/dd"
-          mask="9999/99/99"
-          @date-select="dateFilter = DateUtils.createDateOnlyString($event);"
-        />
+        style="width: 150px"
+        v-model="dateFilter"
+        dateFormat="yy/mm/dd"
+        size="small"
+        placeholder="yy/mm/dd"
+        mask="9999/99/99"
+        @date-select="dateFilter = DateUtils.createDateOnlyString($event)"
+      />
       <span class="p-input-icon-left">
         <i class="pi pi-search" />
         <InputText
+          style="width: 150px"
           ref="input"
           v-model="filter"
           placeholder="Search"
@@ -26,7 +28,7 @@
         style="min-width: 150px"
       >
         <template #value="{ value }">
-          <span>{{ value == 0 ? 'Type' : MoneyOperationType[value] }}</span>
+          <span>{{ value == 0 ? "Type" : MoneyOperationType[value] }}</span>
         </template>
         <template #option="{ option }">
           <span>{{ MoneyOperationType[option] }}</span>
@@ -44,7 +46,7 @@
     <ListView
       header="Operations"
       v-model="filteredOperations"
-      :virtualScrollerOptions="{ itemSize: 40 }"
+      :virtualScrollerOptions="{ itemSize: 40, lazy: true, step: 20 }"
     >
       <template #actions="{ data }">
         <MoneyOperationActions :operation="data" />
@@ -104,7 +106,7 @@
             </span>
             <span v-if="data.targetCurrency">
               {{
-                Math.round(data.value.amount / data.exchangeRate, 2) +
+                (data.value.amount / data.exchangeRate).toFixed(2) +
                 " " +
                 data.targetCurrency
               }}
@@ -123,14 +125,18 @@ import { DisplayFormat } from '@/helpers/display-format';
 import { MoneyOperationType } from '@/models/money-operation-type.enum';
 import { useAppStore } from '@/store/store';
 import { storeToRefs } from 'pinia';
-import { computed,  nextTick, onMounted, ref } from 'vue';
+import { computed, nextTick, onMounted, ref } from 'vue';
 import MoneyOperationActions from './MoneyOperationActions.vue';
 
 const store = useAppStore();
 const input = ref();
 
-const { filteredOperations, operationsFilter, operationsTypeFilter, operationsDateFilter } =
-  storeToRefs(store);
+const {
+  filteredOperations,
+  operationsFilter,
+  operationsTypeFilter,
+  operationsDateFilter,
+} = storeToRefs(store);
 const moneyOperationTypes = Object.keys(MoneyOperationType).filter(
   (item) => !isNaN(Number(item)) && item !== '0'
 );
@@ -143,9 +149,8 @@ const filter = computed({
 });
 const typeFilter = computed({
   get: () => operationsTypeFilter.value,
-  set: (newValue) => {
-    operationsTypeFilter.value =
-      MoneyOperationType[MoneyOperationType[newValue]];
+  set: (newValue: number) => {
+    operationsTypeFilter.value = MoneyOperationType[MoneyOperationType[newValue] as keyof typeof MoneyOperationType];
   },
 });
 const dateFilter = computed({
@@ -187,6 +192,7 @@ function clearFilters() {
     padding: 0.5rem;
     display: flex;
     width: 100%;
+    flex-wrap: wrap;
     gap: 1rem;
     display: flex;
     align-items: center;

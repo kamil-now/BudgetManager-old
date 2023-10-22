@@ -107,19 +107,19 @@ if (process.env.VUE_APP_ENV === 'production') {
   };
 
   const service = new MsalAuthService(msalConfig, router);
-  service.initialize().then(()=>{
+  service.initialize().then(() => {
     service.acquireTokenSilent()
-    .then(success => {
-      axios.defaults.headers.common.Authorization = 'Bearer ' + service.accessToken;
-      app.provide(AUTH, service);
-      if (success) {
-        appStore.setLoggedIn(true);
-        router.push({ path: success ? '/home' : '/login' });
-      }
+      .then(success => {
+        axios.defaults.headers.common.Authorization = 'Bearer ' + service.accessToken;
+        app.provide(AUTH, service);
+        if (success) {
+          appStore.setLoggedIn(true);
+          router.push({ path: success ? '/home' : '/login' });
+        }
 
-      app.mount('#app');
-    });
-  })
+        app.mount('#app');
+      });
+  });
 } else {
   appStore.setLoggedIn(['true', null].includes(window.localStorage.getItem('isLoggedIn')));
   const mockAuthService: IAuthService = {

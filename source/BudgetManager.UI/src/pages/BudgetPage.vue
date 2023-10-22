@@ -1,17 +1,30 @@
 <template>
   <Toast />
   <div v-if="!failed" class="budget-page">
-      <BalanceView/>
+    <BalanceView/>
     <div class="budget-page_content">
-      <div class="budget-page_content-items">
-        <FundsView />
-      </div>
-      <div class="budget-page_content-operations">
-        <OperationsView></OperationsView>
-      </div>
-      <div class="budget-page_content-items">
+      <TabView v-if="windowWidth && windowWidth < 1300" :lazy="true">
+        <TabPanel header="Funds">
+          <FundsView />
+        </TabPanel>
+        <TabPanel header="Operations">
+          <OperationsView></OperationsView>
+        </TabPanel>
+        <TabPanel header="Accounts">
         <AccountsView />
-      </div>
+        </TabPanel>
+      </TabView>
+      <template v-else>
+        <div class="budget-page_content-items">
+          <FundsView />
+        </div>
+        <div class="budget-page_content-operations">
+          <OperationsView></OperationsView>
+        </div>
+        <div class="budget-page_content-items">
+          <AccountsView />
+        </div>
+      </template>
     </div>
   </div>
 </template>
@@ -22,7 +35,7 @@ import AccountsView from '@/components/AccountsView.vue';
 import FundsView from '@/components/FundsView.vue';
 import { useAppStore } from '@/store/store';
 import { storeToRefs } from 'pinia';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, onDeactivated, nextTick } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import axios, { AxiosError } from 'axios';
 import OperationsView from '@/components/OperationsView.vue';
@@ -31,10 +44,17 @@ const store = useAppStore();
 const { isNewUser } = storeToRefs(store);
 const toast = useToast();
 const failed = ref<boolean>(false);
+const windowWidth = ref<number>();
+
 onMounted(() => {
   if (isNewUser) {
     store.createBudget();
   }
+
+  nextTick(() => {
+    onResize();
+    window.addEventListener('resize', onResize);
+  });
 
   axios.interceptors.response.use(
     response => response,
@@ -69,6 +89,11 @@ onMounted(() => {
   );
 });
 
+onDeactivated(() => {
+  window.removeEventListener('resize', onResize); 
+});
+
+const onResize = () => windowWidth.value = window.innerWidth;
 </script>
 
 <style lang="scss">
