@@ -31,7 +31,7 @@ onBeforeMount(() => {
 
 <style lang="scss">
 #app {
-  @media (max-width: map-get($breakpoints, xs)), (max-height: 500px) {
+  @media (max-width: map-get($breakpoints, xs)), (max-height: 300px) {
     * {
       display: none;
     }
@@ -44,7 +44,7 @@ onBeforeMount(() => {
     justify-content: center;
     height: 50%;
       
-    @media (max-width: map-get($breakpoints, xs)), (max-height: 500px) {
+    @media (max-width: map-get($breakpoints, xs)), (max-height: 300px) {
       display: flex;
     }
   }

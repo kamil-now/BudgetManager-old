@@ -129,7 +129,6 @@ export const APP_STORE: DefineStoreOptions<
         operations = operations.filter(x => x.type === state.operationsTypeFilter);
       }
       if (state.operationsDateFilter.length > 0) {
-        console.warn(state.operationsDateFilter)
         operations = operations.filter(x => x.date === state.operationsDateFilter);
       }
       return operations;

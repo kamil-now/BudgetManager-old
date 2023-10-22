@@ -1,21 +1,16 @@
 <template>
   <Toast />
   <div v-if="!failed" class="budget-page">
+      <BalanceView/>
     <div class="budget-page_content">
       <div class="budget-page_content-items">
-        <BalanceView />
-        <TabView class="budget-page_content-items_tab-view">
-          <TabPanel header="Funds">
-            <FundsView />
-          </TabPanel>
-          <TabPanel header="Accounts">
-            <AccountsView />
-          </TabPanel>
-        </TabView>
+        <FundsView />
       </div>
-
       <div class="budget-page_content-operations">
         <OperationsView></OperationsView>
+      </div>
+      <div class="budget-page_content-items">
+        <AccountsView />
       </div>
     </div>
   </div>
@@ -106,15 +101,7 @@ onMounted(() => {
     &-items {
       height: calc(100% - 4rem);
       min-width: 300px;
-      width: calc(50% - 0.5rem);
-      >* {
-        overflow: auto;
-        max-height: 33%;
-      }
-
-      &_tab-view {
-        max-height: 100%;
-      }
+      width: calc(25% - 1rem);
     
       @include media-breakpoint(lg, down) {
         height: 100%;

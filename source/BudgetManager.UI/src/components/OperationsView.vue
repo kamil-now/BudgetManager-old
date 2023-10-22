@@ -23,9 +23,10 @@
       <Dropdown
         v-model="typeFilter"
         :options="moneyOperationTypes"
+        style="min-width: 150px"
       >
         <template #value="{ value }">
-          <span>{{ MoneyOperationType[value] }}</span>
+          <span>{{ value == 0 ? 'Type' : MoneyOperationType[value] }}</span>
         </template>
         <template #option="{ option }">
           <span>{{ MoneyOperationType[option] }}</span>
@@ -131,8 +132,9 @@ const input = ref();
 const { filteredOperations, operationsFilter, operationsTypeFilter, operationsDateFilter } =
   storeToRefs(store);
 const moneyOperationTypes = Object.keys(MoneyOperationType).filter(
-  (item) => !isNaN(Number(item))
+  (item) => !isNaN(Number(item)) && item !== '0'
 );
+
 const filter = computed({
   get: () => operationsFilter.value,
   set: (newValue) => {

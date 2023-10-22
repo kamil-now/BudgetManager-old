@@ -11,7 +11,7 @@
         <div class="funds-view_body">
           <div class="funds-view_body_balance">
             <div class="money" v-for="(value, currency) in data.balance" :key="currency">
-              {{ DisplayFormat.money({ amount: value, currency: currency.toString() }) }}
+              {{ DisplayFormat.money({ amount: value, currency: currency }) }}
             </div>
           </div>
           <div class="funds-view_body_name">{{ data.name }}</div>
