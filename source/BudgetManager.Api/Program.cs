@@ -1,22 +1,15 @@
-using System.Net;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 using BudgetManager.Api;
-using BudgetManager.Api.Extensions;
 using BudgetManager.Application.Extensions;
-using BudgetManager.Application.Features.BudgetManagement;
-using BudgetManager.Domain.Models;
 using BudgetManager.Infrastructure.Models;
-using MediatR;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.FileProviders;
 #if RELEASE
 using Microsoft.Identity.Web;
 #endif
 using Microsoft.OpenApi.Models;
 using MongoDB.Extensions.Migration;
-using Swashbuckle.AspNetCore.Annotations;
-
-const string API_TITLE = "| Budget Manager API";
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -107,161 +100,36 @@ app.UseMongoMigration(m => m
 
 app.MapGet("/", (HttpContext context) => context.Response.Redirect("/swagger", true)).ExcludeFromDescription();
 
-app.MapGet("/budget",
-  [SwaggerOperation(Summary = "Returns budget summary for the authenticated user")]
-async (
-  HttpContext context,
-  IMediator mediator,
-  CancellationToken cancellationToken
-  ) => Results.Ok(await mediator.Send(new BudgetSummaryRequest(context.GetUserId())))
-  )
-.WithTags(API_TITLE)
-.RequireAuthorization();
-
-app.MapPost("/budget",
-  [SwaggerOperation(Summary = "Creates budget for the authenticated user (does nothing if budget already exists)")]
-async (
-  HttpContext context,
-  IMediator mediator,
-  CancellationToken cancellationToken
-  ) =>
-  {
-    var userId = context.GetUserId();
-    var created = await mediator.Send(new CreateBudgetCommand(userId));
-    return created ? Results.CreatedAtRoute(userId) : Results.Ok();
-  })
-.Produces((int)HttpStatusCode.Created)
-.Produces((int)HttpStatusCode.OK)
-.WithTags(API_TITLE)
-.RequireAuthorization();
-
-app.MapPost("/recalculate-budget",
-  [SwaggerOperation(Summary = "Clear funds and accounts balance and reapply all operations.")]
-async (
-  HttpContext context,
-  IMediator mediator,
-  CancellationToken cancellationToken
-  ) =>
-  {
-    await mediator.Send(new RecalculateBudgetCommand(context.GetUserId()));
-    return Results.Ok();
-  })
-.Produces((int)HttpStatusCode.Created)
-.WithTags(API_TITLE)
-.RequireAuthorization();
-
-app.MapGet("/user-settings",
-async (
-  HttpContext context,
-  IMediator mediator,
-  CancellationToken cancellationToken
-  ) => Results.Ok(await mediator.Send(new UserSettingsRequest(context.GetUserId()))))
-.WithTags(API_TITLE)
-.RequireAuthorization();
-
-app.MapPut("/user-settings",
-async (
-  HttpContext context,
-  IMediator mediator,
-  [FromBody] UpdateUserSettingsCommand command,
-  CancellationToken cancellationToken
-  )
-  => Results.Ok(await mediator.Send(command with { UserId = context.GetUserId() })))
-.WithTags(API_TITLE)
-.RequireAuthorization();
-
-app.MapDelete("/budget",
-async (
-  HttpContext context,
-  IMediator mediator,
-  CancellationToken cancellationToken
-  ) =>
-  {
-    await mediator.Send(new DeleteBudgetCommand(context.GetUserId()));
-    return Results.Ok();
-  })
-.WithTags(API_TITLE)
-.RequireAuthorization();
-
-app.MapGet("/balance",
-  [SwaggerOperation(Summary = "Gets user overall balance in a form of a dictionary with currency codes as keys")]
-async (
-  HttpContext context,
-  IMediator mediator,
-  CancellationToken cancellationToken
-  )
-  => Results.Ok(await mediator.Send(new BalanceRequest(context.GetUserId()), cancellationToken)))
-.Produces<BudgetBalanceDto>()
-.WithTags(API_TITLE)
-.RequireAuthorization();
-
-app.MapCRUD<AccountDto, CreateAccountCommand, AccountRequest, UpdateAccountCommand, DeleteAccountCommand>(
-  "account",
-  (ctx, create) => create with { UserId = ctx.GetUserId() },
-  (ctx, id) => new AccountRequest(ctx.GetUserId(), id),
-  (ctx, update) => update with { UserId = ctx.GetUserId() },
-  (ctx, id) => new DeleteAccountCommand(ctx.GetUserId(), id)
-);
-
-app.MapCRUD<FundDto, CreateFundCommand, FundRequest, UpdateFundCommand, DeleteFundCommand>(
-  "fund",
-  (ctx, create) => create with { UserId = ctx.GetUserId() },
-  (ctx, id) => new FundRequest(ctx.GetUserId(), id),
-  (ctx, update) => update with { UserId = ctx.GetUserId() },
-  (ctx, id) => new DeleteFundCommand(ctx.GetUserId(), id)
-);
-
-app.MapCRUD<IncomeDto, CreateIncomeCommand, IncomeRequest, UpdateIncomeCommand, DeleteMoneyOperationCommand<Income>>(
-  "income",
-  (ctx, create) => create with { UserId = ctx.GetUserId() },
-  (ctx, id) => new IncomeRequest(ctx.GetUserId(), id),
-  (ctx, update) => update with { UserId = ctx.GetUserId() },
-  (ctx, id) => new DeleteMoneyOperationCommand<Income>(ctx.GetUserId(), id)
-);
-
-app.MapCRUD<ExpenseDto, CreateExpenseCommand, ExpenseRequest, UpdateExpenseCommand, DeleteMoneyOperationCommand<Expense>>(
-  "expense",
-  (ctx, create) => create with { UserId = ctx.GetUserId() },
-  (ctx, id) => new ExpenseRequest(ctx.GetUserId(), id),
-  (ctx, update) => update with { UserId = ctx.GetUserId() },
-  (ctx, id) => new DeleteMoneyOperationCommand<Expense>(ctx.GetUserId(), id)
-);
-
-app.MapCRUD<FundTransferDto, CreateFundTransferCommand, FundTransferRequest, UpdateFundTransferCommand, DeleteMoneyOperationCommand<FundTransfer>>(
-  "fund-transfer",
-  (ctx, create) => create with { UserId = ctx.GetUserId() },
-  (ctx, id) => new FundTransferRequest(ctx.GetUserId(), id),
-  (ctx, update) => update with { UserId = ctx.GetUserId() },
-  (ctx, id) => new DeleteMoneyOperationCommand<FundTransfer>(ctx.GetUserId(), id)
-);
-
-app.MapCRUD<AccountTransferDto, CreateAccountTransferCommand, AccountTransferRequest, UpdateAccountTransferCommand, DeleteMoneyOperationCommand<AccountTransfer>>(
-  "account-transfer",
-  (ctx, create) => create with { UserId = ctx.GetUserId() },
-  (ctx, id) => new AccountTransferRequest(ctx.GetUserId(), id),
-  (ctx, update) => update with { UserId = ctx.GetUserId() },
-  (ctx, id) => new DeleteMoneyOperationCommand<AccountTransfer>(ctx.GetUserId(), id)
-);
-
-app.MapCRUD<AllocationDto, CreateAllocationCommand, AllocationRequest, UpdateAllocationCommand, DeleteMoneyOperationCommand<Allocation>>(
-  "allocation",
-  (ctx, create) => create with { UserId = ctx.GetUserId() },
-  (ctx, id) => new AllocationRequest(ctx.GetUserId(), id),
-  (ctx, update) => update with { UserId = ctx.GetUserId() },
-  (ctx, id) => new DeleteMoneyOperationCommand<Allocation>(ctx.GetUserId(), id)
-);
-
-app.MapCRUD<CurrencyExchangeDto, CreateCurrencyExchangeCommand, CurrencyExchangeRequest, UpdateCurrencyExchangeCommand, DeleteMoneyOperationCommand<CurrencyExchange>>(
-  "currency-exchange",
-  (ctx, create) => create with { UserId = ctx.GetUserId() },
-  (ctx, id) => new CurrencyExchangeRequest(ctx.GetUserId(), id),
-  (ctx, update) => update with { UserId = ctx.GetUserId() },
-  (ctx, id) => new DeleteMoneyOperationCommand<CurrencyExchange>(ctx.GetUserId(), id)
-);
+app.MapEndpoints();
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
+
 #if DEBUG
-app.RunDatabaseContainerProcess();
+bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+bool isLinux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
+
+if (isWindows)
+{
+  var process = new Process();
+  process.StartInfo.FileName = "cmd.exe";
+  process.StartInfo.Arguments = "/C docker ps -aqf \"name=budget-manager-db\" | findstr . && docker start budget-manager-db || docker run -d -p 27017:27017 --name budget-manager-db mongo:latest";
+  process.StartInfo.UseShellExecute = false;
+  process.StartInfo.RedirectStandardOutput = true;
+  process.Start();
+}
+else if (isLinux)
+{
+  var process = new Process();
+  process.StartInfo.FileName = "/bin/bash";
+  process.StartInfo.Arguments = "-c \"docker ps -aqf 'name=budget-manager-db' | grep -q . && docker start budget-manager-db || docker run -d -p 27017:27017 --name budget-manager-db mongo:latest\"";
+  process.StartInfo.UseShellExecute = false;
+  process.StartInfo.RedirectStandardOutput = true;
+  process.Start();
+}
+else
+{
+  throw new NotSupportedException("The operating system is not supported.");
+}
 app.Run("http://localhost:3001");
 #else
 app.Run();
