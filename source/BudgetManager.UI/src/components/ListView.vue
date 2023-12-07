@@ -136,12 +136,15 @@ function createCopy(item: any) {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function saveItem(item: any, index: number) {
-  if (!props.update || !props.save) {
-    throw new Error();
-  }
   if (item.id) {
+    if (!props.update ) {
+      throw new Error();
+    }
     props.update(item);
   } else {
+    if (!props.save) {
+      throw new Error();
+    }
     props.save(item);
     items.value.splice(index, 1);
   }
