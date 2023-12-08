@@ -176,6 +176,8 @@ export const APP_STORE: DefineStoreOptions<
       await Utils.runAsyncOperation(this, () => axios.post<void>('budget'));
     },
     async reorderAccounts(oldIndex: number, newIndex: number) {
+      oldIndex = this.budget.accounts.indexOf(this.accounts[oldIndex]);
+      newIndex = this.budget.accounts.indexOf(this.accounts[newIndex]);
       const account = this.budget.accounts.splice(oldIndex, 1)[0];
       this.budget.accounts.splice(newIndex, 0, account);
       this.updateUserSettings();
