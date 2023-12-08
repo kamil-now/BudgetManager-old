@@ -27,8 +27,8 @@ public class AccountTransferMappingProfile : Profile
 
     CreateMap<AccountTransfer, AccountTransferDto>()
       .ForMember(x => x.Type, opt => opt.Ignore())
-      .ForMember(x => x.AccountId, opt => opt.MapFrom(src => src.SourceAccountId))
       .ForMember(x => x.AccountName, opt => opt.Ignore())
-      .ForMember(x => x.TargetAccountName, opt => opt.Ignore());
+      .ForMember(x => x.TargetAccountName, opt => opt.Ignore())
+      .ForCtorParam(ctorParamName: nameof(AccountTransferDto.AccountId), opt => opt.MapFrom(src => src.SourceAccountId));
   }
 }

@@ -27,8 +27,8 @@ public class FundTransferMappingProfile : Profile
 
     CreateMap<FundTransfer, FundTransferDto>()
       .ForMember(x => x.Type, opt => opt.Ignore())
-      .ForMember(x => x.FundId, opt => opt.MapFrom(src => src.SourceFundId))
       .ForMember(x => x.FundName, opt => opt.Ignore())
-      .ForMember(x => x.TargetFundName, opt => opt.Ignore());
+      .ForMember(x => x.TargetFundName, opt => opt.Ignore())
+      .ForCtorParam(ctorParamName: nameof(FundTransferDto.FundId), opt => opt.MapFrom(src => src.SourceFundId));
   }
 }
