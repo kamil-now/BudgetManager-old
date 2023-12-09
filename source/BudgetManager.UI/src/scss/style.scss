@@ -78,3 +78,7 @@ $date-width: 4rem;
 .p-button:focus {
   box-shadow: 0 0 0 0px #ffffff, 0 0 0 2px #b1b3f8, 0 0px 0 black;
 }
+.p-dropdown-label {
+  display: flex;
+  align-items: center;
+}
