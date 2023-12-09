@@ -1,11 +1,12 @@
 <template>
-  <ProgressBar 
+  <ProgressSpinner
     v-if="isLoggedIn && isLoading"
+    strokeWidth="8"
+    animationDuration=".5s"
+    aria-label="Loading indicator"
     class="loading-indicator"
-    mode="indeterminate"
-    >
-  </ProgressBar>
-  <router-view/>
+  />
+  <router-view />
 </template>
 
 <script setup lang="ts">
@@ -26,7 +27,6 @@ onBeforeMount(() => {
     auth.login();
   }
 });
-
 </script>
 
 <style lang="scss">
@@ -43,7 +43,7 @@ onBeforeMount(() => {
     align-items: center;
     justify-content: center;
     height: 50%;
-      
+
     @media (max-width: map-get($breakpoints, xs)), (max-height: 300px) {
       display: flex;
     }
@@ -56,10 +56,13 @@ onBeforeMount(() => {
   animation: fadein 1s;
 
   .loading-indicator {
-    height: 0.25rem;
-    width: 100vw;
     position: absolute;
-    top: 0;
+    
+    width: 2rem;
+    height: 2rem;
+    
+    top: 0.25rem;
+    right: 0.5rem;
   }
 }
 
@@ -71,5 +74,4 @@ onBeforeMount(() => {
     opacity: 1;
   }
 }
-
 </style>
