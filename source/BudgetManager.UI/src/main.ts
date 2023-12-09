@@ -11,24 +11,13 @@ import InputText from 'primevue/inputtext';
 import 'primevue/resources/primevue.min.css';
 import 'primevue/resources/themes/lara-light-indigo/theme.css';
 import SpeedDial from 'primevue/speeddial';
-import Tag from 'primevue/tag';
-import Card from 'primevue/card';
-import Fieldset from 'primevue/fieldset';
-import Panel from 'primevue/panel';
-import Accordion from 'primevue/accordion';
-import AccordionTab from 'primevue/accordiontab';
-import Divider from 'primevue/divider';
-import Checkbox from 'primevue/checkbox';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
-import ColumnGroup from 'primevue/columngroup';   // optional
-import Row from 'primevue/row';
 import Calendar from 'primevue/calendar';
 import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';
 import Toast from 'primevue/toast';
 import ToastService from 'primevue/toastservice';
-import Inplace from 'primevue/inplace';
 import DialogService from 'primevue/dialogservice';
 import DynamicDialog from 'primevue/dynamicdialog';
 import ProgressSpinner from 'primevue/progressspinner';
@@ -40,6 +29,7 @@ import axios from 'axios';
 import { createPinia } from 'pinia';
 import { createApp } from 'vue';
 import { useAppStore } from './store/store';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import Colada, { PiniaColadaPlugin } from 'colada-plugin';
 
 if (
@@ -56,6 +46,7 @@ axios.defaults.baseURL = process.env.VUE_APP_API_URL;
 
 const app = createApp(App);
 const pinia = createPinia();
+
 app
   .use(PrimeVue)
   .use(ToastService)
@@ -72,17 +63,7 @@ app
   .component('Calendar', Calendar)
   .component('DataTable', DataTable)
   .component('Column', Column)
-  .component('ColumnGroup', ColumnGroup)
-  .component('Row', Row)
-  .component('Checkbox', Checkbox)
-  .component('Divider', Divider)
-  .component('Accordion', Accordion)
-  .component('AccordionTab', AccordionTab)
-  .component('Panel', Panel)
-  .component('Fieldset', Fieldset)
   .component('ProgressSpinner', ProgressSpinner)
-  .component('Card', Card)
-  .component('Tag', Tag)
   .component('SpeedDial', SpeedDial)
   .component('ConfirmPopup', ConfirmPopup)
   .component('Dropdown', Dropdown)
@@ -90,8 +71,8 @@ app
   .component('InputText', InputText)
   .component('InputNumber', InputNumber)
   .component('Toast', Toast)
-  .component('Inplace', Inplace)
   .component('DynamicDialog', DynamicDialog);
+  
 
 const appStore = useAppStore();
 if (process.env.VUE_APP_ENV === 'production') {
