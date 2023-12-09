@@ -18,7 +18,7 @@
               {{
                 DisplayFormat.money({
                   amount: value,
-                  currency: currency,
+                  currency: currency.toString(),
                 })
               }}
             </div>

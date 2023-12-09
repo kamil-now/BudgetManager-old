@@ -71,7 +71,6 @@ const accountName = computed({
   }
 });
 const initialBalance = computed(() => {
-  console.warn('GET', props.account.initialBalance);
   return props.account.initialBalance;}
 );
 function add() {
