@@ -41,7 +41,8 @@
               ></slot>
             </div>
             <div style="position: absolute; right: 0; display: flex">
-              <div v-if="slots.actions">
+              <div v-if="slots.actions && data.id">
+                <!-- TODO when id is undefined display loader instead -->
                 <slot 
                   v-if="hover === data"
                   name="actions" 
@@ -63,7 +64,7 @@
                   text
                   rounded
                   aria-label="Add"
-                  @click="editing = data"
+                  @click="edit(data)"
                 />
                 <Button
                   v-if="data.id && hover === data && editing !== data"
@@ -123,6 +124,7 @@ const emit = defineEmits(['update:modelValue']);
 const items = vueModel(props, emit);
 const hover = ref<object | null>(null);
 const editing = ref<object | null>(null);
+const beforeUpdate = ref<object | null>(null);
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function createCopy(item: any) {
@@ -132,6 +134,12 @@ function createCopy(item: any) {
   const newItem = props.copy(item);
   items.value.unshift(newItem);
   editing.value = newItem;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function edit(item: any) {
+  editing.value = item;
+  beforeUpdate.value = { ...item };
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -155,6 +163,8 @@ function saveItem(item: any, index: number) {
 function discard(item: any) {
   if (!item.id) {
     items.value = items.value.filter((x) => !!x.id);
+  } else {
+    Object.assign(item, beforeUpdate.value);
   }
   editing.value = null;
 }

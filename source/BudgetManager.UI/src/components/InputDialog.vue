@@ -245,9 +245,15 @@ function saveOperation() {
   }
 }
 function discard() {
-  operation.value = initialOperationValue.value;
-  account.value = initialAccountValue.value;
-  fund.value = initialFundValue.value;
+  if (initialOperationValue.value) {
+    onOperationChanged(initialOperationValue.value);
+  }
+  if (initialAccountValue.value) {
+    onAccountChanged(initialAccountValue.value);
+  }
+  if (initialFundValue.value) {
+    onFundChanged(initialFundValue.value);
+  }
   dialogRef?.value.close();
 }
 </script>
