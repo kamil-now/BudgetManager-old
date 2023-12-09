@@ -3,7 +3,12 @@
     <BudgetSpeedDial />
     <ConfirmPopup />
     <DynamicDialog />
-    <div class="operations-view_filters">
+    <div class="operations-view_filters-toggle" @click="showFilters = !showFilters">
+      <i v-if="showFilters" class="pi pi-search-minus"/>
+      <i v-else class="pi pi-search-plus"/>
+      <span>filters</span>
+    </div>
+    <div v-if="showFilters"  class="operations-view_filters">
       <Calendar
         style="width: 150px"
         v-model="dateFilter"
@@ -130,7 +135,7 @@ import MoneyOperationActions from './MoneyOperationActions.vue';
 
 const store = useAppStore();
 const input = ref();
-
+const showFilters = ref(false);
 const {
   filteredOperations,
   operationsFilter,
@@ -197,6 +202,25 @@ function clearFilters() {
     display: flex;
     align-items: center;
     justify-content: start;
+
+    &-toggle {
+      position: absolute;
+      top: 3rem;
+      left: 35%;
+      width: 0;
+      height: 0;
+      min-width: 0;
+      min-height: 0;
+      z-index: 2;
+      display: flex;
+      flex-wrap: nowrap;
+      white-space: nowrap;
+      gap: 0.5rem;
+
+      &:hover {
+        cursor: pointer;
+      }
+    }
   }
   &_body {
     display: flex;
