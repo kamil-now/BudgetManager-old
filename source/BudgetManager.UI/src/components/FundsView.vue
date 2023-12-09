@@ -66,7 +66,7 @@ function onFundChanged(fund: Fund, newValue: Fund) {
       overflow: hidden;
       > div {
         display: flex;
-        justify-content: end;
+        justify-content: flex-end;
       }
     }
   }

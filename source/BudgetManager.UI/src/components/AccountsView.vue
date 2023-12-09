@@ -81,7 +81,7 @@ function onAccountChanged(account: Account, newValue: Account) {
 
       > div {
         display: flex;
-        justify-content: end;
+        justify-content: flex-end;
       }
     }
   }

@@ -274,7 +274,7 @@ function discard() {
     width: 100%;
     display: flex;
     gap: 1rem;
-    justify-content: end;
+    justify-content: flex-end;
   }
 }
 </style>
