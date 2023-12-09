@@ -42,6 +42,7 @@
       v-model="accountTransferValue" 
       mode="currency"
       currencyDisplay="code"
+      :highlightOnFocus="true"
       :allowEmpty="false"
       :currency="accountTransferCurrency" 
       :min="0"

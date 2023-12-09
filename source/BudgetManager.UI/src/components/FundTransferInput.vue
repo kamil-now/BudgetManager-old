@@ -42,6 +42,7 @@
       v-model="fundTransferValue" 
       mode="currency"
       currencyDisplay="code"
+      :highlightOnFocus="true"
       :allowEmpty="false"
       :currency="fundTransferCurrency" 
       :min="0"

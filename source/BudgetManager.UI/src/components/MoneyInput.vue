@@ -6,6 +6,7 @@
       mode="currency"
       currencyDisplay="code"
       :allowEmpty="false"
+      :highlightOnFocus="true"
       :currency="currency" 
       :min="0"
       :maxFractionDigits="2"

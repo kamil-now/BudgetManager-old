@@ -42,6 +42,7 @@
       v-model="expenseValue" 
       mode="currency"
       currencyDisplay="code"
+      :highlightOnFocus="true"
       :allowEmpty="false"
       :currency="expenseCurrency" 
       :min="0"

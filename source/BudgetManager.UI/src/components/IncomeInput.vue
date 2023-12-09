@@ -30,6 +30,7 @@
       v-model="incomeValue" 
       mode="currency"
       currencyDisplay="code"
+      :highlightOnFocus="true"
       :allowEmpty="false"
       :currency="incomeCurrency" 
       :min="0"

@@ -31,6 +31,7 @@
       v-model="allocationValue" 
       mode="currency"
       currencyDisplay="code"
+      :highlightOnFocus="true"
       :allowEmpty="false"
       :currency="allocationCurrency" 
       :min="-1000000"
