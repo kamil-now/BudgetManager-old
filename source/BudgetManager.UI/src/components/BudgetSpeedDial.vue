@@ -61,15 +61,22 @@ const items = ref([
     label: 'Add Allocation',
     icon: 'pi pi-file-import',
     command: () => {
-      const defaultFund = store.funds.filter((x) => !!x.id)[0];
+      const unallocatedCurrencies = Object.keys(store.unallocated).filter(x => store.unallocated[x] !== 0);
+      const defaultUnallocatedCurrency = unallocatedCurrencies ? unallocatedCurrencies[0] : null;
+      const defaultFund = store.funds.filter((x) => !!x.id && (!defaultUnallocatedCurrency || Object.keys(x.balance).includes(defaultUnallocatedCurrency)))[0];
       edit({
         ...MoneyOperationUtils.createNew(MoneyOperationType.Allocation),
-        fundId: defaultFund.id,
-        fundName: defaultFund.name,
-        value: {
-          currency: Object.keys(defaultFund.balance)[0],
-          amount: 0,
-        },
+        targetFundId: defaultFund.id,
+        targetFundName: defaultFund.name,
+        value: defaultUnallocatedCurrency 
+          ? {
+            currency: defaultUnallocatedCurrency,
+            amount: store.unallocated[defaultUnallocatedCurrency]
+          }
+          : {
+            currency: Object.keys(defaultFund.balance)[0],
+            amount: 0,
+          },
       });
     },
   },
