@@ -1,4 +1,5 @@
 <template>
+  <ThemeToggle />
   <ProgressSpinner
     v-if="isLoggedIn && isLoading"
     strokeWidth="8"
@@ -14,6 +15,7 @@ import { storeToRefs } from 'pinia';
 import { useAppStore } from './store/store';
 import { AUTH, IAuthService } from '@/auth';
 import { inject, onBeforeMount } from 'vue';
+import ThemeToggle from './components/ThemeToggle.vue';
 
 const auth = inject<IAuthService>(AUTH);
 if (!auth) {
@@ -62,7 +64,7 @@ onBeforeMount(() => {
     height: 2rem;
     
     top: 0.25rem;
-    right: 0.5rem;
+    left: 0.5rem;
   }
 }
 
