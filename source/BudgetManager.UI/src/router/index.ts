@@ -1,6 +1,5 @@
 import BudgetPage from '@/pages/BudgetPage.vue';
 import LoginPage from '@/pages/LoginPage.vue';
-import OperationsPage from '@/pages/OperationsPage.vue';
 import { createRouter, createWebHistory } from 'vue-router';
 
 const routes = [
@@ -12,11 +11,6 @@ const routes = [
     path: '/home',
     name: 'BudgetPage',
     component: BudgetPage,
-  },
-  {
-    path: '/operations',
-    name: 'OperationsPage',
-    component: OperationsPage,
   },
   {
     path: '/login',
