@@ -49,7 +49,7 @@ public static class Router
       {
         var userId = context.GetUserId();
         var created = await mediator.Send(new CreateBudgetCommand(userId), cancellationToken);
-        return created ? Results.CreatedAtRoute(userId) : Results.Ok();
+        return created ? Results.StatusCode((int)HttpStatusCode.Created) : Results.Ok();
       })
     .Produces((int)HttpStatusCode.Created)
     .Produces((int)HttpStatusCode.OK)

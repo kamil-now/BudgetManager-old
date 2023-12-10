@@ -10,7 +10,10 @@ export interface IBudgetActions {
 
 export class BudgetActions {
   static async createBudget(store: AppStore) {
-    await StoreUtils.runAsyncOperation(store, () => axios.post<void>('budget'));
+    await StoreUtils.runAsyncOperation(store, async () => {
+      await axios.post<void>('budget');
+      this.fetchBudget(store);
+    });
   }
   
   static async fetchBudget(store: AppStore) {

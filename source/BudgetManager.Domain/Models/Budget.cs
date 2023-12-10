@@ -40,6 +40,14 @@ public class Budget
     return operation;
   }
 
+  public void AddOperations<T>(IEnumerable<T> operations) where T : MoneyOperation
+  {
+    foreach (var operation in operations)
+    {
+      AddOperation(operation);
+    }
+  }
+
   public void AddOperation<T>(T operation) where T : MoneyOperation
   {
     ApplyOperation(operation);

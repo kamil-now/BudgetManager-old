@@ -22,6 +22,15 @@ internal class UserBudgetRepository : IUserBudgetRepository
       .ContinueWith(t => t.IsCompletedSuccessfully ? t : throw t.Exception ?? new Exception("Failed to persist UserBudget in the database"));
   }
 
+  public async Task CreateWithSampleData(string userId){
+    
+    var doc = _budgetFactory.CreateWithSampleData(userId);
+
+    await _collection
+      .InsertOneAsync(doc)
+      .ContinueWith(t => t.IsCompletedSuccessfully ? t : throw t.Exception ?? new Exception("Failed to persist UserBudget in the database"));
+  }
+
   public async Task Update(BudgetEntity budget)
     => await _collection.ReplaceOneAsync(x => x.UserId == budget.UserId, budget);
 
