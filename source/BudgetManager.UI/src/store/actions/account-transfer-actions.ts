@@ -31,10 +31,10 @@ export class AccountTransferActions {
   }
 
   static async deleteAccountTransfer(store: AppStore, accountTransferId: string) {
-    await StoreUtils.runAsyncOperation(store, async (state) => {
+    await StoreUtils.runAsyncOperation(store, async () => {
       await deleteAccountTransferRequest(accountTransferId);
-      StoreUtils.removeFromCollection(state.budget.operations, accountTransferId);
       await this.reload(store, StoreUtils.getFromCollection(store.accountTransfers, accountTransferId));
+      store.budget.operations = store.budget.operations.filter(x => x.id !== accountTransferId);
     });
   }
 

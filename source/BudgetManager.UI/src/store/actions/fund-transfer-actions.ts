@@ -32,6 +32,7 @@ export class FundTransferActions {
     await StoreUtils.runAsyncOperation(store, async () => {
       await deleteFundTransferRequest(fundTransferId);
       await this.reload(store, StoreUtils.getFromCollection(store.fundTransfers, fundTransferId));
+      store.budget.operations = store.budget.operations.filter(x => x.id !== fundTransferId);
     });
   }
 

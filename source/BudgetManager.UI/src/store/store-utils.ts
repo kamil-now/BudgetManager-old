@@ -1,9 +1,9 @@
 import { getAccountRequest } from '@/api/account-requests';
 import { getBalanceRequest } from '@/api/balance-requests';
 import { getFundRequest } from '@/api/fund-requests';
-import { AppState } from './state';
-import { MoneyOperation } from '@/models/money-operation';
 import { MoneyOperationUtils } from '@/helpers/money-operation-utils';
+import { MoneyOperation } from '@/models/money-operation';
+import { AppState } from './state';
 
 export class StoreUtils {
   static async runAsyncOperation(
@@ -56,10 +56,6 @@ export class StoreUtils {
   static async replaceInCollection<T extends { id?: string}>(collection: T[], item: T) {
     const index = collection.indexOf(this.getFromCollection(collection, item.id));
     collection[index] = item; 
-  }
-
-  static async removeFromCollection<T extends { id?: string}>(collection: T[], itemId: string) {
-    collection = collection.filter(x => x.id !== itemId);
   }
 
   static async reloadBalance(state: AppState): Promise<void> {

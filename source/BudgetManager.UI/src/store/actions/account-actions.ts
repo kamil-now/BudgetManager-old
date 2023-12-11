@@ -31,7 +31,8 @@ export class AccountActions {
   static async deleteAccount(store: AppStore, accountId: string) {
     await StoreUtils.runAsyncOperation(store, async () => {
       await deleteAccountRequest(accountId);
-      StoreUtils.removeFromCollection(store.budget.accounts, accountId);
+      store.budget.accounts = store.budget.accounts.filter(x => x.id !== accountId);
+      await StoreUtils.reloadBalance(store);
     });
   }
 }

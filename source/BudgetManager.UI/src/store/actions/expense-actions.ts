@@ -32,6 +32,7 @@ export class ExpenseActions {
     await StoreUtils.runAsyncOperation(store, async () => {
       await deleteExpenseRequest(expenseId);
       await this.reload(store, StoreUtils.getFromCollection(store.expenses, expenseId));
+      store.budget.operations = store.budget.operations.filter(x => x.id !== expenseId);
     });
   }
 

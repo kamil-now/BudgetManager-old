@@ -32,6 +32,7 @@ export class AllocationActions {
     await StoreUtils.runAsyncOperation(store, async () => {
       await deleteAllocationRequest(allocationId);
       await this.reload(store, StoreUtils.getFromCollection(store.allocations, allocationId));
+      store.budget.operations = store.budget.operations.filter(x => x.id !== allocationId);
     });
   }
 

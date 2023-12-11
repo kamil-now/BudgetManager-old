@@ -29,7 +29,7 @@ export class FundActions {
   static async deleteFund(store: AppStore, fundId: string) {
     await StoreUtils.runAsyncOperation(store, async () => {
       await deleteFundRequest(fundId);
-      StoreUtils.removeFromCollection(store.budget.funds, fundId);
+      store.budget.funds = store.budget.funds.filter(x => x.id !== fundId);
     });
   }
 }

@@ -32,6 +32,7 @@ export class CurrencyExchangeActions {
     await StoreUtils.runAsyncOperation(store, async () => {
       await deleteCurrencyExchangeRequest(currencyExchangeId);
       await this.reload(store, StoreUtils.getFromCollection(store.currencyExchanges, currencyExchangeId));
+      store.budget.operations = store.budget.operations.filter(x => x.id !== currencyExchangeId);
     });
   }
 

@@ -32,6 +32,7 @@ export class IncomeActions {
     await StoreUtils.runAsyncOperation(store, async () => {
       await deleteIncomeRequest(incomeId);
       await this.reload(store, StoreUtils.getFromCollection(store.incomes, incomeId));
+      store.budget.operations = store.budget.operations.filter(x => x.id !== incomeId);
     });
   }
 
