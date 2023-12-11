@@ -1,2 +1,2 @@
 source/BudgetManager.Api/Assets/swagger-dark.css linguist-vendored
-source/BudgetManager.UI/public/themes/* linguist-vendored
+source/BudgetManager.UI/public/themes/** linguist-vendored
