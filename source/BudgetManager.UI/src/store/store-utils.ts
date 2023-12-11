@@ -8,11 +8,11 @@ import { AppState } from './state';
 export class StoreUtils {
   static async runAsyncOperation(
     state: AppState,
-    op: (state: AppState) => Promise<unknown>
+    op: () => Promise<unknown>
   ): Promise<void> {
     state.isLoading = true;
     try {
-      await op(state);
+      await op();
     } catch (error) {
       // TODO console.error(error);
     } finally {

@@ -11,9 +11,9 @@ export interface IFundTransferActions {
 
 export class FundTransferActions {
   static async createNewFundTransfer(store: AppStore, fundTransfer: FundTransfer) {
-    await StoreUtils.runAsyncOperation(store, async (state) => {
+    await StoreUtils.runAsyncOperation(store, async () => {
       const fromResponse = await StoreUtils.createOperation(
-        state,
+        store,
         () => createFundTransferRequest(fundTransfer),
         id => getFundTransferRequest(id)
       );
@@ -22,8 +22,8 @@ export class FundTransferActions {
   }
 
   static async updateFundTransfer(store: AppStore, fundTransfer: FundTransfer) {
-    await StoreUtils.runAsyncOperation(store, async (state) => {
-      const fromResponse = await StoreUtils.updateOperation(state, () => updateFundTransferRequest(fundTransfer));
+    await StoreUtils.runAsyncOperation(store, async () => {
+      const fromResponse = await StoreUtils.updateOperation(store, () => updateFundTransferRequest(fundTransfer));
       await this.reload(store, fromResponse);
     });
   }

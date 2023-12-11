@@ -11,9 +11,9 @@ export interface ICurrencyExchangeActions {
 
 export class CurrencyExchangeActions {
   static async createNewCurrencyExchange(store: AppStore, currencyExchange: CurrencyExchange) {
-    await StoreUtils.runAsyncOperation(store, async (state) => {
+    await StoreUtils.runAsyncOperation(store, async () => {
       const fromResponse = await StoreUtils.createOperation(
-        state,
+        store,
         () => createCurrencyExchangeRequest(currencyExchange),
         id => getCurrencyExchangeRequest(id)
       );
@@ -22,8 +22,8 @@ export class CurrencyExchangeActions {
   }
 
   static async updateCurrencyExchange(store: AppStore, currencyExchange: CurrencyExchange) {
-    await StoreUtils.runAsyncOperation(store, async (state) => {
-      const fromResponse = await StoreUtils.updateOperation(state, () => updateCurrencyExchangeRequest(currencyExchange));
+    await StoreUtils.runAsyncOperation(store, async () => {
+      const fromResponse = await StoreUtils.updateOperation(store, () => updateCurrencyExchangeRequest(currencyExchange));
       await this.reload(store, fromResponse);
     });
   }

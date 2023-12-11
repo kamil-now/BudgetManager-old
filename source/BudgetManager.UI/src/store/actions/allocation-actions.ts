@@ -11,9 +11,9 @@ export interface IAllocationActions {
 
 export class AllocationActions {
   static async createNewAllocation(store: AppStore, allocation: Allocation) {
-    await StoreUtils.runAsyncOperation(store, async (state) => {
+    await StoreUtils.runAsyncOperation(store, async () => {
       const fromResponse = await StoreUtils.createOperation(
-        state,
+        store,
         () => createAllocationRequest(allocation),
         id => getAllocationRequest(id)
       );
@@ -22,8 +22,8 @@ export class AllocationActions {
   }
 
   static async updateAllocation(store: AppStore, allocation: Allocation) {
-    await StoreUtils.runAsyncOperation(store, async (state) => {
-      const fromResponse = await StoreUtils.updateOperation(state, () => updateAllocationRequest(allocation));
+    await StoreUtils.runAsyncOperation(store, async () => {
+      const fromResponse = await StoreUtils.updateOperation(store, () => updateAllocationRequest(allocation));
       await this.reload(store, fromResponse);
     });
   }

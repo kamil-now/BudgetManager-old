@@ -11,10 +11,10 @@ export interface IFundActions {
 
 export class FundActions {
   static async createNewFund(store: AppStore, fund: Fund) {
-    await StoreUtils.runAsyncOperation(store, async (state) => {
+    await StoreUtils.runAsyncOperation(store, async () => {
       const id = await createFundRequest(fund);
       const fromResponse = await getFundRequest(id);
-      state.budget.funds.unshift(fromResponse);
+      store.budget.funds.unshift(fromResponse);
       store.updateUserSettings();
     });
   }

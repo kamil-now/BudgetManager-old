@@ -11,9 +11,9 @@ export interface IExpenseActions {
 
 export class ExpenseActions {
   static async createNewExpense(store: AppStore, expense: Expense) {
-    await StoreUtils.runAsyncOperation(store, async (state) => {
+    await StoreUtils.runAsyncOperation(store, async () => {
       const fromResponse = await StoreUtils.createOperation(
-        state,
+        store,
         () => createExpenseRequest(expense),
         id => getExpenseRequest(id)
       );
@@ -22,8 +22,8 @@ export class ExpenseActions {
   }
 
   static async updateExpense(store: AppStore, expense: Expense) {
-    await StoreUtils.runAsyncOperation(store, async (state) => {
-      const fromResponse = await StoreUtils.updateOperation(state, () => updateExpenseRequest(expense));
+    await StoreUtils.runAsyncOperation(store, async () => {
+      const fromResponse = await StoreUtils.updateOperation(store, () => updateExpenseRequest(expense));
       await this.reload(store, fromResponse);
     });
   }

@@ -12,20 +12,21 @@ export interface IAccountTransferActions {
 
 export class AccountTransferActions {
   static async createNewAccountTransfer(store: AppStore, accountTransfer: AccountTransfer) {
-    await StoreUtils.runAsyncOperation(store, async (state) => {
-      const id = await createAccountTransferRequest(accountTransfer); 
-      const fromResponse = await getAccountTransferRequest(id);
-      state.budget.operations.unshift(fromResponse);
-      MoneyOperationUtils.sort(state.budget.operations);
+    await StoreUtils.runAsyncOperation(store, async () => {
+      const fromResponse = await StoreUtils.createOperation(
+        store,
+        () => createAccountTransferRequest(accountTransfer),
+        id => getAccountTransferRequest(id)
+      );
       await this.reload(store, fromResponse);
     });
   }
 
   static async updateAccountTransfer(store: AppStore, accountTransfer: AccountTransfer) {
-    await StoreUtils.runAsyncOperation(store, async (state) => {
+    await StoreUtils.runAsyncOperation(store, async () => {
       const fromResponse = await updateAccountTransferRequest(accountTransfer);
-      StoreUtils.replaceInCollection(state.budget.operations, fromResponse);
-      MoneyOperationUtils.sort(state.budget.operations);
+      StoreUtils.replaceInCollection(store.budget.operations, fromResponse);
+      MoneyOperationUtils.sort(store.budget.operations);
       await this.reload(store, fromResponse);
     });
   }

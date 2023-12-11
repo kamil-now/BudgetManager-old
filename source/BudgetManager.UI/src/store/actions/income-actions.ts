@@ -11,9 +11,9 @@ export interface IIncomeActions {
 
 export class IncomeActions {
   static async createNewIncome(store: AppStore, income: Income) {
-    await StoreUtils.runAsyncOperation(store, async (state) => {
+    await StoreUtils.runAsyncOperation(store, async () => {
       const fromResponse = await StoreUtils.createOperation(
-        state,
+        store,
         () => createIncomeRequest(income),
         id => getIncomeRequest(id)
       );
@@ -22,8 +22,8 @@ export class IncomeActions {
   }
 
   static async updateIncome(store: AppStore, income: Income) {
-    await StoreUtils.runAsyncOperation(store, async (state) => {
-      const fromResponse = await StoreUtils.updateOperation(state, () => updateIncomeRequest(income));
+    await StoreUtils.runAsyncOperation(store, async () => {
+      const fromResponse = await StoreUtils.updateOperation(store, () => updateIncomeRequest(income));
       await this.reload(store, fromResponse);
     });
   }

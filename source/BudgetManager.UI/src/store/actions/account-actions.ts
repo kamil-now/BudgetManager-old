@@ -11,10 +11,10 @@ export interface IAccountActions {
 
 export class AccountActions {
   static async createNewAccount(store: AppStore, account: Account) {
-    await StoreUtils.runAsyncOperation(store, async (state) => {
+    await StoreUtils.runAsyncOperation(store, async () => {
       const id = await createAccountRequest(account);
       const fromResponse = await getAccountRequest(id);
-      state.budget.accounts.unshift(fromResponse);
+      store.budget.accounts.unshift(fromResponse);
       await StoreUtils.reloadBalance(store);
       store.updateUserSettings();
     });
