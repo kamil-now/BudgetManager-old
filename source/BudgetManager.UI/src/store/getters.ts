@@ -1,14 +1,14 @@
+import { Account } from '@/models/account';
 import { AccountTransfer } from '@/models/account-transfer';
 import { Allocation } from '@/models/allocation';
+import { Balance } from '@/models/balance';
 import { CurrencyExchange } from '@/models/currency-exchange';
 import { Expense } from '@/models/expense';
+import { Fund } from '@/models/fund';
 import { FundTransfer } from '@/models/fund-transfer';
 import { Income } from '@/models/income';
-import { MoneyOperationType } from '@/models/money-operation-type.enum';
-import { Account } from '@/models/account';
-import { Balance } from '@/models/balance';
-import { Fund } from '@/models/fund';
 import { MoneyOperation } from '@/models/money-operation';
+import { MoneyOperationType } from '@/models/money-operation-type.enum';
 import { AppState } from './state';
 
 export type AppGetters = {
@@ -26,6 +26,9 @@ export type AppGetters = {
   currencyExchanges: (state: AppState) => CurrencyExchange[],
   fundTransfers: (state: AppState) => FundTransfer[],
   accountTransfers: (state: AppState) => AccountTransfer[],
+  lastUsedAccount: (state: AppState) => Account | undefined,
+  lastUsedFund: (state: AppState) => Fund | undefined,
+  lastOperation: (state: AppState) => (type: MoneyOperationType) => MoneyOperation | undefined
 };
 
 export const APP_GETTERS: AppGetters = {
@@ -45,7 +48,7 @@ export const APP_GETTERS: AppGetters = {
     }
     return operations;
   }, 
-  operations: (state: AppState) => state.budget.operations, 
+  operations: (state: AppState) => state.budget.operations,
   funds: (state: AppState) => state.budget.funds.filter(x => !x.isDeleted),
   fundsNames: (state: AppState) => state.budget.funds.filter(x => !x.isDeleted).map(x => x.name),
   accounts: (state: AppState) => state.budget.accounts.filter(x => !x.isDeleted),
@@ -62,4 +65,38 @@ export const APP_GETTERS: AppGetters = {
     .filter(x => x.type === MoneyOperationType.AccountTransfer).map(x => x as AccountTransfer),
   fundTransfers: (state: AppState) => state.budget.operations
     .filter(x => x.type === MoneyOperationType.FundTransfer).map(x => x as FundTransfer),
+  lastUsedAccount: (state: AppState) => {
+    const lastOperationWithAccount =  state.budget.operations.find(x => !!x.accountId || !!x.targetAccountId);
+    if (lastOperationWithAccount) {
+      const account = state.budget.accounts.find(x => 
+        !x.isDeleted &&
+        (lastOperationWithAccount.accountId && x.id === lastOperationWithAccount.accountId) 
+        || (lastOperationWithAccount.targetAccountId && x.id === lastOperationWithAccount.targetAccountId)
+      );
+      if (account) {
+        return account;
+      }
+    }
+    const accountWithBalance = state.budget.accounts.find(x => !!x.id && Object.keys(x.balance).length > 0);
+    return accountWithBalance;
+  },
+  lastUsedFund: (state: AppState) => {
+    const lastOperationWithFund =  state.budget.operations.find(x => !!x.fundId || !!x.targetFundId);
+    if (lastOperationWithFund) {
+      const fund = state.budget.funds.find(x => 
+        !x.isDeleted &&
+        (lastOperationWithFund.fundId && x.id === lastOperationWithFund.fundId) 
+        || (lastOperationWithFund.targetFundId && x.id === lastOperationWithFund.targetFundId)
+      );
+      if (fund) {
+        return fund;
+      }
+    }
+    const fundWithBalance = state.budget.funds.find(x => !!x.id && Object.keys(x.balance).length > 0);
+    return fundWithBalance;
+  },
+  lastOperation: (state:AppState) => (type: MoneyOperationType) => {
+    const operationsOfType = state.budget.operations.filter(x => x.type === type);
+    return operationsOfType ? operationsOfType[0] : undefined; 
+  }
 };

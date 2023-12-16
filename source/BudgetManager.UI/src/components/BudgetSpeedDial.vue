@@ -8,7 +8,7 @@
 </template>
 <script setup lang="ts">
 import currencies from '@/assets/currencies.json';
-import { MoneyOperationUtils } from '@/helpers/money-operation-utils';
+import { MoneyOperationFactory } from '@/helpers/money-operation-factory';
 import { StringUtils } from '@/helpers/string-utils';
 import { MoneyOperation } from '@/models/money-operation';
 import { MoneyOperationType } from '@/models/money-operation-type.enum';
@@ -23,125 +23,32 @@ const items = ref([
   {
     label: 'Add Expense',
     icon: 'pi pi-minus',
-    command: () => {
-      const defaultAccount = store.accounts.filter((x) => !!x.id)[0];
-      const defaultFund = store.funds.filter((x) => !!x.id)[0];
-      edit({
-        ...MoneyOperationUtils.createNew(MoneyOperationType.Expense),
-        accountId: defaultAccount.id,
-        accountName: defaultAccount.name,
-        fundId: defaultFund.id,
-        fundName: defaultFund.name,
-        value: {
-          currency: Object.keys(defaultAccount.balance)[0],
-          amount: 0,
-        },
-      });
-    },
+    command: () => edit(MoneyOperationFactory.create(store, MoneyOperationType.Expense)),
   },
   {
     label: 'Add Income',
     icon: 'pi pi-plus',
-    command: () => {
-      const defaultAccount = store.accounts.filter((x) => !!x.id)[0];
-      edit(
-        {
-          ...MoneyOperationUtils.createNew(MoneyOperationType.Income),
-          accountId: defaultAccount.id,
-          accountName: defaultAccount.name,
-          value: {
-            currency: Object.keys(defaultAccount.balance)[0],
-            amount: 0,
-          },
-        }
-      );
-    },
+    command: () => edit(MoneyOperationFactory.create(store, MoneyOperationType.Income)),
   },
   {
     label: 'Add Allocation',
     icon: 'pi pi-file-import',
-    command: () => {
-      const unallocatedCurrencies = Object.keys(store.unallocated).filter(x => store.unallocated[x] !== 0);
-      const defaultUnallocatedCurrency = unallocatedCurrencies ? unallocatedCurrencies[0] : null;
-      const defaultFund = store.funds.filter((x) => !!x.id && (!defaultUnallocatedCurrency || Object.keys(x.balance).includes(defaultUnallocatedCurrency)))[0];
-      edit({
-        ...MoneyOperationUtils.createNew(MoneyOperationType.Allocation),
-        targetFundId: defaultFund.id,
-        targetFundName: defaultFund.name,
-        value: defaultUnallocatedCurrency 
-          ? {
-            currency: defaultUnallocatedCurrency,
-            amount: store.unallocated[defaultUnallocatedCurrency]
-          }
-          : {
-            currency: Object.keys(defaultFund.balance)[0],
-            amount: 0,
-          },
-      });
-    },
+    command: () => edit(MoneyOperationFactory.create(store, MoneyOperationType.Allocation)),
   },
   {
     label: 'Add Currency Exchange',
     icon: 'pi pi-arrow-right-arrow-left',
-    command: () => {
-      const defaultAccount = store.accounts.filter((x) => !!x.id)[0];
-      const accountCurrencies = Object.keys(defaultAccount.initialBalance);
-      const targetCurrency = Object.keys(currencies).filter(
-        (x) => !accountCurrencies.includes(x)
-      )[0];
-      edit({
-        ...MoneyOperationUtils.createNew(MoneyOperationType.CurrencyExchange),
-        accountId: defaultAccount.id,
-        accountName: defaultAccount.name,
-        targetCurrency,
-        value: {
-          currency: Object.keys(defaultAccount.balance)[0],
-          amount: 0,
-        },
-      });
-    },
+    command: () => edit(MoneyOperationFactory.create(store, MoneyOperationType.CurrencyExchange)),
   },
   {
     label: 'Add Fund Transfer',
     icon: 'pi pi-forward',
-    command: () => {
-      const defaultSourceFund = store.funds.filter((x) => !!x.id)[0];
-      const defaultTargetFund = store.funds.filter((x) => !!x.id)[0];
-      edit({
-        ...MoneyOperationUtils.createNew(MoneyOperationType.FundTransfer),
-        fundId: defaultSourceFund.id,
-        fundName: defaultSourceFund.name,
-        targetFundId: defaultTargetFund.id,
-        targetFundName: defaultTargetFund.name,
-        value: {
-          currency:
-            Object.keys(defaultSourceFund.balance)[0] ??
-            Object.keys(currencies)[0],
-          amount: 0,
-        },
-      });
-    },
+    command: () => edit(MoneyOperationFactory.create(store, MoneyOperationType.FundTransfer)),
   },
   {
     label: 'Add Account Transfer',
     icon: 'pi pi-arrows-h',
-    command: () => {
-      const defaultSourceAccount = store.accounts.filter((x) => !!x.id)[0];
-      const defaultTargetAccount = store.accounts.filter((x) => !!x.id)[0];
-      edit({
-        ...MoneyOperationUtils.createNew(MoneyOperationType.AccountTransfer),
-        accountId: defaultSourceAccount.id,
-        accountName: defaultSourceAccount.name,
-        targetAccountId: defaultTargetAccount.id,
-        targetAccountName: defaultTargetAccount.name,
-        value: {
-          currency:
-            Object.keys(defaultSourceAccount.balance)[0] ??
-            Object.keys(currencies)[0],
-          amount: 0,
-        },
-      });
-    },
+    command: () => edit(MoneyOperationFactory.create(store, MoneyOperationType.AccountTransfer)),
   },
   {
     label: 'Add Fund',

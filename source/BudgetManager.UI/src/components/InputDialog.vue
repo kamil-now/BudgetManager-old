@@ -197,6 +197,7 @@ function saveOperation() {
     throw new Error();
   }
   if (operation.value.id) {
+    // TODO move switch to store - updateOperation action
     switch (operation.value.type) {
     case MoneyOperationType.Income:
       updateIncome(operation.value as Income);
@@ -220,6 +221,7 @@ function saveOperation() {
       throw new Error('Unknown operation.');
     }
   } else {
+    // TODO move switch to store - createOperation action
     switch (operation.value.type) {
     case MoneyOperationType.Income:
       createNewIncome(operation.value as Income);
