@@ -3,12 +3,24 @@
     <BudgetSpeedDial />
     <ConfirmPopup />
     <DynamicDialog />
-    <div class="operations-view_filters-toggle" @click="showFilters = !showFilters">
-      <i v-if="showFilters" class="pi pi-search-minus"/>
-      <i v-else class="pi pi-search-plus"/>
+    <div
+      class="operations-view_filters-toggle"
+      @click="showFilters = !showFilters"
+    >
+      <i
+        v-if="showFilters"
+        class="pi pi-search-minus"
+      />
+      <i
+        v-else
+        class="pi pi-search-plus"
+      />
       <span>filters</span>
     </div>
-    <div v-if="showFilters"  class="operations-view_filters">
+    <div
+      v-if="showFilters"
+      class="operations-view_filters"
+    >
       <Calendar
         style="width: 150px"
         v-model="dateFilter"
@@ -60,50 +72,23 @@
         <div class="operations-view_body">
           <div class="operations-view_body_left">
             <span class="date">{{ data.date }}</span>
-            <div
-              class="money"
-              :class="{
-                income: data.type === MoneyOperationType.Income,
-                expense: data.type === MoneyOperationType.Expense,
-                allocation: data.type === MoneyOperationType.Allocation,
-                exchange: data.type === MoneyOperationType.CurrencyExchange,
-              }"
-            >
-              <i
-                v-if="data.type === MoneyOperationType.Expense"
-                class="pi pi-minus"
-              ></i>
-              <i
-                v-else-if="data.type === MoneyOperationType.Income"
-                class="pi pi-plus"
-              ></i>
-              <i
-                v-else-if="data.type === MoneyOperationType.Allocation"
-                class="pi pi-file-import"
-              ></i>
-              <i
-                v-else-if="data.type === MoneyOperationType.CurrencyExchange"
-                class="pi pi-arrow-right-arrow-left exchange"
-              ></i>
-              {{ DisplayFormat.money(data.value) }}
-            </div>
+            <component :is="getIcon(data.type)">
+              <span class="money">{{ DisplayFormat.money(data.value) }}</span> 
+            </component>
           </div>
           <div class="operations-view_body_right">
             <span v-if="data.title">{{ data.title }}</span>
             <span v-if="data.fundName">{{ data.fundName }}</span>
             <span v-if="data.accountName">{{ data.accountName }}</span>
-
             <i
-              v-if="data.type === MoneyOperationType.FundTransfer"
-              class="pi pi-forward transfer"
-            ></i>
-            <i
-              v-else-if="data.type === MoneyOperationType.AccountTransfer"
-              class="pi pi-arrows-h transfer"
-            ></i>
-            <i
-              v-else-if="data.type === MoneyOperationType.CurrencyExchange"
-              class="pi pi-arrow-right-arrow-left exchange"
+              v-if="
+                [
+                  MoneyOperationType.FundTransfer,
+                  MoneyOperationType.AccountTransfer,
+                  MoneyOperationType.CurrencyExchange,
+                ].includes(data.type)
+              "
+              class="pi pi-arrow-right transfer"
             ></i>
             <span v-if="data.targetFundName">{{ data.targetFundName }}</span>
             <span v-if="data.targetAccountName">
@@ -131,6 +116,12 @@ import { MoneyOperationType } from '@/models/money-operation-type.enum';
 import { useAppStore } from '@/store/store';
 import { storeToRefs } from 'pinia';
 import { computed, nextTick, onMounted, ref } from 'vue';
+import AccountTransferIcon from './operation-icons/AccountTransferIcon.vue';
+import FundTransferIcon from './operation-icons/FundTransferIcon.vue';
+import IncomeIcon from './operation-icons/IncomeIcon.vue';
+import ExpenseIcon from './operation-icons/ExpenseIcon.vue';
+import AllocationIcon from './operation-icons/AllocationIcon.vue';
+import CurrencyExchangeIcon from './operation-icons/CurrencyExchangeIcon.vue';
 import MoneyOperationActions from './MoneyOperationActions.vue';
 
 const store = useAppStore();
@@ -155,7 +146,10 @@ const filter = computed({
 const typeFilter = computed({
   get: () => operationsTypeFilter.value,
   set: (newValue: number) => {
-    operationsTypeFilter.value = MoneyOperationType[MoneyOperationType[newValue] as keyof typeof MoneyOperationType];
+    operationsTypeFilter.value =
+      MoneyOperationType[
+        MoneyOperationType[newValue] as keyof typeof MoneyOperationType
+      ];
   },
 });
 const dateFilter = computed({
@@ -178,6 +172,23 @@ function clearFilters() {
   filter.value = '';
   dateFilter.value = '';
   focusInput();
+}
+
+function getIcon(type: MoneyOperationType) {
+  switch (type) {
+  case MoneyOperationType.Income:
+    return IncomeIcon;
+  case MoneyOperationType.Expense:
+    return ExpenseIcon;
+  case MoneyOperationType.AccountTransfer:
+    return AccountTransferIcon;
+  case MoneyOperationType.FundTransfer:
+    return FundTransferIcon;
+  case MoneyOperationType.Allocation:
+    return AllocationIcon;
+  case MoneyOperationType.CurrencyExchange:
+    return CurrencyExchangeIcon;
+  }
 }
 </script>
 
@@ -230,7 +241,7 @@ function clearFilters() {
       gap: 1rem;
       display: flex;
       align-items: center;
-      justify-content: flex-end;
+      justify-content: space-between;
       padding-right: 1rem;
       text-overflow: ellipsis;
       overflow: hidden;

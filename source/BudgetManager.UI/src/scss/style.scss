@@ -44,26 +44,19 @@ body {
 }
 
 .money {
+  font-family: var(--font-family);
   font-weight: bold;
-  width: 100%;
   display: block;
   text-align: end;
 }
-.income {
-  color: limegreen;
-}
-.expense {
-  color: crimson;
+.operation-icon {
+  display: flex;
+  gap: 0.5rem;
 }
 .transfer {
-  color: #007BA7;
+  color: var(--highlight-text-color);
   font-weight: bold;
-}
-.allocation {
-  color: #DAA520;
-}
-.exchange {
-  color:#6B8E23;
+  font-size: 0.75rem;
 }
 
 $date-width: 4rem;
