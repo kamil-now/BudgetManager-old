@@ -44,9 +44,12 @@
     />
     <InputNumber 
       class="p-inputtext-sm"
-      v-model="exchangeRate"
+      v-model="targetValue"
       :allowEmpty="false"
+      mode="currency"
+      currencyDisplay="code"
       :highlightOnFocus="true"
+      :currency="targetCurrency" 
       :min="0.00001"
       :maxFractionDigits="5"
       :max="1000000000"
@@ -132,12 +135,12 @@ const targetCurrency = computed({
   }
 });
 
-const exchangeRate = computed({
-  get: () => props.currencyExchange.exchangeRate,
+const targetValue = computed({
+  get: () => Math.round(props.currencyExchange.value.amount / props.currencyExchange.exchangeRate * Math.pow(10, 2)) / Math.pow(10, 2),
   set: (newValue) => {
     emit('changed', {
       ...props.currencyExchange, 
-      exchangeRate: newValue,
+      exchangeRate: props.currencyExchange.value.amount / newValue,
     });
   }
 });
