@@ -1,12 +1,5 @@
 <template>
-  <ThemeToggle />
-  <ProgressSpinner
-    v-if="isLoggedIn && isLoading"
-    strokeWidth="8"
-    animationDuration=".5s"
-    aria-label="Loading indicator"
-    class="loading-indicator"
-  />
+  <AppHeader v-if="isLoggedIn" />
   <router-view />
 </template>
 
@@ -15,7 +8,7 @@ import { storeToRefs } from 'pinia';
 import { useAppStore } from './store/store';
 import { AUTH, IAuthService } from '@/auth';
 import { inject, onBeforeMount } from 'vue';
-import ThemeToggle from './components/ThemeToggle.vue';
+import AppHeader from './AppHeader.vue';
 
 const auth = inject<IAuthService>(AUTH);
 if (!auth) {
@@ -23,7 +16,7 @@ if (!auth) {
 }
 const store = useAppStore();
 
-const { isLoggedIn, isLoading } = storeToRefs(store);
+const { isLoggedIn } = storeToRefs(store);
 onBeforeMount(() => {
   if (!isLoggedIn.value) {
     auth.login();
@@ -50,22 +43,14 @@ onBeforeMount(() => {
       display: flex;
     }
   }
-  height: calc(100vh - 1rem);
+  height: calc(100vh);
+  width: calc(100vw - 1rem);
   margin: 0;
   display: flex;
   align-items: flex-start;
+  flex-direction: column;
   justify-content: center;
   animation: fadein 1s;
-
-  .loading-indicator {
-    position: absolute;
-    
-    width: 2rem;
-    height: 2rem;
-    
-    top: 0.25rem;
-    left: 0.5rem;
-  }
 }
 
 @keyframes fadein {

@@ -10,7 +10,6 @@ import InputNumber from 'primevue/inputnumber';
 import InputText from 'primevue/inputtext';
 import 'primevue/resources/primevue.min.css';
 import 'primevue/resources/themes/lara-light-indigo/theme.css';
-import SpeedDial from 'primevue/speeddial';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Calendar from 'primevue/calendar';
@@ -64,7 +63,6 @@ app
   .component('DataTable', DataTable)
   .component('Column', Column)
   .component('ProgressSpinner', ProgressSpinner)
-  .component('SpeedDial', SpeedDial)
   .component('ConfirmPopup', ConfirmPopup)
   .component('Dropdown', Dropdown)
   .component('Button', Button)

@@ -49,14 +49,15 @@ body {
   display: block;
   text-align: end;
 }
-.operation-icon {
+
+.budget-icon {
   display: flex;
   gap: 0.5rem;
 }
-.transfer {
-  color: var(--highlight-text-color);
+
+.transfer-icon {
+  color: #007BA7;
   font-weight: bold;
-  font-size: 0.75rem;
 }
 
 $date-width: 4rem;
@@ -68,9 +69,11 @@ $date-width: 4rem;
 .operation-title {
   font-style: italic;
 }
+
 .p-button:focus {
   box-shadow: 0 0 0 0px #ffffff, 0 0 0 2px #b1b3f8, 0 0px 0 black;
 }
+
 .p-dropdown-label {
   display: flex;
   align-items: center;

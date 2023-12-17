@@ -5,7 +5,7 @@
 </template>
 <style lang="scss">
 .allocation-icon {
-  @extend .operation-icon;
+  @extend .budget-icon;
   color: #DAA520;
 }
 </style>

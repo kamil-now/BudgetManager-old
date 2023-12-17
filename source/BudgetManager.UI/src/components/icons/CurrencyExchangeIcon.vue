@@ -5,7 +5,7 @@
 </template>
 <style lang="scss">
 .currency-exchange-icon {
-  @extend .operation-icon;
-  color: var(--highlight-text-color);
+  @extend .budget-icon;
+  @extend .transfer-icon;
 }
 </style>

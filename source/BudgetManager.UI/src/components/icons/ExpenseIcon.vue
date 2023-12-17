@@ -5,7 +5,7 @@
 </template>
 <style lang="scss">
 .expense-icon {
-  @extend .operation-icon;
+  @extend .budget-icon;
   color: crimson;
 }
 </style>

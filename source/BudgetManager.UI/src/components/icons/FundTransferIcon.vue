@@ -5,8 +5,7 @@
 </template>
 <style lang="scss">
 .fund-transfer-icon {
-  @extend .operation-icon;
-  color: var(--highlight-text-color);
-  font-weight: bold;
+  @extend .budget-icon;
+  @extend .transfer-icon;
 }
 </style>

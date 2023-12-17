@@ -1,6 +1,5 @@
 <template>
   <div class="operations-view">
-    <BudgetSpeedDial />
     <ConfirmPopup />
     <DynamicDialog />
     <div
@@ -88,7 +87,7 @@
                   MoneyOperationType.CurrencyExchange,
                 ].includes(data.type)
               "
-              class="pi pi-arrow-right transfer"
+              class="pi pi-arrow-right transfer-icon"
             ></i>
             <span v-if="data.targetFundName">{{ data.targetFundName }}</span>
             <span v-if="data.targetAccountName">
@@ -110,18 +109,17 @@
 <script setup lang="ts">
 import ListView from '@/components/ListView.vue';
 import { DateUtils } from '@/helpers/date-utils';
-import BudgetSpeedDial from '@/components/BudgetSpeedDial.vue';
 import { DisplayFormat } from '@/helpers/display-format';
 import { MoneyOperationType } from '@/models/money-operation-type.enum';
 import { useAppStore } from '@/store/store';
 import { storeToRefs } from 'pinia';
 import { computed, nextTick, onMounted, ref } from 'vue';
-import AccountTransferIcon from './operation-icons/AccountTransferIcon.vue';
-import FundTransferIcon from './operation-icons/FundTransferIcon.vue';
-import IncomeIcon from './operation-icons/IncomeIcon.vue';
-import ExpenseIcon from './operation-icons/ExpenseIcon.vue';
-import AllocationIcon from './operation-icons/AllocationIcon.vue';
-import CurrencyExchangeIcon from './operation-icons/CurrencyExchangeIcon.vue';
+import AccountTransferIcon from './icons/AccountTransferIcon.vue';
+import FundTransferIcon from './icons/FundTransferIcon.vue';
+import IncomeIcon from './icons/IncomeIcon.vue';
+import ExpenseIcon from './icons/ExpenseIcon.vue';
+import AllocationIcon from './icons/AllocationIcon.vue';
+import CurrencyExchangeIcon from './icons/CurrencyExchangeIcon.vue';
 import MoneyOperationActions from './MoneyOperationActions.vue';
 
 const store = useAppStore();
@@ -216,7 +214,7 @@ function getIcon(type: MoneyOperationType) {
 
     &-toggle {
       position: absolute;
-      top: 3rem;
+      top: 6rem;
       left: 35%;
       width: 0;
       height: 0;

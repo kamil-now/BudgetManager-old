@@ -1,7 +1,16 @@
 <template>
-  <Button class="theme-toggle" @click="switchTheme()">
-    <i v-if="isDark" class="pi pi-sun" />
-    <i v-else class="pi pi-moon" />
+  <Button
+    class="theme-toggle"
+    @click="switchTheme()"
+  >
+    <i
+      v-if="isDark"
+      class="pi pi-sun"
+    />
+    <i
+      v-else
+      class="pi pi-moon"
+    />
   </Button>
 </template>
 
@@ -30,13 +39,13 @@ function switchTheme() {
 <style lang="scss">
 .theme-toggle {
   $size: 1.5rem;
-  
+
   background-color: var(--surface-card);
   color: var(--text-color-secondary);
   border-color: var(--text-color-secondary);
   box-shadow: none;
   &:focus {
-  box-shadow: none;
+    box-shadow: none;
     border-color: var(--text-color-secondary);
   }
 
@@ -50,9 +59,5 @@ function switchTheme() {
   display: flex;
   align-items: center;
   justify-content: center;
-
-  position: absolute;
-  top: 0.25rem;
-  right: 0.5rem;
 }
 </style>
