@@ -51,7 +51,7 @@ const {
   deleteFundTransfer,
 } = store;
 function createCopy(operation: MoneyOperation) {
-  edit(MoneyOperationUtils.createCopy(operation), 'Create');
+  edit(MoneyOperationUtils.copy(operation), 'Create');
 }
 function edit(operation: MoneyOperation, action: 'Edit' | 'Create') {
   dialog.open(InputDialog, {
