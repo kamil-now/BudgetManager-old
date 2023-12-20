@@ -24,10 +24,12 @@ onBeforeMount(() => {
   // dark is default - see index.html
   if (getSelectedTheme() === 'light') {
     replaceInThemeUrl('dark', 'light');
+    isDark.value = false;
   }
 });
 
 function switchTheme() {
+  isDark.value = !isDark.value;
   const currentTheme = getSelectedTheme() === 'light' ? 'light' : 'dark';
   const selectedTheme = currentTheme === 'light' ? 'dark' : 'light';
   replaceInThemeUrl(currentTheme, selectedTheme);
@@ -46,15 +48,16 @@ function replaceInThemeUrl(oldTheme: string, newTheme: string) {
 </script>
 <style lang="scss">
 .theme-toggle {
-  $size: 1.5rem;
+  $size: 2rem;
 
   background-color: var(--surface-card);
   color: var(--text-color-secondary);
-  border-color: var(--text-color-secondary);
+  border: none;
   box-shadow: none;
-  &:focus {
-    box-shadow: none;
-    border-color: var(--text-color-secondary);
+  
+  &:focus, &:focus-visible {
+    border: none;
+    box-shadow: none !important;
   }
 
   min-width: $size;
