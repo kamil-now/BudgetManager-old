@@ -14,7 +14,7 @@
         v-else
         class="pi pi-search-plus"
       />
-      <span>filters</span>
+      <span>{{ (showFilters ? 'hide' : 'show') + ' filters' }}</span>
     </div>
     <div
       v-if="showFilters"
@@ -197,11 +197,6 @@ function getIcon(type: MoneyOperationType) {
   display: flex;
   align-items: center;
   flex-direction: column;
-  @include media-breakpoint(lg, down) {
-    .date {
-      font-size: 0.75rem;
-    }
-  }
   &_filters {
     padding: 0.5rem;
     display: flex;
@@ -213,18 +208,16 @@ function getIcon(type: MoneyOperationType) {
     justify-content: start;
 
     &-toggle {
-      position: absolute;
-      top: 6rem;
-      left: 35%;
-      width: 0;
-      height: 0;
-      min-width: 0;
-      min-height: 0;
-      z-index: 2;
       display: flex;
+      align-items: center;
       flex-wrap: nowrap;
       white-space: nowrap;
+      align-self: start;
       gap: 0.5rem;
+      color: var(--text-color-secondary);
+      font-size: 0.5rem;
+      padding-bottom: 0.25rem;
+      text-transform: uppercase;
 
       &:hover {
         cursor: pointer;
