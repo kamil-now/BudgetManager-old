@@ -1,5 +1,5 @@
 $breakpoints: (
-  xs: 380px,
+  xs: 288px,
   sm: 576px,
   md: 768px,
   lg: 992px,
@@ -25,6 +25,11 @@ $breakpoints: (
 
   @else {
     @error "Invalid breakpoint: #{$size}";
+  }
+}
+@include media-breakpoint(lg, down) {
+  html {
+    font-size: 12px;
   }
 }
 
