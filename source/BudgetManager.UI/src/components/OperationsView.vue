@@ -2,26 +2,9 @@
   <div class="operations-view">
     <ConfirmPopup />
     <DynamicDialog />
-    <div
-      class="operations-view_filters-toggle"
-      @click="showFilters = !showFilters"
-    >
-      <i
-        v-if="showFilters"
-        class="pi pi-search-minus"
-      />
-      <i
-        v-else
-        class="pi pi-search-plus"
-      />
-      <span>{{ (showFilters ? 'hide' : 'show') + ' filters' }}</span>
-    </div>
-    <div
-      v-if="showFilters"
-      class="operations-view_filters"
-    >
+    <div class="operations-view_filters">
       <Calendar
-        style="width: 150px"
+        style="width: 8rem"
         v-model="dateFilter"
         dateFormat="yy/mm/dd"
         size="small"
@@ -32,19 +15,19 @@
       <span class="p-input-icon-left">
         <i class="pi pi-search" />
         <InputText
-          style="width: 150px"
+          style="width: 8rem"
           ref="input"
           v-model="filter"
-          placeholder="Search"
+          placeholder="search"
         />
       </span>
       <Dropdown
         v-model="typeFilter"
         :options="moneyOperationTypes"
-        style="min-width: 150px"
+        style="width: 8rem"
       >
         <template #value="{ value }">
-          <span>{{ value == 0 ? "Type" : MoneyOperationType[value] }}</span>
+          <span>{{ value == 0 ? "type" : MoneyOperationType[value] }}</span>
         </template>
         <template #option="{ option }">
           <span>{{ MoneyOperationType[option] }}</span>
@@ -124,7 +107,6 @@ import MoneyOperationActions from './MoneyOperationActions.vue';
 
 const store = useAppStore();
 const input = ref();
-const showFilters = ref(false);
 const {
   filteredOperations,
   operationsFilter,
@@ -206,23 +188,6 @@ function getIcon(type: MoneyOperationType) {
     display: flex;
     align-items: center;
     justify-content: start;
-
-    &-toggle {
-      display: flex;
-      align-items: center;
-      flex-wrap: nowrap;
-      white-space: nowrap;
-      align-self: start;
-      gap: 0.5rem;
-      color: var(--text-color-secondary);
-      font-size: 0.5rem;
-      padding-bottom: 0.25rem;
-      text-transform: uppercase;
-
-      &:hover {
-        cursor: pointer;
-      }
-    }
   }
   &_body {
     display: flex;

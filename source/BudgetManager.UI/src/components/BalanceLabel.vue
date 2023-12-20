@@ -1,14 +1,17 @@
 <template>
   <div class="balance-label">
     <label>{{ label }}</label>
-    <div class="money" v-if="isEmpty">0</div>
-    <div
-      v-else
-      class="money"
-      v-for="(value, currency) in balance"
-      :key="currency"
-    >
-      {{ DisplayFormat.money({ amount: value, currency: currency.toString() }) }}
+    <div class="balance-label-content">
+      <div class="money" v-if="isEmpty">0</div>
+        <span
+          v-else
+          class="money"
+          v-for="(value, currency, index) in balance"
+          :key="currency"
+          :class="{ alternate: index % 2 !== 0 }"
+          >
+          {{ DisplayFormat.money({ amount: value, currency: currency.toString() }) }}
+        </span>
     </div>
   </div>
 </template>
@@ -23,19 +26,29 @@ const isEmpty = computed(() => Object.keys(props.balance).length === 0);
 
 <style lang="scss">
 .balance-label {
-  height: 80px;
-  padding: 0.5rem;
+  height: calc($appHeaderHeight - 0.5rem);
+  padding: 0.25rem;
   display: flex;
   flex-direction: column;
-  align-items: end;
-  gap: 0.25rem;
-  flex-wrap: wrap;
+  align-items: start;
+  overflow: hidden;
+
   label {
-    align-self: start;
-    color: var(--text-color-secondary);
-    text-transform: uppercase;
-    font-size: 0.5rem;
-    font-weight: bold;
+    @extend .label;
+  }
+  &-content {
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    flex-wrap: wrap;
+    max-height: 100%;
+    .money {
+      padding: 0.25rem;
+      font-size: 1.25rem;
+      &.alternate {
+        color: var(--text-color-secondary);
+      }
+    }
   }
 }
 </style>

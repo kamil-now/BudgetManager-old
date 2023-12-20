@@ -1,3 +1,5 @@
+$appHeaderHeight: 4rem;
+
 $breakpoints: (
   xs: 288px,
   sm: 576px,
@@ -55,6 +57,7 @@ body {
   font-weight: bold;
   display: block;
   text-align: end;
+  text-wrap: nowrap;
 }
 
 .budget-icon {
@@ -77,11 +80,29 @@ $date-width: 4rem;
   font-style: italic;
 }
 
-.p-button:focus {
-  box-shadow: 0 0 0 0px #ffffff, 0 0 0 2px #b1b3f8, 0 0px 0 black;
+.label {
+  color: var(--text-color-secondary);
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  font-weight: bold;
+  text-overflow: ellipsis;
 }
 
 .p-dropdown-label {
-  display: flex;
+  display: block; // to apply ellipsis on text-overflow
   align-items: center;
+}
+
+.p-inputtext {
+  @extend .label;
+  padding: 0.5rem !important;
+  text-align: start;
+}
+.p-input-icon-left {
+  .p-inputtext {
+    padding-left: 2rem !important;
+  }
+}
+.p-dropdown-items-wrapper {
+  @extend .label;
 }

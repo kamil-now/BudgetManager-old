@@ -10,7 +10,7 @@
       class="loading-indicator"
       :class="{ show: isLoading }"
     />
-    <div class="app-header-content">
+    <div class="app-header-labels">
       <BalanceLabel
         :balance="balance"
         label="Balance"
@@ -20,13 +20,15 @@
         label="Unallocated"
       />
     </div>
-    <Button
-      class="app-header-menu-toggle"
-      @click="toggle()"
-    >
-      <i class="pi pi-bars"></i>
-    </Button>
-
+    <div class="app-header-buttons">
+      <ThemeToggle />
+      <Button
+        class="app-header-menu-toggle"
+        @click="toggle()"
+        >
+        <i class="pi pi-bars"></i>
+      </Button>
+    </div>
     <div
       class="app-header-menu-content"
       :class="{ show: isOpen }"
@@ -64,7 +66,6 @@
         <ExpenseIcon />
         add expense
       </Button>
-      <ThemeToggle />
     </div>
   </div>
 </template>
@@ -159,7 +160,8 @@ function createNewAccount() {
 <style lang="scss">
 .app-header {
   width: 100%;
-  max-height: 88px;
+  max-height: $appHeaderHeight;
+  height: $appHeaderHeight;
   overflow: visible;
   z-index: 10;
 
@@ -175,43 +177,48 @@ function createNewAccount() {
   align-items: center;
   flex-wrap: wrap;
 
-  &-content {
-    // background-color: var(--surface-card);
+  &-labels {
+    max-width: calc(100% - 5rem - 16px);
     display: flex;
     flex-grow: 1;
     align-items: center;
-    justify-content: center;
+    justify-content: start;
     padding: 0.5rem;
     gap: 1rem;
     overflow: hidden;
   }
 
+  &-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: calc(5rem + 16px);
+    padding: 1rem;
+    gap: 1rem;
+  }
   &-menu {
     &-toggle {
       display: flex;
       align-items: center;
       justify-content: center;
-      cursor: pointer;
+      
       color: var(--text-color);
-
-      padding: 0.5rem;
-      border-radius: 0.25rem;
       background-color: transparent;
-      border: 1px solid transparent;
-
-      .pi {
-        $size: 16px !important;
-        min-width: $size;
-        min-height: $size;
-        width: $size;
-        height: $size;
-        font-size: $size;
-        line-height: $size;
-        width: $size;
-        height: $size;
-        display: inline-block;
-        border-radius: 0.25rem;
+      border: none;
+      box-shadow: none;
+      
+      &:focus, &:focus-visible {
+        border: none;
+        box-shadow: none !important;
       }
+
+      $size: 16px !important;
+      min-width: $size;
+      min-height: $size;
+      width: $size;
+      height: $size;
+      font-size: $size;
+      line-height: $size;
     }
     &-content {
       display: flex;
@@ -255,10 +262,15 @@ function createNewAccount() {
 
   .loading-indicator {
     visibility: hidden;
-    margin: 0.5rem;
+    margin: 0.5rem;    
+    
+    position: absolute;
+    
+    top: 0;
+    right: 1rem;
 
-    width: 1rem;
-    height: 1rem;
+    width: 3rem;
+    height: 3rem;
 
     &.show {
       visibility: visible;
