@@ -20,11 +20,11 @@
         v-else-if="windowWidth && windowWidth < 800"
         :lazy="true"
       >
-        <TabPanel header="Funds">
-          <FundsView />
-        </TabPanel>
         <TabPanel header="Operations">
           <OperationsView></OperationsView>
+        </TabPanel>
+        <TabPanel header="Funds">
+          <FundsView />
         </TabPanel>
         <TabPanel header="Accounts">
           <AccountsView />
