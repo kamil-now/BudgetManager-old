@@ -15,25 +15,33 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onBeforeMount, ref } from 'vue';
+import { getSelectedTheme, saveSelectedTheme } from '../storage';
 
-const isDark = ref(true); // set in index.html
+const isDark = ref(true); 
+
+onBeforeMount(() => {
+  // dark is default - see index.html
+  if (getSelectedTheme() === 'light') {
+    replaceInThemeUrl('dark', 'light');
+  }
+});
 
 function switchTheme() {
+  const currentTheme = getSelectedTheme() === 'light' ? 'light' : 'dark';
+  const selectedTheme = currentTheme === 'light' ? 'dark' : 'light';
+  replaceInThemeUrl(currentTheme, selectedTheme);
+  saveSelectedTheme(selectedTheme);
+}
+
+function replaceInThemeUrl(oldTheme: string, newTheme: string) {
   const linkElementId = 'theme-link';
   const linkElement = document.getElementById(linkElementId) as HTMLLinkElement;
   if (!linkElement) {
     return;
   }
   const currentThemeUrl = linkElement.href;
-  let newThemeUrl = null;
-  if (currentThemeUrl.includes('light')) {
-    newThemeUrl = currentThemeUrl.replace('light', 'dark');
-  } else {
-    newThemeUrl = currentThemeUrl.replace('dark', 'light');
-  }
-  linkElement.href = newThemeUrl;
-  isDark.value = !isDark.value;
+  linkElement.href = currentThemeUrl.replace(oldTheme, newTheme);
 }
 </script>
 <style lang="scss">
