@@ -1,9 +1,25 @@
 <template>
   <Toast />
-  <div v-if="!failed" class="budget-page">
-    <BalanceView/>
+  <div
+    v-if="!failed"
+    class="budget-page"
+  >
     <div class="budget-page_content">
-      <TabView v-if="windowWidth && windowWidth < 1300" :lazy="true">
+      <template v-if="windowWidth && windowWidth > 800 && windowWidth < 1300">
+        <TabView :lazy="true">
+          <TabPanel header="Funds">
+            <FundsView />
+          </TabPanel>
+          <TabPanel header="Accounts">
+            <AccountsView />
+          </TabPanel>
+        </TabView>
+        <OperationsView></OperationsView>
+      </template>
+      <TabView
+        v-else-if="windowWidth && windowWidth < 800"
+        :lazy="true"
+      >
         <TabPanel header="Funds">
           <FundsView />
         </TabPanel>
@@ -11,26 +27,19 @@
           <OperationsView></OperationsView>
         </TabPanel>
         <TabPanel header="Accounts">
-        <AccountsView />
+          <AccountsView />
         </TabPanel>
       </TabView>
       <template v-else>
-        <div class="budget-page_content-items">
-          <FundsView />
-        </div>
-        <div class="budget-page_content-operations">
-          <OperationsView></OperationsView>
-        </div>
-        <div class="budget-page_content-items">
-          <AccountsView />
-        </div>
+        <FundsView />
+        <OperationsView></OperationsView>
+        <AccountsView />
       </template>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import BalanceView from '@/components/BalanceView.vue';
 import AccountsView from '@/components/AccountsView.vue';
 import FundsView from '@/components/FundsView.vue';
 import { useAppStore } from '@/store/store';
@@ -57,7 +66,7 @@ onMounted(() => {
   });
 
   axios.interceptors.response.use(
-    response => response,
+    (response) => response,
     (error: AxiosError | Error) => {
       console.error(error);
       let errorMessage: string;
@@ -71,7 +80,8 @@ onMounted(() => {
         failed.value = true;
         return;
       }
-      const axiosErrorMessage = (error as AxiosError).response?.data as string[];
+      const axiosErrorMessage = (error as AxiosError).response
+        ?.data as string[];
       if (Array.isArray(axiosErrorMessage)) {
         errorMessage = axiosErrorMessage.join('\n');
       } else {
@@ -82,7 +92,9 @@ onMounted(() => {
       }
       toast.add({
         severity: 'error',
-        summary: (error as AxiosError).request ? (error as AxiosError).request.statusText : error.name,
+        summary: (error as AxiosError).request
+          ? (error as AxiosError).request.statusText
+          : error.name,
         detail: errorMessage,
       });
     }
@@ -90,10 +102,10 @@ onMounted(() => {
 });
 
 onDeactivated(() => {
-  window.removeEventListener('resize', onResize); 
+  window.removeEventListener('resize', onResize);
 });
 
-const onResize = () => windowWidth.value = window.innerWidth;
+const onResize = () => (windowWidth.value = window.innerWidth);
 </script>
 
 <style lang="scss">
@@ -101,8 +113,7 @@ const onResize = () => windowWidth.value = window.innerWidth;
   height: 100%;
   width: 100%;
   margin: 0.5rem;
-  padding: 0.5rem;
-  @extend .card;
+  // @extend .card;
   max-height: 100%;
   display: flex;
   flex-direction: column;
@@ -115,36 +126,27 @@ const onResize = () => windowWidth.value = window.innerWidth;
     padding-left: 1rem;
   }
 
-
   &_content {
     display: flex;
     gap: 1rem;
     height: 100%;
-    flex-wrap: wrap;
-    overflow: auto;
+    overflow: hidden;
+    max-width: 100%;
 
-    &-items {
-      height: calc(100% - 4rem);
-      min-width: 300px;
-      width: calc(25% - 1rem);
-    
-      @include media-breakpoint(lg, down) {
-        height: 100%;
-        width: calc(100% - 0.5rem);
-      }
+    .operations-view {
+      flex: 2;
     }
-    &-operations {
-      height: calc(100% - 4rem);
-      width: calc(50% - 0.5rem);
-      
-      @include media-breakpoint(lg, down) {
-        height: 100%;
-        width: calc(100% - 0.5rem);
-      }
+    .funds-view {
+      flex: 1;
+    }
+    .accounts-view {
+      flex: 1;
+    }
+    .p-tabview {
+      flex: 1;
     }
   }
 
-  overflow: hidden;
 
   .p-tabview-nav {
     display: flex;
@@ -156,16 +158,12 @@ const onResize = () => windowWidth.value = window.innerWidth;
       a {
         width: 100%;
         display: flex;
-        justify-content: center
+        justify-content: center;
       }
     }
   }
 
   .p-tabview {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-
     .p-tabview-panels {
       height: 90%;
       padding: 0;
@@ -175,4 +173,5 @@ const onResize = () => windowWidth.value = window.innerWidth;
       }
     }
   }
-}</style>
+}
+</style>
