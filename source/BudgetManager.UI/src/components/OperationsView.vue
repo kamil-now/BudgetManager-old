@@ -16,7 +16,6 @@
         <i class="pi pi-search" />
         <InputText
           style="width: 8rem"
-          ref="input"
           v-model="filter"
           placeholder="search"
         />
@@ -96,7 +95,7 @@ import { DisplayFormat } from '@/helpers/display-format';
 import { MoneyOperationType } from '@/models/money-operation-type.enum';
 import { useAppStore } from '@/store/store';
 import { storeToRefs } from 'pinia';
-import { computed, nextTick, onMounted, ref } from 'vue';
+import { computed } from 'vue';
 import AccountTransferIcon from './icons/AccountTransferIcon.vue';
 import FundTransferIcon from './icons/FundTransferIcon.vue';
 import IncomeIcon from './icons/IncomeIcon.vue';
@@ -106,7 +105,7 @@ import CurrencyExchangeIcon from './icons/CurrencyExchangeIcon.vue';
 import MoneyOperationActions from './MoneyOperationActions.vue';
 
 const store = useAppStore();
-const input = ref();
+
 const {
   filteredOperations,
   operationsFilter,
@@ -139,19 +138,11 @@ const dateFilter = computed({
   },
 });
 
-onMounted(() => focusInput());
-
-function focusInput() {
-  nextTick(() => {
-    input.value?.$el.focus();
-  });
-}
 
 function clearFilters() {
   typeFilter.value = MoneyOperationType.Undefined;
   filter.value = '';
   dateFilter.value = '';
-  focusInput();
 }
 
 function getIcon(type: MoneyOperationType) {
