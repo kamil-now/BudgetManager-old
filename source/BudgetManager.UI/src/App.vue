@@ -45,9 +45,12 @@ onBeforeMount(() => {
   }
   height: calc(100vh);
   width: calc(100vw - 1rem);
+  > * {
+    max-width: 1400px;
+  }
   margin: 0;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   flex-direction: column;
   justify-content: center;
   animation: fadein 1s;
