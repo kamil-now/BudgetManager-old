@@ -194,19 +194,19 @@ function createNewAccount() {
       cursor: pointer;
       color: var(--text-color);
 
-      $size: 1.5rem !important;
-      min-width: $size;
-      min-height: $size;
-      width: $size;
-      height: $size;
-      font-size: $size;
-      line-height: $size;
       padding: 0.5rem;
       border-radius: 0.25rem;
       background-color: transparent;
       border: 1px solid transparent;
 
-      &-icon {
+      .pi {
+        $size: 16px !important;
+        min-width: $size;
+        min-height: $size;
+        width: $size;
+        height: $size;
+        font-size: $size;
+        line-height: $size;
         width: $size;
         height: $size;
         display: inline-block;

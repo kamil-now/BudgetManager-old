@@ -112,8 +112,6 @@ const onResize = () => (windowWidth.value = window.innerWidth);
 .budget-page {
   height: 100%;
   width: 100%;
-  margin: 0.5rem;
-  // @extend .card;
   max-height: 100%;
   display: flex;
   flex-direction: column;

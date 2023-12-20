@@ -43,8 +43,8 @@ onBeforeMount(() => {
       display: flex;
     }
   }
-  height: calc(100vh);
-  width: calc(100vw - 1rem);
+  height: 100vh;
+  width: 100vw;
   > * {
     max-width: 1400px;
   }
