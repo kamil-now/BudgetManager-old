@@ -10,16 +10,27 @@
       class="loading-indicator"
       :class="{ show: isLoading }"
     />
+    <div class="app-header-content">
+      <BalanceLabel
+        :balance="balance"
+        label="Balance"
+      />
+      <BalanceLabel
+        :balance="unallocated"
+        label="Unallocated"
+      />
+    </div>
     <Button
-      class="app-header-toggle"
+      class="app-header-menu-toggle"
       @click="toggle()"
     >
       <i class="pi pi-bars"></i>
     </Button>
 
     <div
-      class="app-header-content"
+      class="app-header-menu-content"
       :class="{ show: isOpen }"
+      @click="toggle()"
     >
       <Button @click="createNewAccount()">
         <AccountIcon />
@@ -59,6 +70,7 @@
 </template>
 
 <script setup lang="ts">
+import BalanceLabel from '@/components/BalanceLabel.vue';
 import currencies from '@/assets/currencies.json';
 import { useAppStore } from './store/store';
 import ThemeToggle from './components/ThemeToggle.vue';
@@ -81,7 +93,7 @@ import { storeToRefs } from 'pinia';
 const dialog = useDialog();
 
 const store = useAppStore();
-const { isLoading } = storeToRefs(store);
+const { isLoading, balance, unallocated } = storeToRefs(store);
 
 const isOpen = ref(false);
 const header = ref<HTMLDivElement>();
@@ -147,7 +159,7 @@ function createNewAccount() {
 <style lang="scss">
 .app-header {
   width: 100%;
-  max-height: 4rem;
+  max-height: 88px;
   overflow: visible;
   z-index: 10;
 
@@ -156,104 +168,100 @@ function createNewAccount() {
   background-color: var(--surface-0);
 
   top: 0;
-  padding: 1rem;
+  padding: 0;
 
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
 
-  &-toggle {
-    display: none;
+  &-content {
+    // background-color: var(--surface-card);
+    display: flex;
+    flex-grow: 1;
     align-items: center;
     justify-content: center;
-
-    $size: 1.5rem !important;
-    min-width: $size;
-    min-height: $size;
-    width: $size;
-    height: $size;
-    font-size: $size;
-    line-height: $size;
+    padding: 0.5rem;
+    gap: 1rem;
+    overflow: hidden;
   }
-  &-content {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    transition: all 0.5s ease-in-out;
-    z-index: 2;
-    padding-bottom: 1rem;
 
-    button {
-      font-size: 0.5rem;
-      text-transform: uppercase;
-      font-weight: bold;
-      letter-spacing: 0.03rem;
-
+  &-menu {
+    &-toggle {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 0.5rem;
-      margin: 0.25rem;
-
-      color: #ffffffde;
-      background-color: #036f6f;
-
-      border-color: var(--text-color-secondary);
-      box-shadow: none;
-      &:focus {
-        box-shadow: none;
-        border-color: var(--text-color-secondary);
-      }
-    }
-  }
-
-  .loading-indicator {
-    visibility: hidden;
-    margin: 1rem;
-
-    width: 2rem;
-    height: 2rem;
-
-    &.show {
-      visibility: visible;
-    }
-  }
-  @media (max-width: 1200px) {
-    padding: 0;
-    &-toggle {
-      margin: 1rem;
-      display: flex !important;
       cursor: pointer;
       color: var(--text-color);
+
+      $size: 1.5rem !important;
+      min-width: $size;
+      min-height: $size;
+      width: $size;
+      height: $size;
+      font-size: $size;
+      line-height: $size;
       padding: 0.5rem;
-      font-size: 1.25rem;
+      border-radius: 0.25rem;
       background-color: transparent;
       border: 1px solid transparent;
-      border-radius: 0.25rem;
-      transition: box-shadow 0.25s ease-in-out;
 
       &-icon {
-        width: 1.5rem;
-        height: 1.5rem;
+        width: $size;
+        height: $size;
         display: inline-block;
         border-radius: 0.25rem;
       }
     }
-
     &-content {
+      display: flex;
+      justify-content: flex-end;
+      align-items: end;
       flex-basis: 100%;
       flex-grow: 1;
       max-height: 0;
       width: 100%;
       overflow: hidden;
       flex-direction: column;
-      align-items: end !important;
       transition: all 0.5s ease-in-out;
-
+      z-index: 2;
       &.show {
         max-height: 500px;
       }
+      button {
+        font-size: 0.5rem;
+        text-transform: uppercase;
+        font-weight: bold;
+        letter-spacing: 0.03rem;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        margin: 0.25rem;
+
+        color: #ffffffde;
+        background-color: #036f6f;
+
+        border-color: var(--text-color-secondary);
+        box-shadow: none;
+        &:focus {
+          box-shadow: none;
+          border-color: var(--text-color-secondary);
+        }
+      }
+    }
+  }
+
+  .loading-indicator {
+    visibility: hidden;
+    margin: 0.5rem;
+
+    width: 1rem;
+    height: 1rem;
+
+    &.show {
+      visibility: visible;
     }
   }
 }
