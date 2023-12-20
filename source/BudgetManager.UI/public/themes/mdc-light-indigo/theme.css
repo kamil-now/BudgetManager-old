@@ -1765,12 +1765,12 @@
     border-radius: 4px;
   }
   .p-button:enabled:hover {
-    background: rgba(63, 81, 181, 0.92);
+    background: #036F6F;
     color: #ffffff;
     border-color: transparent;
   }
   .p-button:enabled:active {
-    background: rgba(63, 81, 181, 0.68);
+    background: #72CECE;
     color: #ffffff;
     border-color: transparent;
   }

@@ -1765,12 +1765,12 @@
     border-radius: 4px;
   }
   .p-button:enabled:hover {
-    background: rgba(159, 168, 218, 0.92);
+    background: #036F6F;
     color: #121212;
     border-color: transparent;
   }
   .p-button:enabled:active {
-    background: rgba(159, 168, 218, 0.68);
+    background: #72CECE;
     color: #121212;
     border-color: transparent;
   }
@@ -4158,12 +4158,12 @@
   }
 
   .p-fileupload-choose:not(.p-disabled):hover {
-    background: rgba(159, 168, 218, 0.92);
+    background: #036F6F;
     color: #121212;
     border-color: transparent;
   }
   .p-fileupload-choose:not(.p-disabled):active {
-    background: rgba(159, 168, 218, 0.68);
+    background: #72CECE;
     color: #121212;
     border-color: transparent;
   }
@@ -5833,10 +5833,10 @@
     min-width: auto;
   }
   .p-button:enabled:focus {
-    background: rgba(159, 168, 218, 0.76);
+    background: #72CECE;
   }
   .p-button:enabled:active {
-    background: rgba(159, 168, 218, 0.68);
+    background: #72CECE;
   }
   .p-button .p-ink {
     background-color: rgba(255, 255, 255, 0.32);
