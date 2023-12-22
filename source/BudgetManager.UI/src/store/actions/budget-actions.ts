@@ -26,6 +26,7 @@ export class BudgetActions {
           } else {
             store.isNewUser = true;
           }
+          store.isBudgetLoaded = true;
         },
         (error) => {
           console.error(error);

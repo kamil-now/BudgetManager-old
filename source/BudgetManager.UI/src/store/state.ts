@@ -5,6 +5,7 @@ export type AppState = {
   isLoading: boolean;
   isLoggedIn: boolean;
   isNewUser: boolean,
+  isBudgetLoaded: boolean,
   budget: BudgetSummary,
   operationsFilter: string,
   operationsTypeFilter: MoneyOperationType,
@@ -16,6 +17,7 @@ export const INITIAL_APP_STATE: AppState = {
   isLoading: true,
   isLoggedIn: false,
   isNewUser: true,
+  isBudgetLoaded: false,
   budget: {
     userSettings: { accountsOrder: [], fundsOrder: [] },
     balance: {},

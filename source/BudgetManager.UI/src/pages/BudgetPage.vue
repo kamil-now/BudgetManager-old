@@ -4,7 +4,7 @@
     v-if="!failed"
     class="budget-page"
   >
-    <div class="budget-page_content">
+    <div v-if="isBudgetLoaded" class="budget-page_content">
       <template v-if="windowWidth && windowWidth > 800 && windowWidth < 1300">
         <TabView :lazy="true">
           <TabPanel header="Funds">
@@ -50,7 +50,7 @@ import axios, { AxiosError } from 'axios';
 import OperationsView from '@/components/OperationsView.vue';
 
 const store = useAppStore();
-const { isNewUser } = storeToRefs(store);
+const { isNewUser, isBudgetLoaded } = storeToRefs(store);
 const toast = useToast();
 const failed = ref<boolean>(false);
 const windowWidth = ref<number>();
