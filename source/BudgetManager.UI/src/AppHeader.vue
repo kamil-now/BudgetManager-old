@@ -263,6 +263,7 @@ function createNewAccount() {
   }
 
   .loading-indicator {
+    pointer-events: none;
     visibility: hidden;
     margin: 0.5rem;    
     
@@ -273,6 +274,7 @@ function createNewAccount() {
 
     width: 3rem;
     height: 3rem;
+    z-index: 2;
 
     &.show {
       visibility: visible;

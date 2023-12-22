@@ -232,6 +232,9 @@ function getIcon(type: MoneyOperationType) {
   flex-direction: column;
   &_filters {
     padding-bottom: 0.25rem;
+    @media (max-width: 800px) {
+      padding-top: 0.5rem;
+    }
     display: flex;
     width: 100%;
     flex-wrap: wrap;
@@ -240,6 +243,7 @@ function getIcon(type: MoneyOperationType) {
     justify-content: start;
     .balance-label {
       flex-grow: 1;
+      height: 2.25rem;
     }
   }
   &_body {
