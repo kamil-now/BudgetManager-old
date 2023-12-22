@@ -43,8 +43,11 @@ export const APP_GETTERS: AppGetters = {
     if (state.operationsTypeFilter !== MoneyOperationType.Undefined) {
       operations = operations.filter(x => x.type === state.operationsTypeFilter);
     }
-    if (state.operationsDateFilter.length > 0) {
-      operations = operations.filter(x => x.date === state.operationsDateFilter);
+    if (state.operationsDateFromFilter.length > 0) {
+      operations = operations.filter(x => x.date >= state.operationsDateFromFilter);
+    }
+    if (state.operationsDateToFilter.length > 0) {
+      operations = operations.filter(x => x.date <= state.operationsDateToFilter);
     }
     return operations;
   }, 

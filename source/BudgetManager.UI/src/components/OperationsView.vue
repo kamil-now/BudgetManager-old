@@ -4,13 +4,13 @@
     <DynamicDialog />
     <div class="operations-view_filters">
       <Calendar
-        style="width: 8rem"
-        v-model="dateFilter"
+        style="width: 10rem"
+        v-model="dateRangeFilter"
         dateFormat="yy/mm/dd"
+        selectionMode="range"
         size="small"
-        placeholder="yy/mm/dd"
+        placeholder="yy/mm/dd - yy/mm/dd"
         mask="9999/99/99"
-        @date-select="dateFilter = DateUtils.createDateOnlyString($event)"
       />
       <span class="p-input-icon-left">
         <i class="pi pi-search" />
@@ -95,7 +95,7 @@ import { DisplayFormat } from '@/helpers/display-format';
 import { MoneyOperationType } from '@/models/money-operation-type.enum';
 import { useAppStore } from '@/store/store';
 import { storeToRefs } from 'pinia';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import AccountTransferIcon from './icons/AccountTransferIcon.vue';
 import FundTransferIcon from './icons/FundTransferIcon.vue';
 import IncomeIcon from './icons/IncomeIcon.vue';
@@ -110,7 +110,8 @@ const {
   filteredOperations,
   operationsFilter,
   operationsTypeFilter,
-  operationsDateFilter,
+  operationsDateFromFilter,
+  operationsDateToFilter,
 } = storeToRefs(store);
 const moneyOperationTypes = Object.keys(MoneyOperationType).filter(
   (item) => !isNaN(Number(item)) && item !== '0'
@@ -131,18 +132,22 @@ const typeFilter = computed({
       ];
   },
 });
-const dateFilter = computed({
-  get: () => operationsDateFilter.value,
+
+const selectedDateRange = ref<Date[]>([]);
+const dateRangeFilter = computed({
+  get: () => selectedDateRange.value,
   set: (newValue) => {
-    operationsDateFilter.value = newValue;
+    selectedDateRange.value = newValue;
+    operationsDateFromFilter.value = DateUtils.createDateOnlyString(new Date(newValue[0]));
+    operationsDateToFilter.value = DateUtils.createDateOnlyString(new Date(newValue[1]));
   },
 });
-
 
 function clearFilters() {
   typeFilter.value = MoneyOperationType.Undefined;
   filter.value = '';
-  dateFilter.value = '';
+  operationsDateFromFilter.value = '';
+  operationsDateToFilter.value = '';
 }
 
 function getIcon(type: MoneyOperationType) {

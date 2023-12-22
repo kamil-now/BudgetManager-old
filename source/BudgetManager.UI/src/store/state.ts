@@ -8,7 +8,8 @@ export type AppState = {
   budget: BudgetSummary,
   operationsFilter: string,
   operationsTypeFilter: MoneyOperationType,
-  operationsDateFilter: string
+  operationsDateFromFilter: string
+  operationsDateToFilter: string
 };
 
 export const INITIAL_APP_STATE: AppState = {
@@ -25,5 +26,6 @@ export const INITIAL_APP_STATE: AppState = {
   },
   operationsFilter: '',
   operationsTypeFilter: MoneyOperationType.Undefined,
-  operationsDateFilter: ''
+  operationsDateFromFilter: '',
+  operationsDateToFilter: ''
 };
