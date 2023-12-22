@@ -28,7 +28,7 @@ export type AppGetters = {
   accountTransfers: (state: AppState) => AccountTransfer[],
   lastUsedAccount: (state: AppState) => Account | undefined,
   lastUsedFund: (state: AppState) => Fund | undefined,
-  lastOperation: (state: AppState) => (type: MoneyOperationType) => MoneyOperation | undefined
+  lastOperation: (state: AppState) => (type: MoneyOperationType) => MoneyOperation | undefined,
 };
 
 export const APP_GETTERS: AppGetters = {
@@ -50,7 +50,7 @@ export const APP_GETTERS: AppGetters = {
       operations = operations.filter(x => x.date <= state.operationsDateToFilter);
     }
     return operations;
-  }, 
+  },
   operations: (state: AppState) => state.budget.operations,
   funds: (state: AppState) => state.budget.funds.filter(x => !x.isDeleted),
   fundsNames: (state: AppState) => state.budget.funds.filter(x => !x.isDeleted).map(x => x.name),
@@ -69,11 +69,11 @@ export const APP_GETTERS: AppGetters = {
   fundTransfers: (state: AppState) => state.budget.operations
     .filter(x => x.type === MoneyOperationType.FundTransfer).map(x => x as FundTransfer),
   lastUsedAccount: (state: AppState) => {
-    const lastOperationWithAccount =  state.budget.operations.find(x => !!x.accountId || !!x.targetAccountId);
+    const lastOperationWithAccount = state.budget.operations.find(x => !!x.accountId || !!x.targetAccountId);
     if (lastOperationWithAccount) {
-      const account = state.budget.accounts.find(x => 
+      const account = state.budget.accounts.find(x =>
         !x.isDeleted &&
-        (lastOperationWithAccount.accountId && x.id === lastOperationWithAccount.accountId) 
+        (lastOperationWithAccount.accountId && x.id === lastOperationWithAccount.accountId)
         || (lastOperationWithAccount.targetAccountId && x.id === lastOperationWithAccount.targetAccountId)
       );
       if (account) {
@@ -84,11 +84,11 @@ export const APP_GETTERS: AppGetters = {
     return accountWithBalance;
   },
   lastUsedFund: (state: AppState) => {
-    const lastOperationWithFund =  state.budget.operations.find(x => !!x.fundId || !!x.targetFundId);
+    const lastOperationWithFund = state.budget.operations.find(x => !!x.fundId || !!x.targetFundId);
     if (lastOperationWithFund) {
-      const fund = state.budget.funds.find(x => 
+      const fund = state.budget.funds.find(x =>
         !x.isDeleted &&
-        (lastOperationWithFund.fundId && x.id === lastOperationWithFund.fundId) 
+        (lastOperationWithFund.fundId && x.id === lastOperationWithFund.fundId)
         || (lastOperationWithFund.targetFundId && x.id === lastOperationWithFund.targetFundId)
       );
       if (fund) {
@@ -98,8 +98,8 @@ export const APP_GETTERS: AppGetters = {
     const fundWithBalance = state.budget.funds.find(x => !!x.id && Object.keys(x.balance).length > 0);
     return fundWithBalance;
   },
-  lastOperation: (state:AppState) => (type: MoneyOperationType) => {
+  lastOperation: (state: AppState) => (type: MoneyOperationType) => {
     const operationsOfType = state.budget.operations.filter(x => x.type === type);
-    return operationsOfType ? operationsOfType[0] : undefined; 
-  }
+    return operationsOfType ? operationsOfType[0] : undefined;
+  },
 };

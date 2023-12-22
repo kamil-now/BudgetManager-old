@@ -13,10 +13,12 @@
     <div class="app-header-labels">
       <BalanceLabel
         :balance="balance"
+        :largeFont="true"
         label="Balance"
       />
       <BalanceLabel
         :balance="unallocated"
+        :largeFont="true"
         label="Unallocated"
       />
     </div>

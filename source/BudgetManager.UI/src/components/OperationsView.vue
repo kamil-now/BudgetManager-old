@@ -40,6 +40,20 @@
         aria-label="Clear"
         @click="clearFilters()"
       />
+      <BalanceLabel
+        v-if="
+          !!operationsFilter ||
+          dateRangeFilter.length > 0 ||
+          (!!typeFilter &&
+            [
+              MoneyOperationType.Income,
+              MoneyOperationType.Expense,
+              MoneyOperationType.CurrencyExchange,
+            ].includes(typeFilter))
+        "
+        :balance="filteredOperationsBalance"
+        :useColors="true"
+      />
     </div>
     <ListView
       header="Operations"
@@ -54,7 +68,7 @@
           <div class="operations-view_body_left">
             <span class="date">{{ data.date }}</span>
             <component :is="getIcon(data.type)">
-              <span class="money">{{ DisplayFormat.money(data.value) }}</span> 
+              <span class="money">{{ DisplayFormat.money(data.value) }}</span>
             </component>
           </div>
           <div class="operations-view_body_right">
@@ -90,6 +104,7 @@
 </template>
 <script setup lang="ts">
 import ListView from '@/components/ListView.vue';
+import BalanceLabel from '@/components/BalanceLabel.vue';
 import { DateUtils } from '@/helpers/date-utils';
 import { DisplayFormat } from '@/helpers/display-format';
 import { MoneyOperationType } from '@/models/money-operation-type.enum';
@@ -103,6 +118,8 @@ import ExpenseIcon from './icons/ExpenseIcon.vue';
 import AllocationIcon from './icons/AllocationIcon.vue';
 import CurrencyExchangeIcon from './icons/CurrencyExchangeIcon.vue';
 import MoneyOperationActions from './MoneyOperationActions.vue';
+import { MoneyOperation } from '@/models/money-operation';
+import { Balance } from '@/models/balance';
 
 const store = useAppStore();
 
@@ -116,6 +133,11 @@ const {
 const moneyOperationTypes = Object.keys(MoneyOperationType).filter(
   (item) => !isNaN(Number(item)) && item !== '0'
 );
+
+const filteredOperationsBalance = computed({
+  get: () => getOperationsBalance(filteredOperations.value),
+  set: () => {},
+});
 
 const filter = computed({
   get: () => operationsFilter.value,
@@ -138,8 +160,12 @@ const dateRangeFilter = computed({
   get: () => selectedDateRange.value,
   set: (newValue) => {
     selectedDateRange.value = newValue;
-    operationsDateFromFilter.value = DateUtils.createDateOnlyString(new Date(newValue[0]));
-    operationsDateToFilter.value = DateUtils.createDateOnlyString(new Date(newValue[1]));
+    operationsDateFromFilter.value = DateUtils.createDateOnlyString(
+      new Date(newValue[0])
+    );
+    operationsDateToFilter.value = DateUtils.createDateOnlyString(
+      new Date(newValue[1])
+    );
   },
 });
 
@@ -148,6 +174,35 @@ function clearFilters() {
   filter.value = '';
   operationsDateFromFilter.value = '';
   operationsDateToFilter.value = '';
+  selectedDateRange.value = [];
+}
+
+function getOperationsBalance(operations: MoneyOperation[]) {
+  const balance: Balance = {};
+  for (const operation of operations) {
+    if (!balance[operation.value.currency]) {
+      balance[operation.value.currency] = 0;
+    }
+    if (operation.targetCurrency && !balance[operation.targetCurrency]) {
+      balance[operation.targetCurrency] = 0;
+    }
+    switch (operation.type) {
+      case MoneyOperationType.Income:
+        balance[operation.value.currency] += operation.value.amount;
+        break;
+      case MoneyOperationType.Expense:
+        balance[operation.value.currency] -= operation.value.amount;
+        break;
+      case MoneyOperationType.CurrencyExchange:
+        balance[operation.value.currency] -= operation.value.amount;
+        balance[operation.targetCurrency!] +=
+        operation.value.amount / operation.exchangeRate!;
+        break;
+      default:
+        break;
+    }
+  }
+  return balance;
 }
 
 function getIcon(type: MoneyOperationType) {
@@ -176,14 +231,17 @@ function getIcon(type: MoneyOperationType) {
   align-items: center;
   flex-direction: column;
   &_filters {
-    padding: 0.5rem;
+    padding-bottom: 0.5rem;
     display: flex;
     width: 100%;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     gap: 1rem;
     display: flex;
-    align-items: center;
+    align-items: start;
     justify-content: start;
+    .balance-label {
+      flex-grow: 1;
+    }
   }
   &_body {
     display: flex;
