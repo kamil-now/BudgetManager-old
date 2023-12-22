@@ -57,7 +57,7 @@ module.exports = {
     'arrow-spacing': ['warn', { before: true, after: true }],
     'key-spacing': [2, { beforeColon: false, afterColon: true }],
     'semi': ['warn', 'always'],
-    'indent': ['warn', 2],
+    'indent': ['warn', 2, { 'SwitchCase': 1 }],
   },
   overrides: [
     {

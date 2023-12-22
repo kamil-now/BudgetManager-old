@@ -83,26 +83,26 @@ function removeOperation(operation: MoneyOperation) {
     throw new Error();
   }
   switch (operation.type) {
-  case MoneyOperationType.Income:
-    deleteIncome(operation.id);
-    break;
-  case MoneyOperationType.Allocation:
-    deleteAllocation(operation.id);
-    break;
-  case MoneyOperationType.Expense:
-    deleteExpense(operation.id);
-    break;
-  case MoneyOperationType.CurrencyExchange:
-    deleteCurrencyExchange(operation.id);
-    break;
-  case MoneyOperationType.AccountTransfer:
-    deleteAccountTransfer(operation.id);
-    break;
-  case MoneyOperationType.FundTransfer:
-    deleteFundTransfer(operation.id);
-    break;
-  default:
-    throw new Error('Unknown operation.');
+    case MoneyOperationType.Income:
+      deleteIncome(operation.id);
+      break;
+    case MoneyOperationType.Allocation:
+      deleteAllocation(operation.id);
+      break;
+    case MoneyOperationType.Expense:
+      deleteExpense(operation.id);
+      break;
+    case MoneyOperationType.CurrencyExchange:
+      deleteCurrencyExchange(operation.id);
+      break;
+    case MoneyOperationType.AccountTransfer:
+      deleteAccountTransfer(operation.id);
+      break;
+    case MoneyOperationType.FundTransfer:
+      deleteFundTransfer(operation.id);
+      break;
+    default:
+      throw new Error('Unknown operation.');
   }
 }
 </script>

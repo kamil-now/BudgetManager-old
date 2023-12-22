@@ -152,18 +152,18 @@ function clearFilters() {
 
 function getIcon(type: MoneyOperationType) {
   switch (type) {
-  case MoneyOperationType.Income:
-    return IncomeIcon;
-  case MoneyOperationType.Expense:
-    return ExpenseIcon;
-  case MoneyOperationType.AccountTransfer:
-    return AccountTransferIcon;
-  case MoneyOperationType.FundTransfer:
-    return FundTransferIcon;
-  case MoneyOperationType.Allocation:
-    return AllocationIcon;
-  case MoneyOperationType.CurrencyExchange:
-    return CurrencyExchangeIcon;
+    case MoneyOperationType.Income:
+      return IncomeIcon;
+    case MoneyOperationType.Expense:
+      return ExpenseIcon;
+    case MoneyOperationType.AccountTransfer:
+      return AccountTransferIcon;
+    case MoneyOperationType.FundTransfer:
+      return FundTransferIcon;
+    case MoneyOperationType.Allocation:
+      return AllocationIcon;
+    case MoneyOperationType.CurrencyExchange:
+      return CurrencyExchangeIcon;
   }
 }
 </script>
