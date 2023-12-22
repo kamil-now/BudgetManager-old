@@ -231,12 +231,11 @@ function getIcon(type: MoneyOperationType) {
   align-items: center;
   flex-direction: column;
   &_filters {
-    padding-bottom: 0.5rem;
+    padding-bottom: 0.25rem;
     display: flex;
     width: 100%;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     gap: 1rem;
-    display: flex;
     align-items: start;
     justify-content: start;
     .balance-label {
