@@ -73,8 +73,8 @@
           </div>
           <div class="operations-view_body_right">
             <span v-if="data.title">{{ data.title }}</span>
-            <span v-if="data.fundName">{{ data.fundName }}</span>
-            <span v-if="data.accountName">{{ data.accountName }}</span>
+            <span v-if="data.fundName"><FundIcon>{{ data.fundName }}</FundIcon></span>
+            <span v-if="data.accountName"><AccountIcon>{{ data.accountName }}</AccountIcon></span>
             <i
               v-if="
                 [
@@ -85,10 +85,8 @@
               "
               class="pi pi-arrow-right transfer-icon"
             ></i>
-            <span v-if="data.targetFundName">{{ data.targetFundName }}</span>
-            <span v-if="data.targetAccountName">
-              {{ data.targetAccountName }}
-            </span>
+            <span v-if="data.targetFundName"><FundIcon>{{ data.targetFundName }}</FundIcon></span>
+            <span v-if="data.targetAccountName"><AccountIcon>{{ data.targetAccountName }}</AccountIcon></span>
             <span v-if="data.targetCurrency">
               {{
                 (data.value.amount / data.exchangeRate).toFixed(2) +
@@ -111,6 +109,8 @@ import { MoneyOperationType } from '@/models/money-operation-type.enum';
 import { useAppStore } from '@/store/store';
 import { storeToRefs } from 'pinia';
 import { computed, ref } from 'vue';
+import FundIcon from './icons/FundIcon.vue';
+import AccountIcon from './icons/AccountIcon.vue';
 import AccountTransferIcon from './icons/AccountTransferIcon.vue';
 import FundTransferIcon from './icons/FundTransferIcon.vue';
 import IncomeIcon from './icons/IncomeIcon.vue';
