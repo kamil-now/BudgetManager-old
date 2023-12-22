@@ -23,7 +23,7 @@
               }}
             </div>
           </div>
-          <div class="accounts-view_body_name">{{ data.name }}</div>
+          <div class="accounts-view_body_name account-name">{{ data.name }}</div>
         </div>
       </template>
       <template #editor="{ data }">

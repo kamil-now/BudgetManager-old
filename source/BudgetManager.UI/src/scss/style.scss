@@ -58,6 +58,17 @@ body {
   display: block;
   text-align: end;
   text-wrap: nowrap;
+  color: var(--text-color);
+}
+
+.fund-name {
+  font-family: var(--font-family);
+  color: var(--primary-color);
+}
+
+.account-name {
+  font-family: var(--font-family);
+  color: var(--primary-color);
 }
 
 .budget-icon {
@@ -66,7 +77,7 @@ body {
 }
 
 .transfer-icon {
-  color: #007BA7;
+  color: var(--secondary-color);
   font-weight: bold;
 }
 

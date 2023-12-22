@@ -14,7 +14,7 @@
               {{ DisplayFormat.money({ amount: value, currency: currency.toString() }) }}
             </div>
           </div>
-          <div class="funds-view_body_name">{{ data.name }}</div>
+          <div class="funds-view_body_name fund-name">{{ data.name }}</div>
         </div>
       </template>
       <template #editor="{ data }">

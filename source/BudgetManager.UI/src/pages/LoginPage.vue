@@ -32,8 +32,6 @@ const login = () => auth.login().then(() => router.push('/home'));
 
   .log-in-btn {
     min-width: 100px;
-    background-color: var(--app-accent-color);
-    color: var(--app-accent-text-color);
     border-radius: 5px;
     font-weight: 500;
     font-size: 12px;

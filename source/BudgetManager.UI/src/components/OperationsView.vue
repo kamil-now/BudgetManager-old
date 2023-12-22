@@ -73,8 +73,8 @@
           </div>
           <div class="operations-view_body_right">
             <span v-if="data.title">{{ data.title }}</span>
-            <span v-if="data.fundName"><FundIcon>{{ data.fundName }}</FundIcon></span>
-            <span v-if="data.accountName"><AccountIcon>{{ data.accountName }}</AccountIcon></span>
+            <span v-if="data.fundName"><FundIcon><span class="fund-name">{{ data.fundName }}</span></FundIcon></span>
+            <span v-if="data.accountName"><AccountIcon><span class="account-name">{{ data.accountName }}</span></AccountIcon></span>
             <i
               v-if="
                 [
@@ -85,8 +85,8 @@
               "
               class="pi pi-arrow-right transfer-icon"
             ></i>
-            <span v-if="data.targetFundName"><FundIcon>{{ data.targetFundName }}</FundIcon></span>
-            <span v-if="data.targetAccountName"><AccountIcon>{{ data.targetAccountName }}</AccountIcon></span>
+            <span v-if="data.targetFundName"><FundIcon><span class="fund-name">{{ data.targetFundName }}</span></FundIcon></span>
+            <span v-if="data.targetAccountName"><AccountIcon><span class="account-name">{{ data.targetAccountName }}</span></AccountIcon></span>
             <span v-if="data.targetCurrency">
               {{
                 (data.value.amount / data.exchangeRate).toFixed(2) +
