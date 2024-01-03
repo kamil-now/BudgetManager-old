@@ -1,10 +1,6 @@
 <template>
-  <Toast />
   <AppPage>
-    <div
-      v-if="!failed"
-      class="budget-page"
-    >
+    <div class="budget-page">
       <div
         v-if="isBudgetLoaded"
         class="budget-page_content"
@@ -45,22 +41,16 @@
 </template>
 
 <script setup lang="ts">
-import AppPage from '@/pages/AppPage.vue';
 import AccountsView from '@/components/AccountsView.vue';
 import FundsView from '@/components/FundsView.vue';
+import OperationsView from '@/components/OperationsView.vue';
+import AppPage from '@/pages/AppPage.vue';
 import { useAppStore } from '@/store/store';
 import { storeToRefs } from 'pinia';
-import { onMounted, ref, onDeactivated, nextTick } from 'vue';
-import { useToast } from 'primevue/usetoast';
-import axios, { AxiosError } from 'axios';
-import OperationsView from '@/components/OperationsView.vue';
-import { useRouter } from 'vue-router';
+import { nextTick, onDeactivated, onMounted, ref } from 'vue';
 
 const store = useAppStore();
 const { isNewUser, isBudgetLoaded } = storeToRefs(store);
-const toast = useToast();
-const router = useRouter();
-const failed = ref<boolean>(false);
 const windowWidth = ref<number>();
 
 onMounted(() => {
@@ -73,44 +63,7 @@ onMounted(() => {
     window.addEventListener('resize', onResize);
   });
 
-  axios.interceptors.response.use(
-    (response) => response,
-    (error: AxiosError | Error) => {
-      console.error(error);
-      let errorMessage: string;
-
-      if (typeof (error as AxiosError).response === 'string') {
-        toast.add({
-          severity: 'error',
-          summary: 'Unexpected error.',
-          detail: 'Please reload the page.',
-        });
-        failed.value = true;
-        return;
-      }
-      if ((error as AxiosError).response?.status === 401) {
-        router.push('/login');
-        return;
-      }
-      const axiosErrorMessage = (error as AxiosError).response
-        ?.data as string[];
-      if (Array.isArray(axiosErrorMessage)) {
-        errorMessage = axiosErrorMessage.join('\n');
-      } else {
-        errorMessage = (error as Error).message;
-      }
-      if (errorMessage.includes('Budget already exists.')) {
-        return;
-      }
-      toast.add({
-        severity: 'error',
-        summary: (error as AxiosError).request
-          ? (error as AxiosError).request.statusText
-          : error.name,
-        detail: errorMessage,
-      });
-    }
-  );
+  
 });
 
 onDeactivated(() => {
