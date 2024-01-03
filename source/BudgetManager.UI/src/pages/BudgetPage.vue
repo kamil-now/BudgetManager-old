@@ -54,10 +54,12 @@ import { onMounted, ref, onDeactivated, nextTick } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import axios, { AxiosError } from 'axios';
 import OperationsView from '@/components/OperationsView.vue';
+import { useRouter } from 'vue-router';
 
 const store = useAppStore();
 const { isNewUser, isBudgetLoaded } = storeToRefs(store);
 const toast = useToast();
+const router = useRouter();
 const failed = ref<boolean>(false);
 const windowWidth = ref<number>();
 
@@ -84,6 +86,10 @@ onMounted(() => {
           detail: 'Please reload the page.',
         });
         failed.value = true;
+        return;
+      }
+      if ((error as AxiosError).response?.status === 401) {
+        router.push('/login');
         return;
       }
       const axiosErrorMessage = (error as AxiosError).response
