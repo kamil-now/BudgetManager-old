@@ -42,7 +42,7 @@
       />
       <BalanceLabel
         v-if="
-          !!operationsFilter ||
+          !!operationsContentFilter ||
           dateRangeFilter.length > 0 ||
           (!!typeFilter &&
             [
@@ -58,7 +58,7 @@
     <ListView
       header="Operations"
       v-model="filteredOperations"
-      :virtualScrollerOptions="{ itemSize: 40, lazy: true, step: 20 }"
+      :virtualScrollerOptions="{ itemSize: 40, lazy: true, step: 30 }"
     >
       <template #actions="{ data }">
         <MoneyOperationActions :operation="data" />
@@ -125,7 +125,7 @@ const store = useAppStore();
 
 const {
   filteredOperations,
-  operationsFilter,
+  operationsContentFilter,
   operationsTypeFilter,
   operationsDateFromFilter,
   operationsDateToFilter,
@@ -140,9 +140,9 @@ const filteredOperationsBalance = computed({
 });
 
 const filter = computed({
-  get: () => operationsFilter.value,
+  get: () => operationsContentFilter.value,
   set: (newValue) => {
-    operationsFilter.value = newValue;
+    operationsContentFilter.value = newValue;
   },
 });
 const typeFilter = computed({
