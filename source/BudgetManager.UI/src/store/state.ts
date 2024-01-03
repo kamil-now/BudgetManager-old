@@ -7,7 +7,7 @@ export type AppState = {
   isNewUser: boolean,
   isBudgetLoaded: boolean,
   budget: BudgetSummary,
-  operationsFilter: string,
+  operationsContentFilter: string,
   operationsTypeFilter: MoneyOperationType,
   operationsDateFromFilter: string
   operationsDateToFilter: string
@@ -26,7 +26,7 @@ export const INITIAL_APP_STATE: AppState = {
     accounts: [],
     operations: []
   },
-  operationsFilter: '',
+  operationsContentFilter: '',
   operationsTypeFilter: MoneyOperationType.Undefined,
   operationsDateFromFilter: '',
   operationsDateToFilter: ''

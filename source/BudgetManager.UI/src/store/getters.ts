@@ -1,3 +1,4 @@
+import currencies from '@/assets/currencies.json';
 import { Account } from '@/models/account';
 import { AccountTransfer } from '@/models/account-transfer';
 import { Allocation } from '@/models/allocation';
@@ -35,12 +36,23 @@ export type AppGetters = {
 export const APP_GETTERS: AppGetters = {
   balance: (state: AppState) => state.budget.balance,
   unallocated: (state: AppState) => state.budget.unallocated,
-  isFilteredByTypeOrContent: (state: AppState) => !!state.operationsTypeFilter || !!state.operationsFilter,
+  isFilteredByTypeOrContent: (state: AppState) => !!state.operationsTypeFilter || !!state.operationsContentFilter,
   filteredOperations: (state: AppState) => {
     let operations = [...state.budget.operations];
-    if (state.operationsFilter.length > 1) {
-      const filterValue = state.operationsFilter.toLowerCase();
-      operations = state.budget.operations.filter(x => (x.title + x.accountName + x.fundName + x.targetFundName + x.targetAccountName).toLowerCase().includes(filterValue));
+    if (state.operationsContentFilter.length > 1) {
+      const filterValue = state.operationsContentFilter.toLowerCase();
+      const valueFilter = Number(state.operationsContentFilter);
+      if (valueFilter) {
+        operations = state.budget.operations.filter(x => x.value.amount === valueFilter);
+      } else if (
+        filterValue.length === 3
+        && Object.keys(currencies)
+          .map(x => x.toLowerCase())
+          .includes(filterValue)) {
+        operations = state.budget.operations.filter(x => x.value.currency.toLowerCase().includes(filterValue));
+      } else {
+        operations = state.budget.operations.filter(x => (x.title + x.accountName + x.fundName + x.targetFundName + x.targetAccountName).toLowerCase().includes(filterValue));
+      }
     }
     if (state.operationsTypeFilter !== MoneyOperationType.Undefined) {
       operations = operations.filter(x => x.type === state.operationsTypeFilter);
