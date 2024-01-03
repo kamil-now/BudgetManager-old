@@ -40,6 +40,8 @@
         aria-label="Clear"
         @click="clearFilters()"
       />
+    </div>
+    <div class="operations-view_balance">
       <BalanceLabel
         v-if="
           !!operationsContentFilter ||
@@ -241,10 +243,18 @@ function getIcon(type: MoneyOperationType) {
     gap: 1rem;
     align-items: start;
     justify-content: start;
+  }
+  &_balance {
+    display: flex;
+    align-items: center;
+    padding: 0.25rem 0;
+    width: 100%;
     .balance-label {
-      flex-grow: 1;
       height: 2.25rem;
     }
+  }
+  .list-view {
+    height: calc(100% - 5rem);
   }
   &_body {
     display: flex;

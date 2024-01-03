@@ -71,7 +71,9 @@
         </Button>
       </div>
     </div>
-    <slot></slot>
+    <div class="app-page-content">
+      <slot></slot>
+    </div>
   </div>
 </template>
 
@@ -164,7 +166,6 @@ function createNewAccount() {
 </script>
 <style lang="scss">
 .app-page {
-  height: calc(100vh - $appHeaderHeight);
   overflow: hidden;
   &-header {
     width: 100%;
@@ -268,6 +269,10 @@ function createNewAccount() {
         }
       }
     }
+  }
+  &-content {
+    height: calc(100vh - $appHeaderHeight);
+    width: 100%;
   }
 
   .loading-indicator {
