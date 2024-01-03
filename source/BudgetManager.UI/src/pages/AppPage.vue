@@ -164,6 +164,8 @@ function createNewAccount() {
 </script>
 <style lang="scss">
 .app-page {
+  height: calc(100vh - $appHeaderHeight);
+  overflow: hidden;
   &-header {
     width: 100%;
     max-height: $appHeaderHeight;
