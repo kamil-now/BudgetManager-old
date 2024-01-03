@@ -1,12 +1,32 @@
 <template>
   <Toast />
-  <div
-    v-if="!failed"
-    class="budget-page"
-  >
-    <div v-if="isBudgetLoaded" class="budget-page_content">
-      <template v-if="windowWidth && windowWidth > 800 && windowWidth < 1300">
-        <TabView :lazy="true">
+  <AppPage>
+    <div
+      v-if="!failed"
+      class="budget-page"
+    >
+      <div
+        v-if="isBudgetLoaded"
+        class="budget-page_content"
+      >
+        <template v-if="windowWidth && windowWidth > 800 && windowWidth < 1300">
+          <TabView :lazy="true">
+            <TabPanel header="Funds">
+              <FundsView />
+            </TabPanel>
+            <TabPanel header="Accounts">
+              <AccountsView />
+            </TabPanel>
+          </TabView>
+          <OperationsView></OperationsView>
+        </template>
+        <TabView
+          v-else-if="windowWidth && windowWidth < 800"
+          :lazy="true"
+        >
+          <TabPanel header="Operations">
+            <OperationsView></OperationsView>
+          </TabPanel>
           <TabPanel header="Funds">
             <FundsView />
           </TabPanel>
@@ -14,32 +34,18 @@
             <AccountsView />
           </TabPanel>
         </TabView>
-        <OperationsView></OperationsView>
-      </template>
-      <TabView
-        v-else-if="windowWidth && windowWidth < 800"
-        :lazy="true"
-      >
-        <TabPanel header="Operations">
-          <OperationsView></OperationsView>
-        </TabPanel>
-        <TabPanel header="Funds">
+        <template v-else>
           <FundsView />
-        </TabPanel>
-        <TabPanel header="Accounts">
+          <OperationsView></OperationsView>
           <AccountsView />
-        </TabPanel>
-      </TabView>
-      <template v-else>
-        <FundsView />
-        <OperationsView></OperationsView>
-        <AccountsView />
-      </template>
+        </template>
+      </div>
     </div>
-  </div>
+  </AppPage>
 </template>
 
 <script setup lang="ts">
+import AppPage from '@/pages/AppPage.vue';
 import AccountsView from '@/components/AccountsView.vue';
 import FundsView from '@/components/FundsView.vue';
 import { useAppStore } from '@/store/store';
@@ -144,7 +150,6 @@ const onResize = () => (windowWidth.value = window.innerWidth);
       flex: 1;
     }
   }
-
 
   .p-tabview-nav {
     display: flex;

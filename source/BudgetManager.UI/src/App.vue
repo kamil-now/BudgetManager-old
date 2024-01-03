@@ -1,14 +1,11 @@
 <template>
-  <AppHeader v-if="isLoggedIn" />
   <router-view />
 </template>
 
 <script setup lang="ts">
-import { storeToRefs } from 'pinia';
 import { useAppStore } from './store/store';
 import { AUTH, IAuthService } from '@/auth';
 import { inject, onBeforeMount } from 'vue';
-import AppHeader from './AppHeader.vue';
 
 const auth = inject<IAuthService>(AUTH);
 if (!auth) {
@@ -16,9 +13,8 @@ if (!auth) {
 }
 const store = useAppStore();
 
-const { isLoggedIn } = storeToRefs(store);
 onBeforeMount(() => {
-  if (!isLoggedIn.value) {
+  if (!store.isLoggedIn) {
     auth.login();
   }
 });
@@ -52,7 +48,6 @@ onBeforeMount(() => {
   display: flex;
   align-items: center;
   flex-direction: column;
-  justify-content: center;
   animation: fadein 1s;
 }
 
