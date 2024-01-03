@@ -14,6 +14,7 @@ import { AppState } from './state';
 export type AppGetters = {
   balance: (state: AppState) => Balance,
   unallocated: (state: AppState) => Balance,
+  isFilteredByTypeOrContent: (state: AppState) => boolean,
   filteredOperations: (state: AppState) => MoneyOperation[],
   operations: (state: AppState) => MoneyOperation[],
   funds: (state: AppState) => Fund[],
@@ -34,6 +35,7 @@ export type AppGetters = {
 export const APP_GETTERS: AppGetters = {
   balance: (state: AppState) => state.budget.balance,
   unallocated: (state: AppState) => state.budget.unallocated,
+  isFilteredByTypeOrContent: (state: AppState) => !!state.operationsTypeFilter || !!state.operationsFilter,
   filteredOperations: (state: AppState) => {
     let operations = [...state.budget.operations];
     if (state.operationsFilter.length > 1) {

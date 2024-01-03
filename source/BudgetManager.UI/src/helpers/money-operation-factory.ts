@@ -39,7 +39,7 @@ export class MoneyOperationFactory {
     const lastOperationOfType = store.lastOperation(type);
     if (lastOperationOfType) {
       return {
-        ... MoneyOperationUtils.copy(lastOperationOfType),
+        ...MoneyOperationUtils.copy(lastOperationOfType, store.isFilteredByTypeOrContent),
         value: {
           amount: 0,
           currency: lastOperationOfType.value.currency
@@ -48,20 +48,20 @@ export class MoneyOperationFactory {
     }
 
     switch (type) {
-    case MoneyOperationType.Income:
-      return this.createNewIncome(store);
-    case MoneyOperationType.Allocation:
-      return this.createNewAllocation(store);
-    case MoneyOperationType.Expense:
-      return this.createNewExpense(store);
-    case MoneyOperationType.CurrencyExchange:
-      return this.createNewCurrencyExchange(store);
-    case MoneyOperationType.AccountTransfer:
-      return this.createNewAccountTransfer(store);
-    case MoneyOperationType.FundTransfer:
-      return this.createNewFundTransfer(store);
-    default:
-      throw new Error('Unknown operation.');
+      case MoneyOperationType.Income:
+        return this.createNewIncome(store);
+      case MoneyOperationType.Allocation:
+        return this.createNewAllocation(store);
+      case MoneyOperationType.Expense:
+        return this.createNewExpense(store);
+      case MoneyOperationType.CurrencyExchange:
+        return this.createNewCurrencyExchange(store);
+      case MoneyOperationType.AccountTransfer:
+        return this.createNewAccountTransfer(store);
+      case MoneyOperationType.FundTransfer:
+        return this.createNewFundTransfer(store);
+      default:
+        throw new Error('Unknown operation.');
     }
   }
 

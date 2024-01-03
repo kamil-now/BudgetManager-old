@@ -3,10 +3,10 @@ import { DateUtils } from './date-utils';
 
 export class MoneyOperationUtils {
 
-  public static copy(operation: MoneyOperation): MoneyOperation {
+  public static copy(operation: MoneyOperation, useCurrentDate: boolean): MoneyOperation {
     return {
       ...operation,
-      date: DateUtils.createDateOnlyString(new Date()),
+      date: useCurrentDate ? DateUtils.createDateOnlyString(new Date()) : operation.date,
       id: undefined,
     };
   }

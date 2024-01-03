@@ -6,7 +6,7 @@
       rounded
       size="small"
       aria-label="Copy"
-      @click="createCopy(operation)"
+      @click="createCopy(operation, isFilteredByTypeOrContent)"
     />
     <Button
       icon="pi pi-pencil"
@@ -36,11 +36,13 @@ import { useAppStore } from '@/store/store';
 import { useConfirm } from 'primevue/useconfirm';
 import { useDialog } from 'primevue/usedialog';
 import InputDialog from './InputDialog.vue';
+import { storeToRefs } from 'pinia';
 
 defineProps<{ operation: MoneyOperation }>();
 const dialog = useDialog();
 const store = useAppStore();
 const confirm = useConfirm();
+const { isFilteredByTypeOrContent } = storeToRefs(store);
 
 const {
   deleteIncome,
@@ -50,8 +52,8 @@ const {
   deleteAccountTransfer,
   deleteFundTransfer,
 } = store;
-function createCopy(operation: MoneyOperation) {
-  edit(MoneyOperationUtils.copy(operation), 'Create');
+function createCopy(operation: MoneyOperation, useCurrentDate: boolean) {
+  edit(MoneyOperationUtils.copy(operation, useCurrentDate), 'Create');
 }
 function edit(operation: MoneyOperation, action: 'Edit' | 'Create') {
   dialog.open(InputDialog, {
