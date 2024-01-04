@@ -1,13 +1,7 @@
 namespace BudgetManager.Domain.Models;
 
-public class UserSettings
+public class UserSettings(IEnumerable<string> accountsOrder, IEnumerable<string> fundsOrder)
 {
-  public IEnumerable<string> AccountsOrder { get; }
-  public IEnumerable<string> FundsOrder { get; }
-
-  public UserSettings(IEnumerable<string> accountsOrder, IEnumerable<string> fundsOrder)
-  {
-    AccountsOrder = accountsOrder;
-    FundsOrder = fundsOrder;
-  }
+  public IEnumerable<string> AccountsOrder { get; } = accountsOrder;
+  public IEnumerable<string> FundsOrder { get; } = fundsOrder;
 }

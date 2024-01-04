@@ -1,4 +1,4 @@
-namespace BudgetManager.Application;
+namespace BudgetManager.Application.Features.BudgetManagement;
 
 using AutoMapper;
 

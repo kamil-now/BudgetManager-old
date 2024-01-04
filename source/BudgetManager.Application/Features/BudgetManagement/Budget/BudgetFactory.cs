@@ -3,15 +3,8 @@ using AutoMapper;
 namespace BudgetManager.Application.Features.BudgetManagement;
 
 
-public class BudgetFactory : IBudgetFactory
+public class BudgetFactory(IMapper _mapper) : IBudgetFactory
 {
-  private IMapper _mapper;
-
-  public BudgetFactory(IMapper mapper)
-  {
-    _mapper = mapper;
-  }
-
   public BudgetEntity Create(string userId)
   {
     return new BudgetEntity()
@@ -43,7 +36,7 @@ public class BudgetFactory : IBudgetFactory
     return withSampleData;
   }
 
-  private void AddSampleData(Budget budget)
+  private static void AddSampleData(Budget budget)
   {
     string currency = "EUR";
     var cashId = budget.AddAccount("Cash", new Balance(new Dictionary<string, decimal>() { { currency, 20 }, { "USD", 200 } }));

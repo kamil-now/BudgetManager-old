@@ -12,4 +12,4 @@ public record AccountTransferDto(
   string? TargetAccountId = null,
   string? TargetAccountName = null,
   MoneyOperationType? Type = null
-);
+  );

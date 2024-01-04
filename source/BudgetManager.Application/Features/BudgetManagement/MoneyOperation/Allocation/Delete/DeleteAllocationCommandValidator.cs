@@ -3,9 +3,7 @@ namespace BudgetManager.Application.Features.BudgetManagement;
 using BudgetManager.Domain.Models;
 using BudgetManager.Infrastructure;
 
-public class DeleteAllocationCommandValidator : UpdateMoneyOperationCommandValidator<DeleteMoneyOperationCommand<Allocation>>
+public class DeleteAllocationCommandValidator(IUserBudgetRepository repository)
+  : UpdateMoneyOperationCommandValidator<DeleteMoneyOperationCommand<Allocation>>(repository)
 {
-  public DeleteAllocationCommandValidator(IUserBudgetRepository repository) : base(repository)
-  {
-  }
 }

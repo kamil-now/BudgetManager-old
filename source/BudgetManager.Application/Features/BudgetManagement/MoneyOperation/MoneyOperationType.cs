@@ -1,3 +1,5 @@
+namespace BudgetManager.Application.Features.BudgetManagement;
+
 public enum MoneyOperationType
 {
   Undefined,

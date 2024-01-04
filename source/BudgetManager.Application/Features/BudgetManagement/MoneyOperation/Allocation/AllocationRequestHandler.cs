@@ -2,22 +2,16 @@ namespace BudgetManager.Application.Features.BudgetManagement;
 
 using AutoMapper;
 
-public class AllocationRequestHandler : BudgetRequestHandler<AllocationRequest, AllocationDto>
+public class AllocationRequestHandler(IUserBudgetRepository repo, IMapper map)
+  : BudgetRequestHandler<AllocationRequest, AllocationDto>(repo, map)
 {
-  public AllocationRequestHandler(IUserBudgetRepository repo, IMapper map)
-   : base(repo, map)
-  {
-  }
-
   public override AllocationDto Get(AllocationRequest request, Budget budget)
   {
-    var allocation = budget.Operations.First(x => x.Id == request.AllocationId) as Allocation;
-    if (allocation is null)
+    if (budget.Operations.First(x => x.Id == request.AllocationId) is not Allocation allocation)
     {
       throw new Exception();
     }
-    return _mapper.Map<AllocationDto>(allocation)
-     with
+    return _mapper.Map<AllocationDto>(allocation) with
     {
       Type = MoneyOperationType.Allocation,
       TargetFundName = budget.Funds.First(x => x.Id == allocation.TargetFundId).Name,

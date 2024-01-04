@@ -4,9 +4,7 @@ using AutoMapper;
 using BudgetManager.Domain.Models;
 using BudgetManager.Infrastructure;
 
-public class DeleteCurrencyExchangeCommandHandler : DeleteMOneyOperationCommandHandler<CurrencyExchange>
+public class DeleteCurrencyExchangeCommandHandler(IUserBudgetRepository repo, IMapper map)
+  : DeleteMOneyOperationCommandHandler<CurrencyExchange>(repo, map)
 {
-  public DeleteCurrencyExchangeCommandHandler(IUserBudgetRepository repo, IMapper map) : base(repo, map)
-  {
-  }
 }

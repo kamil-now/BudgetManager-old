@@ -4,22 +4,18 @@ using AutoMapper;
 using BudgetManager.Domain.Models;
 using BudgetManager.Infrastructure;
 
-public class UpdateExpenseCommandHandler : UpdateMoneyOperationCommandHandler<UpdateExpenseCommand, Expense, ExpenseDto>
+public class UpdateExpenseCommandHandler(IUserBudgetRepository repo, IMapper map)
+  : UpdateMoneyOperationCommandHandler<UpdateExpenseCommand, Expense, ExpenseDto>(repo, map)
 {
-  public UpdateExpenseCommandHandler(IUserBudgetRepository repo, IMapper map)
-  : base(repo, map)
-  {
-  }
-
   protected override void Update(Expense operation, UpdateExpenseCommand command)
-    => operation.Update(
-        command.FundId,
-        command.AccountId,
-        command.Title,
-        command.Value,
-        command.Date,
-        command.Description
-      );
+  => operation.Update(
+      command.FundId,
+      command.AccountId,
+      command.Title,
+      command.Value,
+      command.Date,
+      command.Description
+    );
 
   protected override ExpenseDto CompleteDto(ExpenseDto dto, Budget budget)
     => dto with

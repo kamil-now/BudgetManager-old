@@ -1,3 +1,5 @@
+namespace BudgetManager.Application.Features.BudgetManagement;
+
 public record ExpenseDto(
   string? Id = null,
   string? CreatedDate = null,
@@ -10,4 +12,4 @@ public record ExpenseDto(
   string? FundId = null,
   string? FundName = null,
   MoneyOperationType? Type = null
-);
+  );

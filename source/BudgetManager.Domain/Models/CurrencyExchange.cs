@@ -1,29 +1,22 @@
 namespace BudgetManager.Domain.Models;
 
-public class CurrencyExchange : MoneyOperation
+public class CurrencyExchange(
+  string id,
+  string title,
+  Money value,
+  string accountId,
+  string targetCurrency,
+  decimal exchangeRate,
+  string date,
+  string description,
+  DateTime createdDate
+  ) : MoneyOperation(id, title, value, date, description, createdDate)
 {
-  public string AccountId { get; private set; }
-  public string TargetCurrency { get; private set; }
-  public decimal ExchangeRate { get; private set; }
+  public string AccountId { get; private set; } = accountId;
+  public string TargetCurrency { get; private set; } = targetCurrency;
+  public decimal ExchangeRate { get; private set; } = exchangeRate;
 
   public Money Result => new(Math.Round(Value.Amount / ExchangeRate, 2), TargetCurrency);
-
-  public CurrencyExchange(
-    string id,
-    string title,
-    Money value,
-    string accountId,
-    string targetCurrency,
-    decimal exchangeRate,
-    string date,
-    string description,
-    DateTime createdDate
-    ) : base(id, title, value, date, description, createdDate)
-  {
-    AccountId = accountId;
-    TargetCurrency = targetCurrency;
-    ExchangeRate = exchangeRate;
-  }
 
   public void Update(
     string? accountId,

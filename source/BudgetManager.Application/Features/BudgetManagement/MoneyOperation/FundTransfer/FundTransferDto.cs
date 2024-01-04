@@ -1,3 +1,5 @@
+namespace BudgetManager.Application.Features.BudgetManagement;
+
 public record FundTransferDto(
   string? Id = null,
   string? CreatedDate = null,
@@ -10,4 +12,4 @@ public record FundTransferDto(
   string? TargetFundId = null,
   string? TargetFundName = null,
   MoneyOperationType? Type = null
-);
+  );

@@ -5,20 +5,13 @@ using System.Threading.Tasks;
 using AutoMapper;
 using BudgetManager.Infrastructure;
 
-public abstract class BudgetCommandHandler<TCommand, TResult>
+public abstract class BudgetCommandHandler<TCommand, TResult>(
+  IUserBudgetRepository _repository,
+  IMapper mapper
+    )
   : IRequestHandler<TCommand, TResult> where TCommand : IRequest<TResult>, IBudgetCommand
 {
-  private IUserBudgetRepository _repository;
-  protected IMapper _mapper;
-
-  protected BudgetCommandHandler(
-    IUserBudgetRepository repository,
-    IMapper mapper
-    )
-  {
-    _repository = repository;
-    _mapper = mapper;
-  }
+  protected IMapper _mapper = mapper;
 
   public abstract TResult ModifyBudget(TCommand command, Budget budget);
 

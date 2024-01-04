@@ -1,8 +1,6 @@
 namespace BudgetManager.Application.Features.BudgetManagement;
 
-public class UserSettingsRequestValidator : BudgetRequestValidator<UserSettingsRequest>
+public class UserSettingsRequestValidator(IUserBudgetRepository repository) 
+  : BudgetRequestValidator<UserSettingsRequest>(repository)
 {
-  public UserSettingsRequestValidator(IUserBudgetRepository repository) : base(repository)
-  {
-  }
 }

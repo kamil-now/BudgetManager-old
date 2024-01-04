@@ -1,3 +1,5 @@
+namespace BudgetManager.Api;
+
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using BudgetManager.Api.Extensions;
@@ -5,8 +7,6 @@ using BudgetManager.Application.Features.BudgetManagement;
 using BudgetManager.Domain.Models;
 using MediatR;
 using Swashbuckle.AspNetCore.Annotations;
-
-namespace BudgetManager.Api;
 
 public static class Router
 {

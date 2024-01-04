@@ -1,16 +1,7 @@
 namespace BudgetManager.Application.Features.BudgetManagement;
 
-public class CreateBudgetCommandHandler : IRequestHandler<CreateBudgetCommand, bool>
+public class CreateBudgetCommandHandler(IUserBudgetRepository _repository, AppConfig _appConfig) : IRequestHandler<CreateBudgetCommand, bool>
 {
-  private IUserBudgetRepository _repository;
-  private AppConfig _appConfig;
-
-  public CreateBudgetCommandHandler(IUserBudgetRepository repository, AppConfig appConfig)
-  {
-    _repository = repository;
-    _appConfig = appConfig;
-  }
-
   public async Task<bool> Handle(CreateBudgetCommand command, CancellationToken cancellationToken)
   {
     var budgetExists = await _repository.Exists(command.UserId);

@@ -1,3 +1,5 @@
+namespace BudgetManager.Infrastructure.Database.Migrations;
+
 using MongoDB.Bson;
 using MongoDB.Extensions.Migration;
 

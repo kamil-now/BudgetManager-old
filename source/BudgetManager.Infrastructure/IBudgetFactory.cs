@@ -1,3 +1,5 @@
+namespace BudgetManager.Infrastructure;
+
 using BudgetManager.Infrastructure.Models;
 
 public interface IBudgetFactory

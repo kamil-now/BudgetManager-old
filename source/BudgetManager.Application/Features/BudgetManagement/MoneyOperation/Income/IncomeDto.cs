@@ -1,3 +1,5 @@
+namespace BudgetManager.Application.Features.BudgetManagement;
+
 public record IncomeDto(
   string? Id = null,
   string? CreatedDate = null,
@@ -8,4 +10,4 @@ public record IncomeDto(
   string? AccountId = null,
   string? AccountName = null,
   MoneyOperationType? Type = null
-);
+  );

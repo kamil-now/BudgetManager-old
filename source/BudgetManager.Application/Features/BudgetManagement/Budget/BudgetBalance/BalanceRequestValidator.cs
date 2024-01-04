@@ -1,8 +1,5 @@
 namespace BudgetManager.Application.Features.BudgetManagement;
 
-public class BalanceRequestValidator : BudgetRequestValidator<BalanceRequest>
+public class BalanceRequestValidator(IUserBudgetRepository repo) : BudgetRequestValidator<BalanceRequest>(repo)
 {
-  public BalanceRequestValidator(IUserBudgetRepository repo) : base(repo)
-  {
-  }
 }

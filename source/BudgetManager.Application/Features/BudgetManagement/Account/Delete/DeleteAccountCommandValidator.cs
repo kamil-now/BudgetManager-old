@@ -2,11 +2,8 @@ namespace BudgetManager.Application.Features.BudgetManagement;
 
 using BudgetManager.Infrastructure;
 
-public class DeleteAccountCommandValidator : BudgetCommandValidator<DeleteAccountCommand>
+public class DeleteAccountCommandValidator(IUserBudgetRepository repository) : BudgetCommandValidator<DeleteAccountCommand>(repository)
 {
-  public DeleteAccountCommandValidator(IUserBudgetRepository repository) : base(repository)
-  {
-  }
   protected override void RulesWhenBudgetExists()
   {
     RuleFor(x => x)

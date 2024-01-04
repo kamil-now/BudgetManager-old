@@ -5,5 +5,5 @@ public record AccountDto(
     string Name,
     Balance Balance,
     Balance InitialBalance,
-    bool IsDeleted);
-    
+    bool IsDeleted
+    );

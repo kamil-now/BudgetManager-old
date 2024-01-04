@@ -1,30 +1,20 @@
 namespace BudgetManager.Domain.Models;
 
-public abstract class MoneyOperation
+public abstract class MoneyOperation(
+  string id,
+  string title,
+  Money value,
+  string date,
+  string description,
+  DateTime createdDate
+  )
 {
-  public string Id { get; }
-  public DateTime CreatedDate { get; }
-  public string Title { get; private set; }
-  public Money Value { get; private set; }
-  public string Date { get; private set; }
-  public string Description { get; private set; }
-
-  public MoneyOperation(
-    string id,
-    string title,
-    Money value,
-    string date,
-    string description,
-    DateTime createdDate
-    )
-  {
-    Id = id;
-    Title = title;
-    Value = value;
-    Date = date;
-    Description = description;
-    CreatedDate = createdDate;
-  }
+  public string Id { get; } = id;
+  public DateTime CreatedDate { get; } = createdDate;
+  public string Title { get; private set; } = title;
+  public Money Value { get; private set; } = value;
+  public string Date { get; private set; } = date;
+  public string Description { get; private set; } = description;
 
   protected void Update(
     string? title,

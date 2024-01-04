@@ -1,4 +1,4 @@
-namespace BudgetManager.Application;
+namespace BudgetManager.Application.Features.BudgetManagement;
 
 using AutoMapper;
 
@@ -24,7 +24,7 @@ public class ExpenseMappingProfile : Profile
       .ForMember(x => x.Amount, opt => opt.MapFrom(src => src.Value.Amount))
       .ForMember(x => x.Currency, opt => opt.MapFrom(src => src.Value.Currency));
 
-      
+
     CreateMap<Expense, ExpenseDto>()
       .ForMember(x => x.Type, opt => opt.Ignore())
       .ForMember(x => x.FundName, opt => opt.Ignore())

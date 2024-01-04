@@ -2,22 +2,16 @@ namespace BudgetManager.Application.Features.BudgetManagement;
 
 using AutoMapper;
 
-public class ExpenseRequestHandler : BudgetRequestHandler<ExpenseRequest, ExpenseDto>
+public class ExpenseRequestHandler(IUserBudgetRepository repo, IMapper map)
+  : BudgetRequestHandler<ExpenseRequest, ExpenseDto>(repo, map)
 {
-  public ExpenseRequestHandler(IUserBudgetRepository repo, IMapper map)
-   : base(repo, map)
-  {
-  }
-
   public override ExpenseDto Get(ExpenseRequest request, Budget budget)
   {
-    var expense = budget.Operations.First(x => x.Id == request.ExpenseId) as Expense;
-    if (expense is null)
+    if (budget.Operations.First(x => x.Id == request.ExpenseId) is not Expense expense)
     {
       throw new Exception();
     }
-    return _mapper.Map<ExpenseDto>(expense)
-     with
+    return _mapper.Map<ExpenseDto>(expense) with
     {
       Type = MoneyOperationType.Expense,
       AccountName = budget.Accounts.First(x => x.Id == expense.AccountId).Name,

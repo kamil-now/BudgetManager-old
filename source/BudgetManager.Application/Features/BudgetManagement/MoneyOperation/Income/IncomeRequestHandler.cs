@@ -2,22 +2,16 @@ namespace BudgetManager.Application.Features.BudgetManagement;
 
 using AutoMapper;
 
-public class IncomeRequestHandler : BudgetRequestHandler<IncomeRequest, IncomeDto>
+public class IncomeRequestHandler(IUserBudgetRepository repo, IMapper map)
+  : BudgetRequestHandler<IncomeRequest, IncomeDto>(repo, map)
 {
-  public IncomeRequestHandler(IUserBudgetRepository repo, IMapper map)
-   : base(repo, map)
-  {
-  }
-
   public override IncomeDto Get(IncomeRequest request, Budget budget)
   {
-    var income = budget.Operations.First(x => x.Id == request.IncomeId) as Income;
-    if (income is null)
+    if (budget.Operations.First(x => x.Id == request.IncomeId) is not Income income)
     {
       throw new Exception();
     }
-    return _mapper.Map<IncomeDto>(income)
-     with
+    return _mapper.Map<IncomeDto>(income) with
     {
       Type = MoneyOperationType.Income,
       AccountName = budget.Accounts.First(x => x.Id == income.AccountId).Name,

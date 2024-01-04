@@ -2,14 +2,8 @@ namespace BudgetManager.Application.Features.BudgetManagement;
 
 using AutoMapper;
 
-public class BalanceRequestHandler
-  : BudgetRequestHandler<BalanceRequest, BudgetBalanceDto>
+public class BalanceRequestHandler(IUserBudgetRepository repo, IMapper map) : BudgetRequestHandler<BalanceRequest, BudgetBalanceDto>(repo, map)
 {
-  public BalanceRequestHandler(IUserBudgetRepository repo, IMapper map)
-   : base(repo, map)
-  {
-  }
-
   public override BudgetBalanceDto Get(BalanceRequest request, Budget budget)
   {
     var balance = new Balance();

@@ -12,7 +12,7 @@ on:
 env:
   AZURE_WEBAPP_NAME: hajs
   AZURE_WEBAPP_PACKAGE_PATH: "source/BudgetManager.Api"
-  DOTNET_VERSION: "7.0.x"
+  DOTNET_VERSION: "8.0.x"
 
 jobs:
   build:

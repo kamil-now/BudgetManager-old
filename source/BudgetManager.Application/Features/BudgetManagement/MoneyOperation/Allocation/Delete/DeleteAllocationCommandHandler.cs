@@ -4,9 +4,7 @@ using AutoMapper;
 using BudgetManager.Domain.Models;
 using BudgetManager.Infrastructure;
 
-public class DeleteAllocationCommandHandler : DeleteMOneyOperationCommandHandler<Allocation>
+public class DeleteAllocationCommandHandler(IUserBudgetRepository repo, IMapper map)
+  : DeleteMOneyOperationCommandHandler<Allocation>(repo, map)
 {
-  public DeleteAllocationCommandHandler(IUserBudgetRepository repo, IMapper map) : base(repo, map)
-  {
-  }
 }

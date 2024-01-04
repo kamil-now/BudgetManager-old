@@ -1,4 +1,4 @@
-namespace BudgetManager.Application.Features.BudgetManagement;
+namespace BudgetManager.Application;
 
 
 public interface IBudgetCommand

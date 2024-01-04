@@ -1,5 +1,5 @@
-# Stage 1: Build the .NET 7 backend
-FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build-backend
+# Stage 1: Build the .NET 8 backend
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-backend
 WORKDIR /app
 COPY ["source/BudgetManager.Api/BudgetManager.Api.csproj", "source/BudgetManager.Api/"]
 COPY ["source/BudgetManager.Application/BudgetManager.Application.csproj", "source/BudgetManager.Application/"]

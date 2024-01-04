@@ -2,13 +2,9 @@ namespace BudgetManager.Application.Features.BudgetManagement;
 
 using AutoMapper;
 
-public class UserSettingsRequestHandler : BudgetRequestHandler<UserSettingsRequest, UserSettingsDto>
+public class UserSettingsRequestHandler(IUserBudgetRepository repo, IMapper map) 
+  : BudgetRequestHandler<UserSettingsRequest, UserSettingsDto>(repo, map)
 {
-  public UserSettingsRequestHandler(IUserBudgetRepository repo, IMapper map)
-   : base(repo, map)
-  {
-  }
-
   public override UserSettingsDto Get(UserSettingsRequest request, Budget budget)
-    => _mapper.Map<UserSettingsDto>(budget.UserSettings);
+  => _mapper.Map<UserSettingsDto>(budget.UserSettings);
 }

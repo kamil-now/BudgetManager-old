@@ -1,6 +1,5 @@
 namespace BudgetManager.Application.Features.BudgetManagement;
 
-
 using BudgetManager.Infrastructure;
 
 public abstract class BudgetCommandValidator<T> : AbstractValidator<T> where T : IBudgetCommand

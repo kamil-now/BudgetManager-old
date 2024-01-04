@@ -1,3 +1,5 @@
+namespace BudgetManager.Application.Features.BudgetManagement;
+
 public record MoneyOperationDto(
   MoneyOperationType Type,
   string Id,
@@ -16,4 +18,4 @@ public record MoneyOperationDto(
   string? TargetAccountName = null,
   string? TargetCurrency = null,
   decimal? ExchangeRate = null
-);
+  );

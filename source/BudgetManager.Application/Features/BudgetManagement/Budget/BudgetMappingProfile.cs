@@ -1,6 +1,5 @@
 namespace BudgetManager.Application.Features.BudgetManagement;
 
-
 using AutoMapper;
 
 public class BudgetMappingProfile : Profile

@@ -1,3 +1,5 @@
+namespace BudgetManager.Application.Features.BudgetManagement;
+
 public record CurrencyExchangeDto(
   string? Id = null,
   string? CreatedDate = null,
@@ -10,4 +12,4 @@ public record CurrencyExchangeDto(
   string? TargetCurrency = null,
   decimal? ExchangeRate = null,
   MoneyOperationType? Type = null
-);
+  );

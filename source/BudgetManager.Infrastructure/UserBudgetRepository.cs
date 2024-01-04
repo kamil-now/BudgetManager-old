@@ -2,17 +2,8 @@ namespace BudgetManager.Infrastructure;
 
 using BudgetManager.Infrastructure.Models;
 
-internal class UserBudgetRepository : IUserBudgetRepository
+internal class UserBudgetRepository(IMongoCollection<BudgetEntity> _collection, IBudgetFactory _budgetFactory) : IUserBudgetRepository
 {
-  private IMongoCollection<BudgetEntity> _collection;
-  private IBudgetFactory _budgetFactory;
-
-  public UserBudgetRepository(IMongoCollection<BudgetEntity> collection, IBudgetFactory budgetFactory)
-  {
-    _collection = collection;
-    _budgetFactory = budgetFactory;
-  }
-
   public async Task Create(string userId)
   {
     var doc = _budgetFactory.Create(userId);
@@ -22,8 +13,9 @@ internal class UserBudgetRepository : IUserBudgetRepository
       .ContinueWith(t => t.IsCompletedSuccessfully ? t : throw t.Exception ?? new Exception("Failed to persist UserBudget in the database"));
   }
 
-  public async Task CreateWithSampleData(string userId){
-    
+  public async Task CreateWithSampleData(string userId)
+  {
+
     var doc = _budgetFactory.CreateWithSampleData(userId);
 
     await _collection

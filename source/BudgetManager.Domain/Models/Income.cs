@@ -1,20 +1,16 @@
 namespace BudgetManager.Domain.Models;
 
-public class Income : MoneyOperation
+public class Income(
+  string id,
+  string accountId,
+  string title,
+  Money value,
+  string date,
+  string description,
+  DateTime createdDate
+  ) : MoneyOperation(id, title, value, date, description, createdDate)
 {
-  public string AccountId { get; private set; }
-  public Income(
-    string id,
-    string accountId,
-    string title,
-    Money value,
-    string date,
-    string description,
-    DateTime createdDate
-    ) : base(id, title, value, date, description, createdDate)
-  {
-    AccountId = accountId;
-  }
+  public string AccountId { get; private set; } = accountId;
 
   public void Update(string? accountId, string? title, Money? value, string? date, string? description)
   {

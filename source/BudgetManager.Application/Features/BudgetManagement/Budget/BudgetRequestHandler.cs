@@ -2,19 +2,10 @@ namespace BudgetManager.Application.Features.BudgetManagement;
 
 using AutoMapper;
 
-public abstract class BudgetRequestHandler<TRequest, TResult> : IRequestHandler<TRequest, TResult> where TRequest : IBudgetRequest, IRequest<TResult>
+public abstract class BudgetRequestHandler<TRequest, TResult>(IUserBudgetRepository _repository, IMapper mapper)
+  : IRequestHandler<TRequest, TResult> where TRequest : IBudgetRequest, IRequest<TResult>
 {
-  private IUserBudgetRepository _repository;
-  protected IMapper _mapper;
-
-  protected BudgetRequestHandler(
-    IUserBudgetRepository repository,
-    IMapper mapper
-    )
-  {
-    _repository = repository;
-    _mapper = mapper;
-  }
+  protected IMapper _mapper = mapper;
 
   public abstract TResult Get(TRequest request, Budget budget);
 

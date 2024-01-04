@@ -2,20 +2,8 @@ namespace BudgetManager.Application.Features.BudgetManagement;
 
 using AutoMapper;
 
-public class BudgetSummaryRequestHandler : IRequestHandler<BudgetSummaryRequest, BudgetSummaryDto>
+public class BudgetSummaryRequestHandler(IUserBudgetRepository _repository, IMapper _mapper) : IRequestHandler<BudgetSummaryRequest, BudgetSummaryDto>
 {
-  private IUserBudgetRepository _repository;
-  protected IMapper _mapper;
-
-  public BudgetSummaryRequestHandler(
-    IUserBudgetRepository repository,
-    IMapper mapper
-    )
-  {
-    _repository = repository;
-    _mapper = mapper;
-  }
-
   public async Task<BudgetSummaryDto> Handle(BudgetSummaryRequest request, CancellationToken cancellationToken)
   {
     var budget = await _repository.Get(request.UserId);

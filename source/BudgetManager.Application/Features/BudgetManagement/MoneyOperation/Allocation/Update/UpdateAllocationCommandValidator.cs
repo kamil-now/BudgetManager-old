@@ -1,5 +1,6 @@
 namespace BudgetManager.Application.Features.BudgetManagement;
 
+using BudgetManager.Application.Extensions;
 using BudgetManager.Infrastructure;
 
 public class UpdateAllocationCommandValidator : UpdateMoneyOperationCommandValidator<UpdateAllocationCommand>

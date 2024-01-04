@@ -4,21 +4,19 @@ using AutoMapper;
 using BudgetManager.Domain.Models;
 using BudgetManager.Infrastructure;
 
-public class UpdateFundTransferCommandHandler : UpdateMoneyOperationCommandHandler<UpdateFundTransferCommand, FundTransfer, FundTransferDto>
+public class UpdateFundTransferCommandHandler(IUserBudgetRepository repo, IMapper map)
+  : UpdateMoneyOperationCommandHandler<UpdateFundTransferCommand, FundTransfer, FundTransferDto>(repo, map)
 {
-  public UpdateFundTransferCommandHandler(IUserBudgetRepository repo, IMapper map)
-  : base(repo, map)
-  {
-  }
   protected override void Update(FundTransfer operation, UpdateFundTransferCommand command)
-    => operation.Update(
-        command.FundId,
-        command.TargetFundId,
-        command.Title,
-        command.Value,
-        command.Date,
-        command.Description
+  => operation.Update(
+      command.FundId,
+      command.TargetFundId,
+      command.Title,
+      command.Value,
+      command.Date,
+      command.Description
       );
+
   protected override FundTransferDto CompleteDto(FundTransferDto dto, Budget budget)
     => dto with
     {

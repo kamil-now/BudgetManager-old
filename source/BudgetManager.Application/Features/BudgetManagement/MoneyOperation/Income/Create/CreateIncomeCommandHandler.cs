@@ -4,14 +4,9 @@ using AutoMapper;
 using BudgetManager.Domain.Models;
 using BudgetManager.Infrastructure;
 
-public class CreateIncomeCommandHandler
-  : BudgetCommandHandler<CreateIncomeCommand, string>
+public class CreateIncomeCommandHandler(IUserBudgetRepository repo, IMapper map)
+  : BudgetCommandHandler<CreateIncomeCommand, string>(repo, map)
 {
-  public CreateIncomeCommandHandler(IUserBudgetRepository repo, IMapper map)
-  : base(repo, map)
-  {
-  }
-
   public override string ModifyBudget(CreateIncomeCommand command, Budget budget)
   {
     var id = Guid.NewGuid().ToString();

@@ -3,9 +3,7 @@ namespace BudgetManager.Application.Features.BudgetManagement;
 using BudgetManager.Domain.Models;
 using BudgetManager.Infrastructure;
 
-public class DeleteCurrencyExchangeCommandValidator : UpdateMoneyOperationCommandValidator<DeleteMoneyOperationCommand<CurrencyExchange>>
+public class DeleteCurrencyExchangeCommandValidator(IUserBudgetRepository repository)
+  : UpdateMoneyOperationCommandValidator<DeleteMoneyOperationCommand<CurrencyExchange>>(repository)
 {
-  public DeleteCurrencyExchangeCommandValidator(IUserBudgetRepository repository) : base(repository)
-  {
-  }
 }

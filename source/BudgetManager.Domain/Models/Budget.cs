@@ -1,6 +1,11 @@
 namespace BudgetManager.Domain.Models;
 
-public class Budget
+public class Budget(
+  UserSettings userSettings,
+  IEnumerable<Account> accounts,
+  IEnumerable<Fund> funds,
+  IEnumerable<MoneyOperation> operations
+  )
 {
   public string? Id { get; init; }
   public UserSettings UserSettings => _userSettings;
@@ -8,23 +13,10 @@ public class Budget
   public IReadOnlyCollection<Fund> Funds => _funds.AsReadOnly();
   public IReadOnlyCollection<MoneyOperation> Operations => _operations.AsReadOnly();
 
-  private readonly List<MoneyOperation> _operations;
-  private readonly List<Account> _accounts;
-  private readonly List<Fund> _funds;
-  private UserSettings _userSettings;
-
-  public Budget(
-    UserSettings userSettings,
-    IEnumerable<Account> accounts,
-    IEnumerable<Fund> funds,
-    IEnumerable<MoneyOperation> operations
-    )
-  {
-    _userSettings = userSettings;
-    _accounts = accounts.ToList();
-    _funds = funds.ToList();
-    _operations = operations.ToList();
-  }
+  private readonly List<MoneyOperation> _operations = operations.ToList();
+  private readonly List<Account> _accounts = accounts.ToList();
+  private readonly List<Fund> _funds = funds.ToList();
+  private UserSettings _userSettings = userSettings;
 
   public void UpdateUserSettings(IEnumerable<string> accountsOrder, IEnumerable<string> fundsOrder)
   {

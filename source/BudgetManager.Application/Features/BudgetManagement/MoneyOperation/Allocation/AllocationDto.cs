@@ -1,3 +1,5 @@
+namespace BudgetManager.Application.Features.BudgetManagement;
+
 public record AllocationDto(
   string? Id = null,
   string? CreatedDate = null,
@@ -8,4 +10,4 @@ public record AllocationDto(
   string? TargetFundId = null,
   string? TargetFundName = null,
   MoneyOperationType? Type = null
-);
+  );

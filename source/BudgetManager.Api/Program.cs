@@ -1,7 +1,9 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using BudgetManager.Api;
+using BudgetManager.Application;
 using BudgetManager.Application.Extensions;
+using BudgetManager.Infrastructure.Database.Migrations;
 using BudgetManager.Infrastructure.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.FileProviders;
