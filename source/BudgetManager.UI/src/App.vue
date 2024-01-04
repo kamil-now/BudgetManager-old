@@ -20,9 +20,9 @@ const toast = useToast();
 const router = useRouter();
 const failed = ref<boolean>(false);
 
-onBeforeMount(() => {
+onBeforeMount(async () => {
   if (!store.isLoggedIn) {
-    auth.login();
+    await auth.login();
   }
   axios.interceptors.response.use(
     (response) => response,

@@ -11,14 +11,22 @@
 
 <script setup lang="ts">
 import { AUTH, IAuthService } from '@/auth';
-import { inject } from 'vue';
+import { useAppStore } from '@/store/store';
+import { inject, onBeforeMount } from 'vue';
 import { useRouter } from 'vue-router';
 const auth = inject<IAuthService>(AUTH);
 if (!auth) {
   throw new Error('No provider for IAuthService');
 }
 const router = useRouter();
+const store = useAppStore();
 const login = () => auth.login().then(() => router.push('/home'));
+
+onBeforeMount(() => {
+  if (store.isLoggedIn) {
+    router.push('/home');
+  }
+});
 
 </script>
 
