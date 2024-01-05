@@ -38,36 +38,36 @@
         @click="toggle()"
       >
         <Button @click="createNewAccount()">
+          Account
           <AccountIcon />
-          add account
         </Button>
         <Button @click="createNewFund()">
+          Fund
           <FundIcon />
-          add fund
         </Button>
         <Button @click="createNew(MoneyOperationType.CurrencyExchange)">
+          Currency Exchange
           <CurrencyExchangeIcon />
-          add currency exchange
         </Button>
         <Button @click="createNew(MoneyOperationType.AccountTransfer)">
+          Account Transfer
           <AccountTransferIcon />
-          add account transfer
         </Button>
         <Button @click="createNew(MoneyOperationType.FundTransfer)">
+          Fund Transfer
           <FundTransferIcon />
-          add fund transfer
         </Button>
         <Button @click="createNew(MoneyOperationType.Allocation)">
+          Allocation
           <AllocationIcon />
-          add allocation
         </Button>
         <Button @click="createNew(MoneyOperationType.Income)">
+          Income
           <IncomeIcon />
-          add income
         </Button>
         <Button @click="createNew(MoneyOperationType.Expense)">
+          Expense
           <ExpenseIcon />
-          add expense
         </Button>
       </div>
     </div>
@@ -167,6 +167,11 @@ function createNewAccount() {
 <style lang="scss">
 .app-page {
   overflow: hidden;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
   &-header {
     width: 100%;
     max-height: $appHeaderHeight;
@@ -176,7 +181,6 @@ function createNewAccount() {
 
     position: -webkit-sticky;
     position: sticky;
-    background-color: var(--surface-0);
 
     top: 0;
     padding: 0;
@@ -192,7 +196,6 @@ function createNewAccount() {
       flex-grow: 1;
       align-items: center;
       justify-content: start;
-      padding: 0.5rem;
       gap: 1rem;
       overflow: hidden;
     }
@@ -246,21 +249,19 @@ function createNewAccount() {
           max-height: 500px;
         }
         button {
-          font-size: 0.5rem;
+          font-size: 0.75rem;
           text-transform: uppercase;
-          font-weight: bold;
           letter-spacing: 0.03rem;
 
           display: flex;
           align-items: center;
-          justify-content: center;
+          justify-content: start;
           gap: 0.5rem;
           margin: 0.25rem;
+          background-color: #000000;
+          color: #ffffff;
+          width: 12rem;
 
-          color: #ffffffde;
-          background-color: #036f6f;
-
-          border-color: var(--text-color-secondary);
           box-shadow: none;
           &:focus {
             box-shadow: none;
@@ -272,6 +273,7 @@ function createNewAccount() {
   }
   &-content {
     height: calc(100vh - $appHeaderHeight);
+    max-width: 1400px;
     width: 100%;
   }
 

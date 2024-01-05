@@ -7,10 +7,10 @@
   --surface-d:rgba(0,0,0,.12);
   --surface-e:#ffffff;
   --surface-f:#ffffff;
-  --text-color:rgba(0, 0, 0, 0.87);
+  --text-color:#000000de;
   --text-color-secondary:rgba(0, 0, 0, 0.6);
   --primary-color:#269B9B;
-  --secondary-color: #385BAC;
+  --secondary-color: #32CD32;
   --primary-color-text:#ffffff;
   --surface-0: #ffffff;
   --surface-50: #FAFAFA;
@@ -5834,10 +5834,10 @@
     min-width: auto;
   }
   .p-button:enabled:focus {
-    background: rgba(63, 81, 181, 0.76);
+    background: #72CECE;
   }
   .p-button:enabled:active {
-    background: rgba(63, 81, 181, 0.68);
+    background: #72CECE;
   }
   .p-button .p-ink {
     background-color: rgba(255, 255, 255, 0.32);

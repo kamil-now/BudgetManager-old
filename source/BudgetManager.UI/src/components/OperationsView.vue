@@ -26,7 +26,7 @@
         style="width: 8rem"
       >
         <template #value="{ value }">
-          <span>{{ value == 0 ? "type" : MoneyOperationType[value] }}</span>
+          <span :class="{ placeholder: value === 0}">{{ value === 0 ? "type" : MoneyOperationType[value] }}</span>
         </template>
         <template #option="{ option }">
           <span>{{ MoneyOperationType[option] }}</span>

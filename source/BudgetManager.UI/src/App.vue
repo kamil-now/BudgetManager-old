@@ -86,14 +86,12 @@ onBeforeMount(async () => {
   }
   height: 100vh;
   width: 100vw;
-  > * {
-    max-width: 1400px;
-  }
   margin: 0;
   display: flex;
   align-items: center;
   flex-direction: column;
   animation: fadein 1s;
+  background-color: var(--surface-ground);
 }
 
 @keyframes fadein {
