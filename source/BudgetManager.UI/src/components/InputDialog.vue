@@ -199,50 +199,50 @@ function saveOperation() {
   if (operation.value.id) {
     // TODO move switch to store - updateOperation action
     switch (operation.value.type) {
-    case MoneyOperationType.Income:
-      updateIncome(operation.value as Income);
-      break;
-    case MoneyOperationType.Allocation:
-      updateAllocation(operation.value as Allocation);
-      break;
-    case MoneyOperationType.Expense:
-      updateExpense(operation.value as Expense);
-      break;
-    case MoneyOperationType.CurrencyExchange:
-      updateCurrencyExchange(operation.value as CurrencyExchange);
-      break;
-    case MoneyOperationType.AccountTransfer:
-      updateAccountTransfer(operation.value as AccountTransfer);
-      break;
-    case MoneyOperationType.FundTransfer:
-      updateFundTransfer(operation.value as FundTransfer);
-      break;
-    default:
-      throw new Error('Unknown operation.');
+      case MoneyOperationType.Income:
+        updateIncome(operation.value as Income);
+        break;
+      case MoneyOperationType.Allocation:
+        updateAllocation(operation.value as Allocation);
+        break;
+      case MoneyOperationType.Expense:
+        updateExpense(operation.value as Expense);
+        break;
+      case MoneyOperationType.CurrencyExchange:
+        updateCurrencyExchange(operation.value as CurrencyExchange);
+        break;
+      case MoneyOperationType.AccountTransfer:
+        updateAccountTransfer(operation.value as AccountTransfer);
+        break;
+      case MoneyOperationType.FundTransfer:
+        updateFundTransfer(operation.value as FundTransfer);
+        break;
+      default:
+        throw new Error('Unknown operation.');
     }
   } else {
     // TODO move switch to store - createOperation action
     switch (operation.value.type) {
-    case MoneyOperationType.Income:
-      createNewIncome(operation.value as Income);
-      break;
-    case MoneyOperationType.Allocation:
-      createNewAllocation(operation.value as Allocation);
-      break;
-    case MoneyOperationType.Expense:
-      createNewExpense(operation.value as Expense);
-      break;
-    case MoneyOperationType.CurrencyExchange:
-      createNewCurrencyExchange(operation.value as CurrencyExchange);
-      break;
-    case MoneyOperationType.AccountTransfer:
-      createNewAccountTransfer(operation.value as AccountTransfer);
-      break;
-    case MoneyOperationType.FundTransfer:
-      createNewFundTransfer(operation.value as FundTransfer);
-      break;
-    default:
-      throw new Error('Unknown operation.');
+      case MoneyOperationType.Income:
+        createNewIncome(operation.value as Income);
+        break;
+      case MoneyOperationType.Allocation:
+        createNewAllocation(operation.value as Allocation);
+        break;
+      case MoneyOperationType.Expense:
+        createNewExpense(operation.value as Expense);
+        break;
+      case MoneyOperationType.CurrencyExchange:
+        createNewCurrencyExchange(operation.value as CurrencyExchange);
+        break;
+      case MoneyOperationType.AccountTransfer:
+        createNewAccountTransfer(operation.value as AccountTransfer);
+        break;
+      case MoneyOperationType.FundTransfer:
+        createNewFundTransfer(operation.value as FundTransfer);
+        break;
+      default:
+        throw new Error('Unknown operation.');
     }
   }
 }

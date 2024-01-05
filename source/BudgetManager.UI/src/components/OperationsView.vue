@@ -122,6 +122,7 @@ import CurrencyExchangeIcon from './icons/CurrencyExchangeIcon.vue';
 import MoneyOperationActions from './MoneyOperationActions.vue';
 import { MoneyOperation } from '@/models/money-operation';
 import { Balance } from '@/models/balance';
+import { EnumUtils } from '@/helpers/enum-utils';
 
 const store = useAppStore();
 
@@ -132,9 +133,7 @@ const {
   operationsDateFromFilter,
   operationsDateToFilter,
 } = storeToRefs(store);
-const moneyOperationTypes = Object.keys(MoneyOperationType).filter(
-  (item) => !isNaN(Number(item)) && item !== '0'
-);
+const moneyOperationTypes = EnumUtils.getStringValues(MoneyOperationType);
 
 const filteredOperationsBalance = computed({
   get: () => getOperationsBalance(filteredOperations.value),
