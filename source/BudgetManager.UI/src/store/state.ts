@@ -24,7 +24,8 @@ export const INITIAL_APP_STATE: AppState = {
     unallocated: {},
     funds: [],
     accounts: [],
-    operations: []
+    operations: [],
+    incomeDistributionTemplates: []
   },
   operationsContentFilter: '',
   operationsTypeFilter: MoneyOperationType.Undefined,

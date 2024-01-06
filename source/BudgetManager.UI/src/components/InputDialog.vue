@@ -1,6 +1,11 @@
 <template>
   <div class="input-dialog">
     <div class="input-dialog_content">
+      <IncomeDistributionInput
+        v-if="incomeDistribution"
+        :incomeDistribution="incomeDistribution"
+        @changed="onIncomeDistributionChanged($event)"
+      />
       <FundInput
         v-if="fund"
         :fund="fund"
@@ -77,9 +82,12 @@ import ExpenseInput from '@/components/ExpenseInput.vue';
 import CurrencyExchangeInput from '@/components/CurrencyExchangeInput.vue';
 import AccountTransferInput from '@/components/AccountTransferInput.vue';
 import FundTransferInput from '@/components/FundTransferInput.vue';
+import IncomeDistributionInput from '@/components/IncomeDistributionInput.vue';
 import { useAppStore } from '@/store/store';
 import { Account } from '@/models/account';
 import { Fund } from '@/models/fund';
+import { IncomeDistribution } from '@/models/income-distribution';
+import { IncomeDistributionUtils } from '@/helpers/income-distribution-utils';
 
 const store = useAppStore();
 const {
@@ -108,7 +116,16 @@ const fund = ref<Fund>();
 const initialFundValue = ref<Fund>();
 const account = ref<Account>();
 const initialAccountValue = ref<Account>();
+const incomeDistribution = ref<IncomeDistribution>();
+
 onMounted(() => {
+  incomeDistribution.value = dialogRef?.value.data?.incomeDistribution;
+  if (incomeDistribution.value) {
+    incomeDistribution.value = JSON.parse(
+      JSON.stringify(dialogRef?.value.data?.incomeDistribution)
+    );
+  }
+  
   operation.value = dialogRef?.value.data?.operation;
   if (operation.value) {
     initialOperationValue.value = JSON.parse(
@@ -130,7 +147,7 @@ onMounted(() => {
     );
   }
 
-  if (!operation.value && !fund.value && !account.value) {
+  if (!operation.value && !fund.value && !account.value && !incomeDistribution.value) {
     throw new Error();
   }
 });
@@ -172,6 +189,11 @@ function onOperationChanged(changed: MoneyOperation) {
   operation.value.targetCurrency = changed.targetCurrency;
   operation.value.exchangeRate = changed.exchangeRate;
 }
+
+function onIncomeDistributionChanged(changed: IncomeDistribution) {
+  incomeDistribution.value = IncomeDistributionUtils.copy(changed);
+}
+
 function save() {
   if (operation.value) {
     saveOperation();
@@ -189,6 +211,9 @@ function save() {
     } else {
       createNewAccount(account.value);
     }
+  } else if (incomeDistribution.value) {
+    console.warn(incomeDistribution.value);
+    // TODO
   }
   dialogRef?.value.close();
 }

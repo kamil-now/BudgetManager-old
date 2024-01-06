@@ -95,10 +95,12 @@ watch(selectedFund, async (fund) => {
 });
 const leftover = computed({
   get: () => {
-    const leftover = Object.assign({}, props.income) ?? {
-      amount: 0,
-      currency: Object.keys(currencies)[0],
-    };
+    const leftover = props.income 
+      ? { ...props.income } 
+      : {
+        amount: 0,
+        currency: Object.keys(currencies)[0],
+      };
     props.incomeDistribution.rules.forEach((rule) => {
       if (rule.type === IncomeDistributionRuleType.Fixed) {
         leftover.amount -= rule.value;
@@ -138,8 +140,8 @@ function createNewIncomeDistributionRule(): IncomeDistributionRule {
   return {
     id: Date.now().valueOf(),
     name: 'Rule ' + (props.incomeDistribution.rules.length + 1),
-    type: IncomeDistributionRuleType.Fixed,
-    value: leftover.value.amount,
+    type: IncomeDistributionRuleType.Percent,
+    value: props.income ? (leftover.value.amount / props.income.amount * 100) : 0,
     fundId: fund.id,
     fundName: fund.name,
   };

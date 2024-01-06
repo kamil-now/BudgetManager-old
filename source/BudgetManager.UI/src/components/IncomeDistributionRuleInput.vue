@@ -28,14 +28,15 @@
 
     <InputNumber
       v-else
-      class="p-inputtext-sm"
-      v-model="ruleValue.amount"
+      class="percent-input p-inputtext-sm"
+      v-model="ruleValueAmount"
       :allowEmpty="false"
       :highlightOnFocus="true"
       :min="0"
       suffix=" %"
       :maxFractionDigits="2"
-      :max="1"
+      :max="100"
+      @input="onPercentInput($event)"
     />
     <i class="pi pi-arrow-right" />
     <Dropdown
@@ -60,6 +61,7 @@ import { IncomeDistributionRule } from '@/models/income-distribution-rule';
 import { IncomeDistributionRuleType } from '@/models/income-distribution-rule-type.enum';
 import { useAppStore } from '@/store/store';
 import { computed, ref, watch } from 'vue';
+import { InputNumberInputEvent } from 'primevue/inputnumber';
 
 const props = defineProps<{ currency: string; rule: IncomeDistributionRule }>();
 const emit = defineEmits(['changed']);
@@ -89,6 +91,13 @@ const ruleValue = computed({
     });
   },
 });
+const ruleValueAmount = computed({
+  get: () => {
+    console.warn('VALUE', props.rule.value);
+    return  props.rule.value;
+  },
+  set: () => {} // handled in onPercentInput
+});
 const name = computed({
   get: () => props.rule.name,
   set: (newValue) => {
@@ -111,6 +120,19 @@ const type = computed({
     });
   },
 });
+
+function onPercentInput(event: InputNumberInputEvent) {
+  let newValue = Number(event.value);
+  if (newValue > 100) {
+    newValue = 100;
+  } else if (newValue < 0) {
+    newValue = 0;
+  }
+  emit('changed', {
+    ...props.rule,
+    value: newValue,
+  });
+}
 </script>
 
 <style lang="scss">
@@ -120,5 +142,10 @@ const type = computed({
   flex-wrap: wrap;
   gap: 1rem;
   align-items: center;
+  .percent-input {
+    .p-inputtext {
+      text-align: center !important;
+    }
+  }
 }
 </style>

@@ -17,7 +17,7 @@
       :currency="currency" 
       :min="0"
       :maxFractionDigits="2"
-      :max="1000000000"
+      :max=" max ?? 1000000000"
     />
   </div>
 </template>
@@ -28,7 +28,7 @@ import { InputNumberInputEvent } from 'primevue/inputnumber';
 import { computed } from 'vue';
 
 const currencyCodeList = Object.keys(currencies);
-const props = defineProps<{ money: Money }>();
+const props = defineProps<{ money: Money, max?: number }>();
 const emit = defineEmits(['changed']);
 
 const amount = computed({
