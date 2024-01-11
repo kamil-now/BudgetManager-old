@@ -1,7 +1,9 @@
 <template>
   <div class="income-distribution-form-input">
-    <span>Test income</span>
-    <MoneyInput :money="testIncome" />
+    <div class="income-distribution-form-input_income">
+      <span>Test income</span>
+      <MoneyInput :money="testIncome" />
+    </div>
     <IncomeDistributionForm
       :income="testIncome"
       :incomeDistribution="incomeDistribution"
@@ -34,5 +36,11 @@ function onIncomeDistributionChange(changed: IncomeDistribution) {
   flex-direction: column;
   align-items: start;
   gap: 1rem;
+
+  &_income {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
 }
 </style>

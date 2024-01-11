@@ -93,7 +93,6 @@ const ruleValue = computed({
 });
 const ruleValueAmount = computed({
   get: () => {
-    console.warn('VALUE', props.rule.value);
     return  props.rule.value;
   },
   set: () => {} // handled in onPercentInput

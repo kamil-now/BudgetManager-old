@@ -20,6 +20,7 @@ import ToastService from 'primevue/toastservice';
 import DialogService from 'primevue/dialogservice';
 import DynamicDialog from 'primevue/dynamicdialog';
 import ProgressSpinner from 'primevue/progressspinner';
+import Checkbox from 'primevue/checkbox';
 // PrimeVue
 import App from '@/App.vue';
 import { AUTH, IAuthService, MsalAuthService, MsalConfiguration } from '@/auth';
@@ -57,6 +58,7 @@ app
 // app.use(Colada);
 
 app
+  .component('Checkbox', Checkbox)
   .component('TabView', TabView)
   .component('TabPanel', TabPanel)
   .component('Calendar', Calendar)

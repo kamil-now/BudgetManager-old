@@ -27,12 +27,18 @@
         @changed="incomeValue = $event"
       />
     </div>
-    <IncomeDistributionForm
-      v-if="incomeValue.amount > 0"
-      :incomeDistribution="incomeDistribution"
-      :income="income.value"
-      @changed="onIncomeDistributionChange($event)"
-    ></IncomeDistributionForm>
+    <template v-if="incomeValue.amount > 0">
+      <div class="income-input_distribute-income-checkbox">
+        <Checkbox id="distributeIncomeCheckbox" v-model="distributeIncome" :binary="true"></Checkbox>
+        <label for="distributeIncomeCheckbox"> Distribute income </label>
+      </div>
+      <IncomeDistributionForm
+        v-if="distributeIncome"
+        :incomeDistribution="incomeDistribution"
+        :income="incomeValue"
+        @changed="onIncomeDistributionChange($event)"
+      ></IncomeDistributionForm>
+    </template>
   </div>
 </template>
 <script setup lang="ts">
@@ -45,12 +51,39 @@ import { useAppStore } from '@/store/store';
 import { computed, ref, watch } from 'vue';
 import { IncomeDistribution } from '@/models/income-distribution';
 import { IncomeDistributionRule } from '@/models/income-distribution-rule';
+import { IncomeDistributionRuleType } from '@/models/income-distribution-rule-type.enum';
+import { saveIncomeDistributionPreference, getIncomeDistributionPreference } from '@/storage';
 
 const props = defineProps<{ income: Income }>();
 const emit = defineEmits(['changed']);
 const { accounts } = useAppStore();
+
+const incomeRef = ref<Income>(props.income);
+const distributeIncomePreferenceRef = ref<boolean>(getIncomeDistributionPreference());
+const distributeIncome = computed({
+  get: () => distributeIncomePreferenceRef.value,
+  set: (newValue) => {
+    saveIncomeDistributionPreference(newValue);
+    distributeIncomePreferenceRef.value = newValue;
+  }
+});
 const incomeDistribution = ref<IncomeDistribution>({
-  rules: [] as IncomeDistributionRule[],
+  rules: [
+    {
+      id: 1,
+      type: IncomeDistributionRuleType.Fixed,
+      value: 2000,
+    },  
+    {
+      id: 2,
+      type: IncomeDistributionRuleType.Percent,
+      value: 50,
+    },
+    {
+      id: 3,
+      type: IncomeDistributionRuleType.Percent,
+      value: 50,
+    }] as IncomeDistributionRule[],
 });
 
 const selectedAccount = ref<Account | undefined>(
@@ -88,6 +121,7 @@ const incomeTitle = computed({
 const incomeValue = computed({
   get: () => props.income.value,
   set: (newValue) => {
+    incomeRef.value.value = { ...newValue };
     emit('changed', {
       ...props.income,
       value: { ...newValue },
@@ -113,8 +147,14 @@ function onIncomeDistributionChange(
     gap: 1rem;
   }
   .income-distribution-form {
+    width: 90vw;
     border-top: 1px solid black;
     padding-top: 1rem;
+  }
+  &_distribute-income-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
   }
 }
 </style>
