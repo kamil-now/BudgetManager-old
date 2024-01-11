@@ -15,6 +15,7 @@
       :allowEmpty="false"
       :highlightOnFocus="true"
       :currency="currency" 
+      :input-props="{ inputmode: 'numeric' }"
       :min="0"
       :maxFractionDigits="2"
       :max=" max ?? 1000000000"
