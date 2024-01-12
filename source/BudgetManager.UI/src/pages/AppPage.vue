@@ -37,8 +37,8 @@
         :class="{ show: isOpen }"
         @click="toggle()"
       >
-        <Button @click="createNewIncomeDistribution()">
-          Income distribution template
+        <Button @click="createNewIncomeAllocation()">
+          Income allocation template
           <IncomeIcon />
         </Button>
         <Button @click="createNewAccount()">
@@ -101,7 +101,7 @@ import { MoneyOperationType } from '@/models/money-operation-type.enum';
 import { MoneyOperationFactory } from '@/helpers/money-operation-factory';
 import { StringUtils } from '@/helpers/string-utils';
 import { storeToRefs } from 'pinia';
-import { IncomeDistributionUtils } from '@/helpers/income-distribution-utils';
+import { IncomeAllocationUtils } from '@/helpers/income-allocation-utils';
 
 const dialog = useDialog();
 
@@ -115,13 +115,13 @@ function toggle() {
   isOpen.value = !isOpen.value;
 }
 
-function createNewIncomeDistribution() {
+function createNewIncomeAllocation() {
   dialog.open(InputDialog, {
     data: {
-      incomeDistribution: IncomeDistributionUtils.createNew()
+      incomeAllocation: IncomeAllocationUtils.createNew()
     },
     props: {
-      header: 'Create New Income Distribution Template',
+      header: 'Create New Income allocation Template',
       modal: true,
       closable: false,
     },

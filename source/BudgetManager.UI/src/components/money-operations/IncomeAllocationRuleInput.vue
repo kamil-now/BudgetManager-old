@@ -1,20 +1,20 @@
 <template>
-  <div class="income-distribution-rule-input">
+  <div class="income-allocation-rule-input">
     <InputGroup>
       <InputGroupAddon
-        :class="{ selected: ruleType === IncomeDistributionRuleType.Fixed }"
+        :class="{ selected: ruleType === IncomeAllocationRuleType.Fixed }"
       >
         <i
           class="pi pi-money-bill"
-          @click="ruleType = IncomeDistributionRuleType.Fixed"
+          @click="ruleType = IncomeAllocationRuleType.Fixed"
         />
       </InputGroupAddon>
       <InputGroupAddon
-        :class="{ selected: ruleType === IncomeDistributionRuleType.Percent }"
+        :class="{ selected: ruleType === IncomeAllocationRuleType.Percent }"
       >
         <i
           class="pi pi-percentage"
-          @click="ruleType = IncomeDistributionRuleType.Percent"
+          @click="ruleType = IncomeAllocationRuleType.Percent"
         />
       </InputGroupAddon>
       <InputNumber
@@ -45,13 +45,13 @@
 </template>
 <script setup lang="ts">
 import { Fund } from '@/models/fund';
-import { IncomeDistributionRule } from '@/models/income-distribution-rule';
-import { IncomeDistributionRuleType } from '@/models/income-distribution-rule-type.enum';
+import { IncomeAllocationRule } from '@/models/income-allocation-rule';
+import { IncomeAllocationRuleType } from '@/models/income-allocation-rule-type.enum';
 import { useAppStore } from '@/store/store';
 import { InputNumberInputEvent } from 'primevue/inputnumber';
 import { computed, toRefs } from 'vue';
 
-const props = defineProps<{ currency: string; rule: IncomeDistributionRule }>();
+const props = defineProps<{ currency: string; rule: IncomeAllocationRule }>();
 const { rule } = toRefs(props);
 const emit = defineEmits(['changed']);
 const { funds } = useAppStore();
@@ -72,7 +72,7 @@ const selectedFund = computed({
 
 const ruleType = computed({
   get: () => rule.value.type,
-  set: (newValue: IncomeDistributionRuleType) => {
+  set: (newValue: IncomeAllocationRuleType) => {
     rule.value.type = newValue;
     emit('changed', {
       ...rule.value,
@@ -83,12 +83,12 @@ const ruleType = computed({
 
 const ruleValue = computed(() => rule.value.value);
 
-const valueSuffix = computed(() => ruleType.value === IncomeDistributionRuleType.Percent ? ' %' : '');
-const valuePrefix = computed(() => ruleType.value === IncomeDistributionRuleType.Fixed ? `${props.currency} ` : '');
+const valueSuffix = computed(() => ruleType.value === IncomeAllocationRuleType.Percent ? ' %' : '');
+const valuePrefix = computed(() => ruleType.value === IncomeAllocationRuleType.Fixed ? `${props.currency} ` : '');
 
 function onValueInput(event: InputNumberInputEvent) {
   let newValue = Number(event.value);
-  if (ruleType.value === IncomeDistributionRuleType.Percent && newValue > 100) {
+  if (ruleType.value === IncomeAllocationRuleType.Percent && newValue > 100) {
     newValue = 100;
   } else if (newValue < 0) {
     newValue = 0;
@@ -103,7 +103,7 @@ function onValueInput(event: InputNumberInputEvent) {
 </script>
 
 <style lang="scss">
-.income-distribution-rule-input {
+.income-allocation-rule-input {
   display: flex;
   gap: 1rem;
   align-items: center;

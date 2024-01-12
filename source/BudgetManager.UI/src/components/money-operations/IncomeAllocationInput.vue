@@ -1,37 +1,37 @@
 <template>
-  <div class="income-distribution-form-input">
-    <div class="income-distribution-form-input_income">
+  <div class="income-allocation-form-input">
+    <div class="income-allocation-form-input_income">
       <span>Test income</span>
       <MoneyInput :money="testIncome" />
     </div>
-    <IncomeDistributionForm
+    <IncomeAllocationForm
       :income="testIncome"
-      :incomeDistribution="incomeDistribution"
-      @changed="onIncomeDistributionChange($event)"
+      :incomeAllocation="incomeAllocation"
+      @changed="onIncomeAllocationChange($event)"
     />
   </div>
 </template>
 <script setup lang="ts">
 import currencies from '@/assets/currencies.json';
 import MoneyInput from '@/components/money-operations/MoneyInput.vue';
-import IncomeDistributionForm from '@/components/money-operations/IncomeDistributionForm.vue';
-import { IncomeDistribution } from '@/models/income-distribution';
+import IncomeAllocationForm from '@/components/money-operations/IncomeAllocationForm.vue';
+import { IncomeAllocation } from '@/models/income-allocation';
 import { Money } from '@/models/money';
 import { ref } from 'vue';
 
-defineProps<{ incomeDistribution: IncomeDistribution }>();
+defineProps<{ incomeAllocation: IncomeAllocation }>();
 const emit = defineEmits(['changed']);
 const testIncome = ref<Money>({
   amount: 0,
   currency: Object.keys(currencies)[0],
 });
 
-function onIncomeDistributionChange(changed: IncomeDistribution) {
+function onIncomeAllocationChange(changed: IncomeAllocation) {
   emit('changed', changed);
 }
 </script>
 <style lang="scss">
-.income-distribution-form-input {
+.income-allocation-form-input {
   display: flex;
   flex-direction: column;
   align-items: start;

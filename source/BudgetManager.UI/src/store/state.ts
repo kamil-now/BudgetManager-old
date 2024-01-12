@@ -25,7 +25,7 @@ export const INITIAL_APP_STATE: AppState = {
     funds: [],
     accounts: [],
     operations: [],
-    incomeDistributionTemplates: []
+    incomeAllocationTemplates: []
   },
   operationsContentFilter: '',
   operationsTypeFilter: MoneyOperationType.Undefined,

@@ -6,10 +6,10 @@ export function saveSelectedTheme(value: 'dark' | 'light') {
   localStorage.setItem('theme', value);
 }
 
-export function getIncomeDistributionPreference() {
-  return localStorage.getItem('use-income-distribution') === 'true';
+export function getIncomeAllocationPreference() {
+  return localStorage.getItem('use-income-allocation') === 'true';
 }
 
-export function saveIncomeDistributionPreference(value: boolean) {
-  return localStorage.setItem('use-income-distribution', value.toString());
+export function saveIncomeAllocationPreference(value: boolean) {
+  return localStorage.setItem('use-income-allocation', value.toString());
 }

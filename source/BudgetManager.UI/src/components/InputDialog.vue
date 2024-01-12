@@ -1,10 +1,10 @@
 <template>
   <div class="input-dialog">
     <div class="input-dialog_content">
-      <IncomeDistributionInput
-        v-if="incomeDistribution"
-        :incomeDistribution="incomeDistribution"
-        @changed="onIncomeDistributionChanged($event)"
+      <IncomeAllocationInput
+        v-if="incomeAllocation"
+        :incomeAllocation="incomeAllocation"
+        @changed="onIncomeAllocationChanged($event)"
       />
       <FundInput
         v-if="fund"
@@ -82,12 +82,12 @@ import ExpenseInput from '@/components/money-operations/ExpenseInput.vue';
 import CurrencyExchangeInput from '@/components/money-operations/CurrencyExchangeInput.vue';
 import AccountTransferInput from '@/components/money-operations/AccountTransferInput.vue';
 import FundTransferInput from '@/components/money-operations/FundTransferInput.vue';
-import IncomeDistributionInput from '@/components/money-operations/IncomeDistributionInput.vue';
+import IncomeAllocationInput from '@/components/money-operations/IncomeAllocationInput.vue';
 import { useAppStore } from '@/store/store';
 import { Account } from '@/models/account';
 import { Fund } from '@/models/fund';
-import { IncomeDistribution } from '@/models/income-distribution';
-import { IncomeDistributionUtils } from '@/helpers/income-distribution-utils';
+import { IncomeAllocation } from '@/models/income-allocation';
+import { IncomeAllocationUtils } from '@/helpers/income-allocation-utils';
 
 const store = useAppStore();
 const {
@@ -116,13 +116,13 @@ const fund = ref<Fund>();
 const initialFundValue = ref<Fund>();
 const account = ref<Account>();
 const initialAccountValue = ref<Account>();
-const incomeDistribution = ref<IncomeDistribution>();
+const incomeAllocation = ref<IncomeAllocation>();
 
 onMounted(() => {
-  incomeDistribution.value = dialogRef?.value.data?.incomeDistribution;
-  if (incomeDistribution.value) {
-    incomeDistribution.value = JSON.parse(
-      JSON.stringify(dialogRef?.value.data?.incomeDistribution)
+  incomeAllocation.value = dialogRef?.value.data?.incomeAllocation;
+  if (incomeAllocation.value) {
+    incomeAllocation.value = JSON.parse(
+      JSON.stringify(dialogRef?.value.data?.incomeAllocation)
     );
   }
   
@@ -147,7 +147,7 @@ onMounted(() => {
     );
   }
 
-  if (!operation.value && !fund.value && !account.value && !incomeDistribution.value) {
+  if (!operation.value && !fund.value && !account.value && !incomeAllocation.value) {
     throw new Error();
   }
 });
@@ -190,8 +190,8 @@ function onOperationChanged(changed: MoneyOperation) {
   operation.value.exchangeRate = changed.exchangeRate;
 }
 
-function onIncomeDistributionChanged(changed: IncomeDistribution) {
-  incomeDistribution.value = IncomeDistributionUtils.copy(changed);
+function onIncomeAllocationChanged(changed: IncomeAllocation) {
+  incomeAllocation.value = IncomeAllocationUtils.copy(changed);
 }
 
 function save() {
@@ -211,8 +211,8 @@ function save() {
     } else {
       createNewAccount(account.value);
     }
-  } else if (incomeDistribution.value) {
-    console.warn(incomeDistribution.value);
+  } else if (incomeAllocation.value) {
+    console.warn(incomeAllocation.value);
     // TODO
   }
   dialogRef?.value.close();

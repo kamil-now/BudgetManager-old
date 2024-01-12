@@ -1,7 +1,7 @@
 import { Account } from './account';
 import { Balance } from './balance';
 import { Fund } from './fund';
-import { IncomeDistribution } from './income-distribution';
+import { IncomeAllocation } from './income-allocation';
 import { MoneyOperation } from './money-operation';
 
 export type BudgetSummary = {
@@ -11,5 +11,5 @@ export type BudgetSummary = {
   funds: Fund[],
   accounts: Account[],
   operations: MoneyOperation[],
-  incomeDistributionTemplates: IncomeDistribution[]
+  incomeAllocationTemplates: IncomeAllocation[]
 };

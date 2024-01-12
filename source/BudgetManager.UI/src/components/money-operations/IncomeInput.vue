@@ -31,40 +31,40 @@
       <Checkbox id="distributeIncomeCheckbox" v-model="distributeIncome" :binary="true"></Checkbox>
       <label for="distributeIncomeCheckbox"> Allocate income </label>
     </div>
-    <IncomeDistributionForm
+    <IncomeAllocationForm
       v-if="distributeIncome"
-      :incomeDistribution="incomeDistribution"
+      :incomeAllocation="incomeAllocation"
       :income="incomeValue"
-      @changed="onIncomeDistributionChange($event)"
-    ></IncomeDistributionForm>
+      @changed="onIncomeAllocationChange($event)"
+    ></IncomeAllocationForm>
   </div>
 </template>
 <script setup lang="ts">
-import IncomeDistributionForm from '@/components/money-operations/IncomeDistributionForm.vue';
+import IncomeAllocationForm from '@/components/money-operations/IncomeAllocationForm.vue';
 import MoneyInput from '@/components/money-operations/MoneyInput.vue';
 import { DateUtils } from '@/helpers/date-utils';
 import { Account } from '@/models/account';
 import { Income } from '@/models/income';
 import { useAppStore } from '@/store/store';
 import { computed, ref, watch } from 'vue';
-import { IncomeDistribution } from '@/models/income-distribution';
-import { IncomeDistributionRule } from '@/models/income-distribution-rule';
-import { saveIncomeDistributionPreference, getIncomeDistributionPreference } from '@/storage';
+import { IncomeAllocation } from '@/models/income-allocation';
+import { IncomeAllocationRule } from '@/models/income-allocation-rule';
+import { saveIncomeAllocationPreference, getIncomeAllocationPreference } from '@/storage';
 
 const props = defineProps<{ income: Income }>();
 const emit = defineEmits(['changed']);
 const { accounts, funds } = useAppStore();
 
 const incomeRef = ref<Income>(props.income);
-const distributeIncomePreferenceRef = ref<boolean>(getIncomeDistributionPreference());
+const distributeIncomePreferenceRef = ref<boolean>(getIncomeAllocationPreference());
 const distributeIncome = computed({
   get: () => distributeIncomePreferenceRef.value,
   set: (newValue) => {
-    saveIncomeDistributionPreference(newValue);
+    saveIncomeAllocationPreference(newValue);
     distributeIncomePreferenceRef.value = newValue;
   }
 });
-const incomeDistribution = ref<IncomeDistribution>({ defaultFundId: funds[0].id,  rules: [] as IncomeDistributionRule[] });
+const incomeAllocation = ref<IncomeAllocation>({ defaultFundId: funds[0].id,  rules: [] as IncomeAllocationRule[] });
 
 const selectedAccount = ref<Account | undefined>(
   props.income.accountId
@@ -109,8 +109,8 @@ const incomeValue = computed({
   },
 });
 
-function onIncomeDistributionChange(
-  changedIncomeDistribution: IncomeDistribution
+function onIncomeAllocationChange(
+  changedIncomeAllocation: IncomeAllocation
 ) {
   // TODO
 }
@@ -126,7 +126,7 @@ function onIncomeDistributionChange(
     flex-wrap: wrap;
     gap: 1rem;
   }
-  .income-distribution-form {
+  .income-allocation-form {
     border-top: 1px solid black;
     padding-top: 1rem;
   }
