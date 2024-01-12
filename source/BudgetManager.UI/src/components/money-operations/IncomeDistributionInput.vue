@@ -13,8 +13,8 @@
 </template>
 <script setup lang="ts">
 import currencies from '@/assets/currencies.json';
-import MoneyInput from '@/components/MoneyInput.vue';
-import IncomeDistributionForm from '@/components/IncomeDistributionForm.vue';
+import MoneyInput from '@/components/money-operations/MoneyInput.vue';
+import IncomeDistributionForm from '@/components/money-operations/IncomeDistributionForm.vue';
 import { IncomeDistribution } from '@/models/income-distribution';
 import { Money } from '@/models/money';
 import { ref } from 'vue';

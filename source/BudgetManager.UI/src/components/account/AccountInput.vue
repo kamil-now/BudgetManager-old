@@ -40,7 +40,7 @@
 import currencies from '@/assets/currencies.json';
 import { Account } from '@/models/account';
 import { computed, nextTick, onMounted, ref } from 'vue';
-import MoneyInput from './MoneyInput.vue';
+import MoneyInput from '@/components/money-operations/MoneyInput.vue';
 import { Money } from '@/models/money';
 
 const props = defineProps<{ account : Account }>();

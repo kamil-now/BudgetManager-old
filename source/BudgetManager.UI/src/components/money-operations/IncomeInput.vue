@@ -40,8 +40,8 @@
   </div>
 </template>
 <script setup lang="ts">
-import IncomeDistributionForm from '@/components/IncomeDistributionForm.vue';
-import MoneyInput from '@/components/MoneyInput.vue';
+import IncomeDistributionForm from '@/components/money-operations/IncomeDistributionForm.vue';
+import MoneyInput from '@/components/money-operations/MoneyInput.vue';
 import { DateUtils } from '@/helpers/date-utils';
 import { Account } from '@/models/account';
 import { Income } from '@/models/income';

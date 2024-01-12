@@ -36,7 +36,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import AccountInput from '@/components/AccountInput.vue';
+import AccountInput from '@/components/account/AccountInput.vue';
 import ListView from '@/components/ListView.vue';
 import { DisplayFormat } from '@/helpers/display-format';
 import { Account } from '@/models/account';

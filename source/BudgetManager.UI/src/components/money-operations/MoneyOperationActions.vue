@@ -35,7 +35,7 @@ import { MoneyOperationType } from '@/models/money-operation-type.enum';
 import { useAppStore } from '@/store/store';
 import { useConfirm } from 'primevue/useconfirm';
 import { useDialog } from 'primevue/usedialog';
-import InputDialog from './InputDialog.vue';
+import InputDialog from '@/components/InputDialog.vue';
 import { storeToRefs } from 'pinia';
 
 defineProps<{ operation: MoneyOperation }>();

@@ -28,7 +28,7 @@
 </template>
 <script setup lang="ts">
 import ListView from '@/components/ListView.vue';
-import FundInput from '@/components/FundInput.vue';
+import FundInput from '@/components/fund/FundInput.vue';
 import { DisplayFormat } from '@/helpers/display-format';
 import { Fund } from '@/models/fund';
 import { useAppStore } from '@/store/store';

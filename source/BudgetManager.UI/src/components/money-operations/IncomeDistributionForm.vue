@@ -60,7 +60,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import IncomeDistributionRuleInput from '@/components/IncomeDistributionRuleInput.vue';
+import IncomeDistributionRuleInput from '@/components/money-operations/IncomeDistributionRuleInput.vue';
 import { DisplayFormat } from '@/helpers/display-format';
 import { IncomeDistributionUtils } from '@/helpers/income-distribution-utils';
 import { Fund } from '@/models/fund';

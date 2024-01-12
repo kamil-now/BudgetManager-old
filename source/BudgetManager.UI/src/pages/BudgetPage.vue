@@ -41,9 +41,9 @@
 </template>
 
 <script setup lang="ts">
-import AccountsView from '@/components/AccountsView.vue';
-import FundsView from '@/components/FundsView.vue';
-import OperationsView from '@/components/OperationsView.vue';
+import AccountsView from '@/components/account/AccountsView.vue';
+import FundsView from '@/components/fund/FundsView.vue';
+import OperationsView from '@/components/money-operations/OperationsView.vue';
 import AppPage from '@/pages/AppPage.vue';
 import { useAppStore } from '@/store/store';
 import { storeToRefs } from 'pinia';
