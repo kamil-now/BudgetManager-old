@@ -4,18 +4,6 @@ import { IncomeDistributionRuleType } from '@/models/income-distribution-rule-ty
 import { DisplayFormat } from './display-format';
 
 export class IncomeDistributionUtils {
-  static calculate(baseValue: number, rule: IncomeDistributionRule): {label: string, leftoverAmount: number} {
-    if (rule.type === IncomeDistributionRuleType.Fixed) {
-      const leftoverAmount = baseValue - rule.value;
-      return { label: `${DisplayFormat.rounded(baseValue)} - ${DisplayFormat.rounded(rule.value)} = ${DisplayFormat.rounded(leftoverAmount)} left`, leftoverAmount };
-    } else if (rule.type === IncomeDistributionRuleType.Percent) {
-      const leftoverAmount = baseValue * (1 - (rule.value / 100));
-      const value =  baseValue * (rule.value / 100);
-      return { label: `${DisplayFormat.rounded(baseValue)} x ${DisplayFormat.rounded(rule.value)}% = ${DisplayFormat.rounded(value)} → (${DisplayFormat.rounded(leftoverAmount)} left)`, leftoverAmount };
-    }
-    throw new Error('Unhandled distribution rule type.');
-  }
-
   static createNew(): IncomeDistribution {
     return {
       rules: []
@@ -27,5 +15,25 @@ export class IncomeDistributionUtils {
       ...incomeDistribution,
       rules: [...incomeDistribution.rules.map(x => ({ ...x }))]
     };
+  }
+
+  static calculate(baseValue: number, rule: IncomeDistributionRule): {label: string, leftoverAmount: number} {
+    if (rule.type === IncomeDistributionRuleType.Fixed) {
+      const leftoverAmount = baseValue - rule.value;
+      return { label: this.getFixedRuleLabel(baseValue, rule.value, leftoverAmount), leftoverAmount };
+    } else if (rule.type === IncomeDistributionRuleType.Percent) {
+      const leftoverAmount = baseValue * (1 - (rule.value / 100));
+      return { label: this.getPercentRuleLabel(baseValue, rule.value, leftoverAmount), leftoverAmount };
+    }
+    throw new Error(`Unhandled distribution rule type ${rule.type}.`);
+  }
+
+  private static getFixedRuleLabel(baseValue: number, ruleValue: number, leftover: number): string {
+    return `${DisplayFormat.rounded(baseValue)} - ${DisplayFormat.rounded(ruleValue)} = ${DisplayFormat.rounded(leftover)} left`;
+  }
+
+  private static getPercentRuleLabel(baseValue: number, ruleValue: number, leftover: number): string {
+    const value =  baseValue * (ruleValue / 100);
+    return `${DisplayFormat.rounded(baseValue)} x ${DisplayFormat.rounded(ruleValue)}% = ${DisplayFormat.rounded(value)} → ${DisplayFormat.rounded(leftover)} left`;
   }
 }

@@ -1,40 +1,36 @@
 <template>
   <div class="income-distribution-form">
-    <div v-if="income" class="income-distribution-form_rules">
+    <div
+      v-if="income"
+      class="income-distribution-form_rules"
+    >
       <div
         class="income-distribution-form_rule"
-        v-for="rule in incomeDistribution.rules"
+        v-for="rule in incomeDistributionRules"
         :key="rule.id"
       >
-        <IncomeDistributionRuleInput
-          :rule="rule"
-          :currency="leftover.currency"
-          @changed="onRuleChanged($event)"
-        />
-        <Button
-          icon="pi pi-times"
-          severity="danger"
-          text
-          rounded
-          size="small"
-          aria-label="Remove"
-          @click="removeRule(rule)"
-        />
+        <div class="income-distribution-form_rule-input">
+          <IncomeDistributionRuleInput
+            :rule="rule"
+            :currency="leftover.currency"
+            @changed="onRuleChanged($event)"
+          />
+          <Button
+            icon="pi pi-times"
+            severity="danger"
+            text
+            rounded
+            size="small"
+            aria-label="Remove"
+            @click="removeRule(rule)"
+          />
+        </div>
         <span>{{ ruleCalculations[rule.id] }}</span>
       </div>
     </div>
     <div class="income-distribution-form_footer">
-      <span
-        class="money"
-        v-if="incomeDistribution.rules.length === 0"
-      >
-        {{ income !== undefined ? DisplayFormat.money(income) : "All" }}
-      </span>
-      <span
-        class="money"
-        v-else
-      >
-        {{ income !== undefined ? DisplayFormat.money(leftover) : "Rest" }}
+      <span class="money">
+        {{ DisplayFormat.money(leftover) }}
       </span>
       <i class="pi pi-arrow-right" />
       <Dropdown
@@ -50,7 +46,10 @@
         </template>
       </Dropdown>
       <Button
-        v-if="funds.length > 1 || props.incomeDistribution.rules.length === MAX_RULES"
+        v-if="
+          funds.length > 1 ||
+          props.incomeDistribution.rules.length === MAX_RULES
+        "
         icon="pi pi-plus"
         text
         rounded
@@ -70,7 +69,7 @@ import { IncomeDistributionRule } from '@/models/income-distribution-rule';
 import { IncomeDistributionRuleType } from '@/models/income-distribution-rule-type.enum';
 import { Money } from '@/models/money';
 import { useAppStore } from '@/store/store';
-import { computed, ref, watch } from 'vue';
+import { computed, ref, toRef, watch } from 'vue';
 
 const MAX_RULES = 100;
 const props = defineProps<{
@@ -79,57 +78,49 @@ const props = defineProps<{
 }>();
 const emit = defineEmits(['changed']);
 const { funds } = useAppStore();
+const leftover = ref({ ...props.income });
 
-const leftover = ref<Money>({ ...props.income });
+const incomeDistributionRules = toRef(props.incomeDistribution, 'rules');
 
-const selectedFund = ref<Fund | undefined>(
-  props.incomeDistribution.defaultFundId
-    ? funds.find((x) => x.id === props.incomeDistribution.defaultFundId)
-    : funds.find((x) => !!x.id)
-);
-
-
-watch(selectedFund, async (fund) => {
-  emit('changed', {
-    ...props.incomeDistribution,
-    defaultFundId: fund?.id,
-    defaultFundName: fund?.name,
-  });
-});
-
-const ruleCalculations = computed<{[id: number]: string}>({
-  get: () => {
-    const calculations:{[id: number]: string} = {};
-    let leftover = props.income.amount;
-    
-    props.incomeDistribution.rules.forEach((rule) => {
-      if (leftover < 0) {
-        calculations[rule.id] = '-';
-      } else {
-        const { label, leftoverAmount } = IncomeDistributionUtils.calculate(leftover, rule);
-        calculations[rule.id] = label;
-        leftover = leftoverAmount;
-      }
+const selectedFund = computed({
+  get: () => props.incomeDistribution.defaultFundId
+    ? funds.find((x) => x.id === props.incomeDistribution.defaultFundId)!
+    : funds.find((x) => !!x.id)!,
+  set: (newValue: Fund) => {
+    emit('changed', {
+      ...props.incomeDistribution,
+      defaultFundId: newValue?.id,
+      defaultFundName: newValue?.name,
     });
-    return calculations;
-  },
-  set: () => {}
+  }
 });
+
+watch(props, () => {
+  updateCalculations();
+});
+
+const ruleCalculations = ref<{ [id: number]: string }>({});
 
 function addRule() {
+  (incomeDistributionRules.value = [
+    ...props.incomeDistribution.rules,
+    createNewIncomeDistributionRule(),
+  ]),
+  updateCalculations();
   emit('changed', {
     ...props.incomeDistribution,
-    rules: [
-      ...props.incomeDistribution.rules,
-      createNewIncomeDistributionRule(),
-    ],
+    rules: incomeDistributionRules.value,
   });
 }
 
 function removeRule(rule: IncomeDistributionRule) {
+  incomeDistributionRules.value = incomeDistributionRules.value.filter(
+    (x) => x.id !== rule.id
+  );
+  updateCalculations();
   emit('changed', {
     ...props.incomeDistribution,
-    rules: props.incomeDistribution.rules.filter((x) => x.id !== rule.id),
+    rules: incomeDistributionRules.value,
   });
 }
 
@@ -144,39 +135,39 @@ function createNewIncomeDistributionRule(): IncomeDistributionRule {
   }
   return {
     id: Date.now().valueOf(),
-    name: 'Rule ' + (props.incomeDistribution.rules.length + 1),
-    type: IncomeDistributionRuleType.Percent,
-    value: props.income ? (leftover.value.amount / props.income.amount * 100) : 0,
+    type: IncomeDistributionRuleType.Fixed,
+    value: leftover.value.amount,
     fundId: fund.id,
     fundName: fund.name,
   };
 }
 
 function onRuleChanged(rule: IncomeDistributionRule) {
-  const index = props.incomeDistribution.rules.findIndex(
+  const index = incomeDistributionRules.value.findIndex(
     (x) => x.id === rule.id
   );
-  const rules = [...props.incomeDistribution.rules];
-  updateCalculations(rules);
-  rules.splice(index, 1, rule);
+  incomeDistributionRules.value.splice(index, 1, rule);
+  updateCalculations();
   emit('changed', {
     ...props.incomeDistribution,
-    rules,
+    rules: incomeDistributionRules.value,
   });
 }
 
-function updateCalculations(rules: IncomeDistributionRule[]) {
+function updateCalculations() {
   leftover.value.amount = props.income.amount;
-  rules.forEach((rule, index) => {
+  incomeDistributionRules.value.forEach((rule, index) => {
     if (leftover.value.amount < 0) {
       ruleCalculations.value[rule.id] = '-';
     } else {
-      const { label, leftoverAmount } = IncomeDistributionUtils.calculate(index === 0 ? props.income.amount : leftover.value.amount, rule);
+      const { label, leftoverAmount } = IncomeDistributionUtils.calculate(
+        index === 0 ? props.income.amount : leftover.value.amount,
+        rule
+      );
       ruleCalculations.value[rule.id] = label;
       leftover.value.amount = leftoverAmount;
     }
   });
-  
 }
 </script>
 
@@ -194,10 +185,16 @@ function updateCalculations(rules: IncomeDistributionRule[]) {
   }
   &_rule {
     display: flex;
-    align-items: center;
+    align-items: start;
+    gap: 1rem;
     flex-wrap: wrap;
+    flex-direction: column;
     span {
       text-wrap: nowrap;
+    }
+    &-input {
+      display: flex;
+      align-items: center;
     }
   }
   &_footer {

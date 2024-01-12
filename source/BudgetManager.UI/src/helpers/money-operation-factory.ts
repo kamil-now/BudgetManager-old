@@ -28,7 +28,7 @@ export class MoneyOperationFactory {
       date: DateUtils.createDateOnlyString(new Date()),
       value: {
         currency: Object.keys(currencies)[0],
-        amount: 0,
+        amount: 1,
       },
       createdDate: new Date().toString(),
       targetCurrency: Object.keys(currencies)[1],

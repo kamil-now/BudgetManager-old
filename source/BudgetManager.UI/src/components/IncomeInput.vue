@@ -27,18 +27,16 @@
         @changed="incomeValue = $event"
       />
     </div>
-    <template v-if="incomeValue.amount > 0">
-      <div class="income-input_distribute-income-checkbox">
-        <Checkbox id="distributeIncomeCheckbox" v-model="distributeIncome" :binary="true"></Checkbox>
-        <label for="distributeIncomeCheckbox"> Distribute income </label>
-      </div>
-      <IncomeDistributionForm
-        v-if="distributeIncome"
-        :incomeDistribution="incomeDistribution"
-        :income="incomeValue"
-        @changed="onIncomeDistributionChange($event)"
-      ></IncomeDistributionForm>
-    </template>
+    <div class="income-input_distribute-income-checkbox">
+      <Checkbox id="distributeIncomeCheckbox" v-model="distributeIncome" :binary="true"></Checkbox>
+      <label for="distributeIncomeCheckbox"> Allocate income </label>
+    </div>
+    <IncomeDistributionForm
+      v-if="distributeIncome"
+      :incomeDistribution="incomeDistribution"
+      :income="incomeValue"
+      @changed="onIncomeDistributionChange($event)"
+    ></IncomeDistributionForm>
   </div>
 </template>
 <script setup lang="ts">
@@ -51,12 +49,11 @@ import { useAppStore } from '@/store/store';
 import { computed, ref, watch } from 'vue';
 import { IncomeDistribution } from '@/models/income-distribution';
 import { IncomeDistributionRule } from '@/models/income-distribution-rule';
-import { IncomeDistributionRuleType } from '@/models/income-distribution-rule-type.enum';
 import { saveIncomeDistributionPreference, getIncomeDistributionPreference } from '@/storage';
 
 const props = defineProps<{ income: Income }>();
 const emit = defineEmits(['changed']);
-const { accounts } = useAppStore();
+const { accounts, funds } = useAppStore();
 
 const incomeRef = ref<Income>(props.income);
 const distributeIncomePreferenceRef = ref<boolean>(getIncomeDistributionPreference());
@@ -67,24 +64,7 @@ const distributeIncome = computed({
     distributeIncomePreferenceRef.value = newValue;
   }
 });
-const incomeDistribution = ref<IncomeDistribution>({
-  rules: [
-    {
-      id: 1,
-      type: IncomeDistributionRuleType.Fixed,
-      value: 2000,
-    },  
-    {
-      id: 2,
-      type: IncomeDistributionRuleType.Percent,
-      value: 50,
-    },
-    {
-      id: 3,
-      type: IncomeDistributionRuleType.Percent,
-      value: 50,
-    }] as IncomeDistributionRule[],
-});
+const incomeDistribution = ref<IncomeDistribution>({ defaultFundId: funds[0].id,  rules: [] as IncomeDistributionRule[] });
 
 const selectedAccount = ref<Account | undefined>(
   props.income.accountId
@@ -119,7 +99,7 @@ const incomeTitle = computed({
   },
 });
 const incomeValue = computed({
-  get: () => props.income.value,
+  get: () => incomeRef.value.value,
   set: (newValue) => {
     incomeRef.value.value = { ...newValue };
     emit('changed', {
@@ -132,7 +112,7 @@ const incomeValue = computed({
 function onIncomeDistributionChange(
   changedIncomeDistribution: IncomeDistribution
 ) {
-  incomeDistribution.value = changedIncomeDistribution;
+  // TODO
 }
 </script>
 
@@ -147,7 +127,6 @@ function onIncomeDistributionChange(
     gap: 1rem;
   }
   .income-distribution-form {
-    width: 90vw;
     border-top: 1px solid black;
     padding-top: 1rem;
   }

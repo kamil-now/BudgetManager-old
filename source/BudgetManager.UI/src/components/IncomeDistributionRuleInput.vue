@@ -1,43 +1,33 @@
 <template>
   <div class="income-distribution-rule-input">
-    <InputText
-      ref="input"
-      class="p-inputtext-sm"
-      placeholder="Rule name"
-      v-model="name"
-    />
-    <Dropdown
-      v-model="type"
-      :options="incomeDistributionRuleTypes"
-      style="width: 8rem"
-    >
-      <template #value="{ value }">
-        <span :class="{ placeholder: value === 0}">
-          {{ value === 0 ? "type" : IncomeDistributionRuleType[value] }}
-        </span>
-      </template>
-      <template #option="{ option }">
-        <span>{{ IncomeDistributionRuleType[option] }}</span>
-      </template>
-    </Dropdown>
-
-    <MoneyInput
-      v-if="type == IncomeDistributionRuleType.Fixed"
-      :money="ruleValue"
-    />
-
-    <InputNumber
-      v-else
-      class="percent-input p-inputtext-sm"
-      v-model="ruleValueAmount"
-      :allowEmpty="false"
-      :highlightOnFocus="true"
-      :min="0"
-      suffix=" %"
-      :maxFractionDigits="2"
-      :max="100"
-      @input="onPercentInput($event)"
-    />
+    <InputGroup>
+      <InputGroupAddon
+        :class="{ selected: ruleType === IncomeDistributionRuleType.Fixed }"
+      >
+        <i
+          class="pi pi-money-bill"
+          @click="ruleType = IncomeDistributionRuleType.Fixed"
+        />
+      </InputGroupAddon>
+      <InputGroupAddon
+        :class="{ selected: ruleType === IncomeDistributionRuleType.Percent }"
+      >
+        <i
+          class="pi pi-percentage"
+          @click="ruleType = IncomeDistributionRuleType.Percent"
+        />
+      </InputGroupAddon>
+      <InputNumber
+        v-model="ruleValue"
+        :allowEmpty="false"
+        :highlightOnFocus="true"
+        :min="0"
+        :suffix="valueSuffix"
+        :prefix="valuePrefix"
+        :maxFractionDigits="2"
+        @input="onValueInput($event)"
+      />
+    </InputGroup>
     <i class="pi pi-arrow-right" />
     <Dropdown
       class="p-inputtext-sm"
@@ -54,81 +44,59 @@
   </div>
 </template>
 <script setup lang="ts">
-import { EnumUtils } from '@/helpers/enum-utils';
 import { Fund } from '@/models/fund';
-import MoneyInput from '@/components/MoneyInput.vue';
 import { IncomeDistributionRule } from '@/models/income-distribution-rule';
 import { IncomeDistributionRuleType } from '@/models/income-distribution-rule-type.enum';
 import { useAppStore } from '@/store/store';
-import { computed, ref, watch } from 'vue';
 import { InputNumberInputEvent } from 'primevue/inputnumber';
+import { computed, toRefs } from 'vue';
 
 const props = defineProps<{ currency: string; rule: IncomeDistributionRule }>();
+const { rule } = toRefs(props);
 const emit = defineEmits(['changed']);
 const { funds } = useAppStore();
-const incomeDistributionRuleTypes = EnumUtils.getStringValues(
-  IncomeDistributionRuleType
-);
-const selectedFund = ref<Fund | undefined>(
-  props.rule.fundId
-    ? funds.find((x) => x.id === props.rule.fundId)
-    : funds.find((x) => !!x.id)
-);
 
-watch(selectedFund, async (fund) => {
-  emit('changed', {
-    ...props.rule,
-    fundId: fund?.id,
-    fundName: fund?.name,
-  });
-});
-const ruleValue = computed({
-  get: () => ({ amount: props.rule.value, currency: props.currency }),
-  set: (newValue) => {
+const selectedFund = computed({
+  get: () =>
+    props.rule.fundId
+      ? funds.find((x) => x.id === props.rule.fundId)!
+      : funds.find((x) => !!x.id)!,
+  set: (fund: Fund) => {
     emit('changed', {
-      ...props.rule,
-      value: newValue.amount,
-    });
-  },
-});
-const ruleValueAmount = computed({
-  get: () => {
-    return  props.rule.value;
-  },
-  set: () => {} // handled in onPercentInput
-});
-const name = computed({
-  get: () => props.rule.name,
-  set: (newValue) => {
-    emit('changed', {
-      ...props.rule,
-      name: newValue,
-    });
-  },
-});
-const type = computed({
-  get: () => props.rule.type,
-  set: (newValue: number) => {
-    emit('changed', {
-      ...props.rule,
-      type: IncomeDistributionRuleType[
-        IncomeDistributionRuleType[
-          newValue
-        ] as keyof typeof IncomeDistributionRuleType
-      ],
+      ...rule.value,
+      fundId: fund?.id,
+      fundName: fund?.name,
     });
   },
 });
 
-function onPercentInput(event: InputNumberInputEvent) {
+const ruleType = computed({
+  get: () => rule.value.type,
+  set: (newValue: IncomeDistributionRuleType) => {
+    rule.value.type = newValue;
+    emit('changed', {
+      ...rule.value,
+      type: newValue,
+    });
+  },
+});
+
+const ruleValue = computed(() => rule.value.value);
+
+const valueSuffix = computed(() => ruleType.value === IncomeDistributionRuleType.Percent ? ' %' : '');
+const valuePrefix = computed(() => ruleType.value === IncomeDistributionRuleType.Fixed ? `${props.currency} ` : '');
+
+function onValueInput(event: InputNumberInputEvent) {
   let newValue = Number(event.value);
-  if (newValue > 100) {
+  if (ruleType.value === IncomeDistributionRuleType.Percent && newValue > 100) {
     newValue = 100;
   } else if (newValue < 0) {
     newValue = 0;
   }
+
+  rule.value.value = newValue;
   emit('changed', {
-    ...props.rule,
+    ...rule.value,
     value: newValue,
   });
 }
@@ -137,14 +105,15 @@ function onPercentInput(event: InputNumberInputEvent) {
 <style lang="scss">
 .income-distribution-rule-input {
   display: flex;
-  max-width: 100%;
-  flex-wrap: wrap;
   gap: 1rem;
   align-items: center;
-  .percent-input {
-    .p-inputtext {
-      text-align: center !important;
-    }
+
+  i {
+    font-size: 0.75rem;
+    cursor: pointer;
+  }
+  .selected {
+    background-color: var(--primary-color);
   }
 }
 </style>

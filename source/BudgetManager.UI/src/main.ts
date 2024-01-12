@@ -21,6 +21,8 @@ import DialogService from 'primevue/dialogservice';
 import DynamicDialog from 'primevue/dynamicdialog';
 import ProgressSpinner from 'primevue/progressspinner';
 import Checkbox from 'primevue/checkbox';
+import InputGroup from 'primevue/inputgroup';
+import InputGroupAddon from 'primevue/inputgroupaddon';
 // PrimeVue
 import App from '@/App.vue';
 import { AUTH, IAuthService, MsalAuthService, MsalConfiguration } from '@/auth';
@@ -58,6 +60,8 @@ app
 // app.use(Colada);
 
 app
+  .component('InputGroupAddon', InputGroupAddon)
+  .component('InputGroup', InputGroup)
   .component('Checkbox', Checkbox)
   .component('TabView', TabView)
   .component('TabPanel', TabPanel)
