@@ -25,7 +25,9 @@
         style="width: 8rem"
       >
         <template #value="{ value }">
-          <span :class="{ placeholder: value === 0}">{{ value === 0 ? "type" : MoneyOperationType[value] }}</span>
+          <span :class="{ placeholder: value === 0 }">
+            {{ value === 0 ? "type" : MoneyOperationType[value] }}
+          </span>
         </template>
         <template #option="{ option }">
           <span>{{ MoneyOperationType[option] }}</span>
@@ -69,13 +71,21 @@
           <div class="operations-view_body_left">
             <span class="date">{{ data.date }}</span>
             <component :is="getIcon(data.type)">
-              <span class="money">{{ DisplayFormat.money(data.value) }}</span>
+              <MoneySpan :money="data.value" />
             </component>
           </div>
           <div class="operations-view_body_right">
             <span v-if="data.title">{{ data.title }}</span>
-            <span v-if="data.fundName"><FundIcon><span class="fund-name">{{ data.fundName }}</span></FundIcon></span>
-            <span v-if="data.accountName"><AccountIcon><span class="account-name">{{ data.accountName }}</span></AccountIcon></span>
+            <span v-if="data.fundName">
+              <FundIcon>
+                <span class="fund-name">{{ data.fundName }}</span>
+              </FundIcon>
+            </span>
+            <span v-if="data.accountName">
+              <AccountIcon>
+                <span class="account-name">{{ data.accountName }}</span>
+              </AccountIcon>
+            </span>
             <i
               v-if="
                 [
@@ -86,8 +96,16 @@
               "
               class="pi pi-arrow-right transfer-icon"
             ></i>
-            <span v-if="data.targetFundName"><FundIcon><span class="fund-name">{{ data.targetFundName }}</span></FundIcon></span>
-            <span v-if="data.targetAccountName"><AccountIcon><span class="account-name">{{ data.targetAccountName }}</span></AccountIcon></span>
+            <span v-if="data.targetFundName">
+              <FundIcon>
+                <span class="fund-name">{{ data.targetFundName }}</span>
+              </FundIcon>
+            </span>
+            <span v-if="data.targetAccountName">
+              <AccountIcon>
+                <span class="account-name">{{ data.targetAccountName }}</span>
+              </AccountIcon>
+            </span>
             <span v-if="data.targetCurrency">
               {{
                 (data.value.amount / data.exchangeRate).toFixed(2) +
@@ -104,8 +122,8 @@
 <script setup lang="ts">
 import ListView from '@/components/ListView.vue';
 import BalanceLabel from '@/components/BalanceLabel.vue';
+import MoneySpan from '@/components/MoneySpan.vue';
 import { DateUtils } from '@/helpers/date-utils';
-import { DisplayFormat } from '@/helpers/display-format';
 import { MoneyOperationType } from '@/models/money-operation-type.enum';
 import { useAppStore } from '@/store/store';
 import { storeToRefs } from 'pinia';
@@ -196,7 +214,7 @@ function getOperationsBalance(operations: MoneyOperation[]) {
       case MoneyOperationType.CurrencyExchange:
         balance[operation.value.currency] -= operation.value.amount;
         balance[operation.targetCurrency!] +=
-        operation.value.amount / operation.exchangeRate!;
+          operation.value.amount / operation.exchangeRate!;
         break;
       default:
         break;
@@ -230,11 +248,14 @@ function getIcon(type: MoneyOperationType) {
   display: flex;
   align-items: center;
   flex-direction: column;
+
   &_filters {
     padding-bottom: 0.25rem;
+
     @media (max-width: 800px) {
       padding-top: 0.5rem;
     }
+
     display: flex;
     width: 100%;
     flex-wrap: wrap;
@@ -242,21 +263,26 @@ function getIcon(type: MoneyOperationType) {
     align-items: start;
     justify-content: start;
   }
+
   &_balance {
     display: flex;
     align-items: center;
     padding: 0.25rem 0;
     width: 100%;
+
     .balance-label {
       height: 2.25rem;
     }
   }
+
   .list-view {
     height: calc(100% - 5rem);
   }
+
   &_body {
     display: flex;
     width: 100%;
+
     &_left {
       width: 50%;
       gap: 1rem;
@@ -267,6 +293,7 @@ function getIcon(type: MoneyOperationType) {
       text-overflow: ellipsis;
       overflow: hidden;
     }
+
     &_right {
       width: 50%;
       gap: 1rem;

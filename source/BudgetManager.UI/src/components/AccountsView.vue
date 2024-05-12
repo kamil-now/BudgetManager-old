@@ -10,20 +10,16 @@
       <template #content="{ data }">
         <div class="accounts-view_body">
           <div class="accounts-view_body_balance">
-            <div
-              class="money"
+            <MoneySpan
               v-for="(value, currency) in data.balance"
               :key="currency"
-            >
-              {{
-                DisplayFormat.money({
-                  amount: value,
-                  currency: currency.toString(),
-                })
-              }}
-            </div>
+              :amount="value"
+              :currency="currency.toString()"
+            />
           </div>
-          <div class="accounts-view_body_name account-name">{{ data.name }}</div>
+          <div class="accounts-view_body_name account-name">
+            {{ data.name }}
+          </div>
         </div>
       </template>
       <template #editor="{ data }">
@@ -38,7 +34,7 @@
 <script setup lang="ts">
 import AccountInput from '@/components/AccountInput.vue';
 import ListView from '@/components/ListView.vue';
-import { DisplayFormat } from '@/helpers/display-format';
+import MoneySpan from '@/components/MoneySpan.vue';
 import { Account } from '@/models/account';
 import { useAppStore } from '@/store/store';
 import { storeToRefs } from 'pinia';

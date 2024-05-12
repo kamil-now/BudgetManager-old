@@ -29,9 +29,7 @@
       </div>
     </div>
     <div class="income-distribution-form_footer">
-      <span class="money">
-        {{ DisplayFormat.money(leftover) }}
-      </span>
+      <MoneySpan :money="leftover" />
       <i class="pi pi-arrow-right" />
       <Dropdown
         class="p-inputtext-sm"
@@ -61,7 +59,7 @@
 </template>
 <script setup lang="ts">
 import IncomeDistributionRuleInput from '@/components/IncomeDistributionRuleInput.vue';
-import { DisplayFormat } from '@/helpers/display-format';
+import MoneySpan from '@/components/MoneySpan.vue';
 import { IncomeDistributionUtils } from '@/helpers/income-distribution-utils';
 import { Fund } from '@/models/fund';
 import { IncomeDistribution } from '@/models/income-distribution';
