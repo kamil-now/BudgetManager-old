@@ -6,7 +6,6 @@
       <Calendar
         style="width: 10rem"
         v-model="dateRangeFilter"
-        dateFormat="yy/mm/dd"
         selectionMode="range"
         size="small"
         placeholder="yy/mm/dd - yy/mm/dd"

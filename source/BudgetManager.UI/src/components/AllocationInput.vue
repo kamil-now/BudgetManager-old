@@ -1,6 +1,6 @@
 <template>
   <div class="allocation-input">
-    <Calendar v-model="allocationDate" dateFormat="yy/mm/dd" />
+    <Calendar v-model="allocationDate" />
     <InputText
       ref="input"
       class="p-inputtext-sm"
@@ -10,7 +10,7 @@
     <Dropdown
       class="p-inputtext-sm"
       v-model="selectedFund"
-      :options="funds" 
+      :options="funds"
     >
       <template #value="{ value }">
         <span>{{ value?.name }}</span>
@@ -21,19 +21,19 @@
     </Dropdown>
     <Dropdown
       class="p-inputtext-sm"
-      id="allocationCurrency" 
-      v-model="allocationCurrency" 
-      :options="currencyCodeList" 
+      id="allocationCurrency"
+      v-model="allocationCurrency"
+      :options="currencyCodeList"
     />
-    <InputNumber 
+    <InputNumber
       class="p-inputtext-sm"
       id="allocationValue"
-      v-model="allocationValue" 
+      v-model="allocationValue"
       mode="currency"
       currencyDisplay="code"
       :highlightOnFocus="true"
       :allowEmpty="false"
-      :currency="allocationCurrency" 
+      :currency="allocationCurrency"
       :min="-1000000"
       :maxFractionDigits="2"
       :max="1000000"
@@ -52,24 +52,26 @@ const props = defineProps<{ allocation: Allocation }>();
 const emit = defineEmits(['changed']);
 const input = ref();
 
-const { funds }  = useAppStore();
+const { funds } = useAppStore();
 
 const currencyCodeList = Object.keys(currencies);
-onMounted(() => nextTick(() => {
-  input.value.$el.focus();
-}));
+onMounted(() =>
+  nextTick(() => {
+    input.value.$el.focus();
+  })
+);
 
 const selectedFund = ref<Fund | undefined>(
-  props.allocation.targetFundId 
-    ? funds.find(x => x.id === props.allocation.targetFundId)
+  props.allocation.targetFundId
+    ? funds.find((x) => x.id === props.allocation.targetFundId)
     : undefined
 );
 
 watch(selectedFund, async (fund) => {
   emit('changed', {
-    ...props.allocation, 
+    ...props.allocation,
     targetFundId: fund?.id,
-    targetFundName: fund?.name
+    targetFundName: fund?.name,
   });
 });
 
@@ -77,31 +79,31 @@ const allocationDate = computed({
   get: () => props.allocation.date,
   set: (newValue) => {
     emit('changed', {
-      ...props.allocation, 
-      date: DateUtils.createDateOnlyString(new Date(newValue))
+      ...props.allocation,
+      date: DateUtils.createDateOnlyString(new Date(newValue)),
     });
-  }
+  },
 });
 const allocationTitle = computed({
   get: () => props.allocation.title,
   set: (newValue) => {
     emit('changed', {
-      ...props.allocation, 
-      title: newValue
+      ...props.allocation,
+      title: newValue,
     });
-  }
+  },
 });
 const allocationValue = computed({
   get: () => props.allocation.value.amount,
   set: (newValue) => {
     emit('changed', {
-      ...props.allocation, 
+      ...props.allocation,
       value: {
         ...props.allocation.value,
-        amount: newValue
-      }
+        amount: newValue,
+      },
     });
-  }
+  },
 });
 
 const allocationCurrency = computed({
@@ -111,10 +113,10 @@ const allocationCurrency = computed({
       ...props.allocation,
       value: {
         ...props.allocation.value,
-        currency: newValue 
-      }
+        currency: newValue,
+      },
     });
-  }
+  },
 });
 </script>
 

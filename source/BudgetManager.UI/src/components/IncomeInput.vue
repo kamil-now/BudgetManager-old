@@ -1,10 +1,7 @@
 <template>
   <div class="income-input">
     <div class="income-input_content">
-      <Calendar
-        v-model="incomeDate"
-        dateFormat="yy/mm/dd"
-      />
+      <Calendar v-model="incomeDate" />
       <InputText
         class="p-inputtext-sm"
         placeholder="Income title"
@@ -28,8 +25,12 @@
       />
     </div>
     <div class="income-input_distribute-income-checkbox">
-      <Checkbox id="distributeIncomeCheckbox" v-model="distributeIncome" :binary="true"></Checkbox>
-      <label for="distributeIncomeCheckbox"> Allocate income </label>
+      <Checkbox
+        id="distributeIncomeCheckbox"
+        v-model="distributeIncome"
+        :binary="true"
+      ></Checkbox>
+      <label for="distributeIncomeCheckbox">Allocate income</label>
     </div>
     <IncomeDistributionForm
       v-if="distributeIncome"
@@ -49,22 +50,30 @@ import { useAppStore } from '@/store/store';
 import { computed, ref, watch } from 'vue';
 import { IncomeDistribution } from '@/models/income-distribution';
 import { IncomeDistributionRule } from '@/models/income-distribution-rule';
-import { saveIncomeDistributionPreference, getIncomeDistributionPreference } from '@/storage';
+import {
+  saveIncomeDistributionPreference,
+  getIncomeDistributionPreference,
+} from '@/storage';
 
 const props = defineProps<{ income: Income }>();
 const emit = defineEmits(['changed']);
 const { accounts, funds } = useAppStore();
 
 const incomeRef = ref<Income>(props.income);
-const distributeIncomePreferenceRef = ref<boolean>(getIncomeDistributionPreference());
+const distributeIncomePreferenceRef = ref<boolean>(
+  getIncomeDistributionPreference()
+);
 const distributeIncome = computed({
   get: () => distributeIncomePreferenceRef.value,
   set: (newValue) => {
     saveIncomeDistributionPreference(newValue);
     distributeIncomePreferenceRef.value = newValue;
-  }
+  },
 });
-const incomeDistribution = ref<IncomeDistribution>({ defaultFundId: funds[0].id,  rules: [] as IncomeDistributionRule[] });
+const incomeDistribution = ref<IncomeDistribution>({
+  defaultFundId: funds[0].id,
+  rules: [] as IncomeDistributionRule[],
+});
 
 const selectedAccount = ref<Account | undefined>(
   props.income.accountId
@@ -121,15 +130,18 @@ function onIncomeDistributionChange(
   display: flex;
   flex-direction: column;
   gap: 1rem;
+
   &_content {
     display: flex;
     flex-wrap: wrap;
     gap: 1rem;
   }
+
   .income-distribution-form {
     border-top: 1px solid black;
     padding-top: 1rem;
   }
+
   &_distribute-income-checkbox {
     display: flex;
     align-items: center;

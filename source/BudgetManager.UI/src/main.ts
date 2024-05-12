@@ -2,7 +2,7 @@
 // PrimeVue
 import 'primeicons/primeicons.css';
 import Button from 'primevue/button';
-import PrimeVue from 'primevue/config';
+import PrimeVue, { defaultOptions }  from 'primevue/config';
 import ConfirmationService from 'primevue/confirmationservice';
 import ConfirmPopup from 'primevue/confirmpopup';
 import Dropdown from 'primevue/dropdown';
@@ -50,7 +50,13 @@ const app = createApp(App);
 const pinia = createPinia();
 
 app
-  .use(PrimeVue)
+  .use(PrimeVue, {
+    locale: {
+      ...defaultOptions.locale,
+      firstDayOfWeek: 1,  
+      dateFormat: 'yy/mm/dd',
+    } 
+  })
   .use(ToastService)
   .use(ConfirmationService)
   .use(DialogService)
