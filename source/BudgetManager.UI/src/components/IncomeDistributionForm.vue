@@ -97,7 +97,7 @@ watch(props, () => {
   updateCalculations();
 });
 
-const ruleCalculations = ref<{ [id: number]: string }>({});
+const ruleCalculations = ref<{ [id: string]: string }>({});
 
 function addRule() {
   (incomeDistributionRules.value = [
@@ -132,7 +132,10 @@ function createNewIncomeDistributionRule(): IncomeDistributionRule {
     );
   }
   return {
-    id: Date.now().valueOf(),
+    id: Date
+      .now()
+      .valueOf()
+      .toString(),
     type: IncomeDistributionRuleType.Fixed,
     value: leftover.value.amount,
     fundId: fund.id,

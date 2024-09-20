@@ -2,7 +2,7 @@
   <div class="income-distribution-form-input">
     <div class="income-distribution-form-input_income">
       <span>Test income</span>
-      <MoneyInput :money="testIncome" />
+      <MoneyInput :money="testIncome" @changed="onIncomeChange($event)" />
     </div>
     <IncomeDistributionForm
       :income="testIncome"
@@ -29,6 +29,11 @@ const testIncome = ref<Money>({
 function onIncomeDistributionChange(changed: IncomeDistribution) {
   emit('changed', changed);
 }
+
+function onIncomeChange(money: Money) {
+  testIncome.value = money;
+}
+
 </script>
 <style lang="scss">
 .income-distribution-form-input {
