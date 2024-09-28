@@ -4,6 +4,7 @@ public class Budget(
   UserSettings userSettings,
   IEnumerable<Account> accounts,
   IEnumerable<Fund> funds,
+  IEnumerable<IncomeDistributionTemplate> incomeDistributionTemplates,
   IEnumerable<MoneyOperation> operations
   )
 {
@@ -12,7 +13,9 @@ public class Budget(
   public IReadOnlyCollection<Account> Accounts => _accounts.AsReadOnly();
   public IReadOnlyCollection<Fund> Funds => _funds.AsReadOnly();
   public IReadOnlyCollection<MoneyOperation> Operations => _operations.AsReadOnly();
+  public IReadOnlyCollection<IncomeDistributionTemplate> IncomeDistributionTemplates => _incomeDistributionTemplates.AsReadOnly();
 
+  private readonly List<IncomeDistributionTemplate> _incomeDistributionTemplates = incomeDistributionTemplates.ToList();
   private readonly List<MoneyOperation> _operations = operations.ToList();
   private readonly List<Account> _accounts = accounts.ToList();
   private readonly List<Fund> _funds = funds.ToList();
@@ -112,6 +115,26 @@ public class Budget(
   {
     var fund = _funds.First(x => x.Id == fundId);
     fund.IsDeleted = true;
+  }
+
+  public string AddIncomeDistributionTemplate(string name, string defaultFundId, IEnumerable<IncomeDistributionRule> rules)
+  {
+    var id = Guid.NewGuid().ToString();
+    var incomeDistributionTemplate = new IncomeDistributionTemplate(id, name, defaultFundId, rules);
+    _incomeDistributionTemplates.Add(incomeDistributionTemplate);
+    return id;
+  }
+
+  public IncomeDistributionTemplate UpdateIncomeDistributionTemplate(string incomeDistributionTemplateId, string? name, string? defaultFundId, IEnumerable<IncomeDistributionRule>? rules)
+  {
+    var incomeDistributionTemplate = _incomeDistributionTemplates.First(x => x.Id == incomeDistributionTemplateId);
+    incomeDistributionTemplate.Update(name, defaultFundId, rules);
+    return incomeDistributionTemplate;
+  }
+
+  public void RemoveIncomeDistributionTemplate(string incomeDistributionTemplateId)
+  {
+    incomeDistributionTemplates = _incomeDistributionTemplates.Where(x => x.Id != incomeDistributionTemplateId).ToList();
   }
 
   public void Recalculate()

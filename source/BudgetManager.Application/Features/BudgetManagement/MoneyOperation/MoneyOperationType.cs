@@ -8,5 +8,6 @@ public enum MoneyOperationType
   Expense,
   CurrencyExchange,
   AccountTransfer,
-  FundTransfer
+  FundTransfer,
+  IncomeDistributionTemplate
 }
