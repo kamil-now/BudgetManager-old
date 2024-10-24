@@ -1,6 +1,6 @@
 namespace BudgetManager.Infrastructure.Models;
 
-public enum IncomeDistributionTemplateRuleType
+public enum IncomeAllocationTemplateRuleType
 {
   Undefined,
   Fixed,

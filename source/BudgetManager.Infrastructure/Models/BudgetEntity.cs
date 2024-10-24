@@ -17,5 +17,5 @@ public class BudgetEntity : IVersioned
   public IEnumerable<AccountTransferEntity>? AccountTransfers { get; set; }
   public IEnumerable<AllocationEntity>? Allocations { get; set; }
   public IEnumerable<CurrencyExchangeEntity>? CurrencyExchanges { get; set; }
-  public IEnumerable<IncomeDistributionTemplateEntity>? IncomeDistributionTemplates { get; set; }
+  public IEnumerable<IncomeAllocationTemplateEntity>? IncomeAllocationTemplates { get; set; }
 }

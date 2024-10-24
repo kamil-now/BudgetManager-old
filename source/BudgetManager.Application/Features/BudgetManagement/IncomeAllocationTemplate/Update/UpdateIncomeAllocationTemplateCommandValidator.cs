@@ -2,9 +2,9 @@ namespace BudgetManager.Application.Features.BudgetManagement;
 
 using BudgetManager.Infrastructure;
 
-public class UpdateIncomeDistributionTemplateCommandValidator : BudgetCommandValidator<UpdateIncomeDistributionTemplateCommand>
+public class UpdateIncomeAllocationTemplateCommandValidator : BudgetCommandValidator<UpdateIncomeAllocationTemplateCommand>
 {
-  public UpdateIncomeDistributionTemplateCommandValidator(IUserBudgetRepository repository, AppConfig config) : base(repository)
+  public UpdateIncomeAllocationTemplateCommandValidator(IUserBudgetRepository repository, AppConfig config) : base(repository)
   {
     RuleFor(x => x.Name)
       .Must(name => name is null || name.Length <= config.MaxTitleLength);

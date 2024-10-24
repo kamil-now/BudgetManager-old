@@ -1,6 +1,6 @@
 namespace BudgetManager.Application.Features.BudgetManagement;
 
-public record IncomeDistributionRuleDto(
+public record IncomeAllocationRuleDto(
   string? Id = null,
   int? Value = null,
   string? FundId = null,
@@ -8,9 +8,9 @@ public record IncomeDistributionRuleDto(
   int? Type = null
 );
 
-public record IncomeDistributionTemplateDto(
+public record IncomeAllocationTemplateDto(
   string? Id = null,
   string? DefaultFundId = null,
   string? DefaultFundName = null,
-  IEnumerable<IncomeDistributionRuleDto>? Rules = null
+  IEnumerable<IncomeAllocationRuleDto>? Rules = null
 );

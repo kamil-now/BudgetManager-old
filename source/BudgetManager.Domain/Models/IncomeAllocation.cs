@@ -1,24 +1,24 @@
 namespace BudgetManager.Domain.Models;
 
-public enum IncomeDistributionRuleType
+public enum IncomeAllocationRuleType
 {
   Undefined,
   Fixed,
   Percent,
 }
 
-public class IncomeDistributionRule(
+public class IncomeAllocationRule(
   string id,
   int value,
   string fundId,
-  IncomeDistributionRuleType type
+  IncomeAllocationRuleType type
 )
 {
   public string Id { get; private set; } = id;
   public int Value { get; private set; } = value;
   public string FundId { get; private set; } = fundId;
-  public IncomeDistributionRuleType Type { get; private set; } = type;
-  public void Update(int? value, string? fundId, IncomeDistributionRuleType? type)
+  public IncomeAllocationRuleType Type { get; private set; } = type;
+  public void Update(int? value, string? fundId, IncomeAllocationRuleType? type)
   {
     if (value is not null)
     {
@@ -30,25 +30,25 @@ public class IncomeDistributionRule(
     }
     if (type is not null)
     {
-      Type = (IncomeDistributionRuleType)type;
+      Type = (IncomeAllocationRuleType)type;
     }
   }
 }
 
-public class IncomeDistributionTemplate(
+public class IncomeAllocationTemplate(
   string id,
   string name,
   string defaultFundId,
-  IEnumerable<IncomeDistributionRule> rules
+  IEnumerable<IncomeAllocationRule> rules
   )
 {
   public string Id { get; private set; } = id;
   public string Name { get; private set; } = name;
 
-  public IEnumerable<IncomeDistributionRule> Rules { get; private set; } = rules;
+  public IEnumerable<IncomeAllocationRule> Rules { get; private set; } = rules;
   public string DefaultFundId { get; private set; } = defaultFundId;
 
-  public void Update(string? name, string? defaultFundId, IEnumerable<IncomeDistributionRule>? rules)
+  public void Update(string? name, string? defaultFundId, IEnumerable<IncomeAllocationRule>? rules)
   {
     if (name is not null)
     {

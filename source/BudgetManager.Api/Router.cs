@@ -212,7 +212,7 @@ public static class Router
     );
   }
 
-  private static WebApplication MapIncomeDistributionTemplate(this WebApplication app)
+  private static WebApplication MapIncomeAllocationTemplate(this WebApplication app)
   {
     return app.MapCRUD<CurrencyExchangeDto, CreateCurrencyExchangeCommand, CurrencyExchangeRequest, UpdateCurrencyExchangeCommand, DeleteMoneyOperationCommand<CurrencyExchange>>(
       "currency-exchange",

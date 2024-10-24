@@ -1,6 +1,6 @@
 namespace BudgetManager.Infrastructure.Models;
 
-public class IncomeDistributionRuleEntity
+public class IncomeAllocationRuleEntity
 {
   public string? Id { get; set; }
   public int? Value { get; set; }
@@ -9,12 +9,12 @@ public class IncomeDistributionRuleEntity
   public DateTime CreatedDate { get; set; }
 }
 
-public class IncomeDistributionTemplateEntity
+public class IncomeAllocationTemplateEntity
 {
   public string? Id { get; set; }
   public string? Name { get; set; }
   public string? DefaultFundId { get; set; }
-  public IEnumerable<IncomeDistributionRuleEntity>? Rules { get; set; }
+  public IEnumerable<IncomeAllocationRuleEntity>? Rules { get; set; }
   public DateTime CreatedDate { get; set; }
   public bool IsDeleted { get; set; }
 }

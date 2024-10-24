@@ -9,5 +9,5 @@ public enum MoneyOperationType
   CurrencyExchange,
   AccountTransfer,
   FundTransfer,
-  IncomeDistributionTemplate
+  IncomeAllocationTemplate
 }

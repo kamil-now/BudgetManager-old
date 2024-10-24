@@ -1,8 +1,8 @@
 namespace BudgetManager.Application.Features.BudgetManagement;
 
-public record CreateIncomeDistributionTemplateCommand(
+public record CreateIncomeAllocationTemplateCommand(
   string UserId,
   string Name,
   string DefaultFundId,
-  IEnumerable<IncomeDistributionRuleDto> Rules
+  IEnumerable<IncomeAllocationRuleDto> Rules
 ) : IRequest<string>, IBudgetCommand;

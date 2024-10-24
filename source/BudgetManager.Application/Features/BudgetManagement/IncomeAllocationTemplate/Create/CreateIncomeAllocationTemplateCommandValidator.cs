@@ -2,10 +2,10 @@ namespace BudgetManager.Application.Features.BudgetManagement;
 
 using BudgetManager.Infrastructure;
 
-public class CreateIncomeDistributionTemplateCommandValidator
-  : BudgetCommandValidator<CreateIncomeDistributionTemplateCommand>
+public class CreateIncomeAllocationTemplateCommandValidator
+  : BudgetCommandValidator<CreateIncomeAllocationTemplateCommand>
 {
-  public CreateIncomeDistributionTemplateCommandValidator(IUserBudgetRepository repository, AppConfig appConfig) : base(repository)
+  public CreateIncomeAllocationTemplateCommandValidator(IUserBudgetRepository repository, AppConfig appConfig) : base(repository)
   {
     RuleFor(x => x.Name)
       .NotEmpty()

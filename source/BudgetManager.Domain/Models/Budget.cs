@@ -4,7 +4,7 @@ public class Budget(
   UserSettings userSettings,
   IEnumerable<Account> accounts,
   IEnumerable<Fund> funds,
-  IEnumerable<IncomeDistributionTemplate> incomeDistributionTemplates,
+  IEnumerable<IncomeAllocationTemplate> incomeAllocationTemplates,
   IEnumerable<MoneyOperation> operations
   )
 {
@@ -13,9 +13,9 @@ public class Budget(
   public IReadOnlyCollection<Account> Accounts => _accounts.AsReadOnly();
   public IReadOnlyCollection<Fund> Funds => _funds.AsReadOnly();
   public IReadOnlyCollection<MoneyOperation> Operations => _operations.AsReadOnly();
-  public IReadOnlyCollection<IncomeDistributionTemplate> IncomeDistributionTemplates => _incomeDistributionTemplates.AsReadOnly();
+  public IReadOnlyCollection<IncomeAllocationTemplate> IncomeAllocationTemplates => _incomeAllocationTemplates.AsReadOnly();
 
-  private readonly List<IncomeDistributionTemplate> _incomeDistributionTemplates = incomeDistributionTemplates.ToList();
+  private readonly List<IncomeAllocationTemplate> _incomeAllocationTemplates = incomeAllocationTemplates.ToList();
   private readonly List<MoneyOperation> _operations = operations.ToList();
   private readonly List<Account> _accounts = accounts.ToList();
   private readonly List<Fund> _funds = funds.ToList();
@@ -117,24 +117,24 @@ public class Budget(
     fund.IsDeleted = true;
   }
 
-  public string AddIncomeDistributionTemplate(string name, string defaultFundId, IEnumerable<IncomeDistributionRule> rules)
+  public string AddIncomeAllocationTemplate(string name, string defaultFundId, IEnumerable<IncomeAllocationRule> rules)
   {
     var id = Guid.NewGuid().ToString();
-    var incomeDistributionTemplate = new IncomeDistributionTemplate(id, name, defaultFundId, rules);
-    _incomeDistributionTemplates.Add(incomeDistributionTemplate);
+    var incomeAllocationTemplate = new IncomeAllocationTemplate(id, name, defaultFundId, rules);
+    _incomeAllocationTemplates.Add(incomeAllocationTemplate);
     return id;
   }
 
-  public IncomeDistributionTemplate UpdateIncomeDistributionTemplate(string incomeDistributionTemplateId, string? name, string? defaultFundId, IEnumerable<IncomeDistributionRule>? rules)
+  public IncomeAllocationTemplate UpdateIncomeAllocationTemplate(string incomeAllocationTemplateId, string? name, string? defaultFundId, IEnumerable<IncomeAllocationRule>? rules)
   {
-    var incomeDistributionTemplate = _incomeDistributionTemplates.First(x => x.Id == incomeDistributionTemplateId);
-    incomeDistributionTemplate.Update(name, defaultFundId, rules);
-    return incomeDistributionTemplate;
+    var incomeAllocationTemplate = _incomeAllocationTemplates.First(x => x.Id == incomeAllocationTemplateId);
+    incomeAllocationTemplate.Update(name, defaultFundId, rules);
+    return incomeAllocationTemplate;
   }
 
-  public void RemoveIncomeDistributionTemplate(string incomeDistributionTemplateId)
+  public void RemoveIncomeAllocationTemplate(string incomeAllocationTemplateId)
   {
-    incomeDistributionTemplates = _incomeDistributionTemplates.Where(x => x.Id != incomeDistributionTemplateId).ToList();
+    incomeAllocationTemplates = _incomeAllocationTemplates.Where(x => x.Id != incomeAllocationTemplateId).ToList();
   }
 
   public void Recalculate()

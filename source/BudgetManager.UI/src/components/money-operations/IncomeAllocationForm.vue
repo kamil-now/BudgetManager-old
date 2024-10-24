@@ -28,7 +28,7 @@
         <span>{{ ruleCalculations[rule.id] }}</span>
       </div>
     </div>
-    <div class="income-distribution-form_footer">
+    <div class="income-allocation-form_footer">
       <MoneySpan :money="leftover" />
       <i class="pi pi-arrow-right" />
       <Dropdown

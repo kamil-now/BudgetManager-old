@@ -21,7 +21,7 @@ public class BudgetMappingProfile : Profile
           ctx.Mapper.Map<UserSettings>(src.UserSettings),
           ctx.Mapper.Map<IEnumerable<Account>>(src.Accounts),
           ctx.Mapper.Map<IEnumerable<Fund>>(src.Funds),
-          ctx.Mapper.Map<IEnumerable<IncomeDistributionTemplate>>(src.IncomeDistributionTemplates),
+          ctx.Mapper.Map<IEnumerable<IncomeAllocationTemplate>>(src.IncomeAllocationTemplates),
           operations
         );
         return budget;
@@ -41,9 +41,9 @@ public class BudgetMappingProfile : Profile
           ctx.Mapper.Map<IEnumerable<FundEntity>>(src.Funds)
           )
       )
-      .ForMember(x => x.IncomeDistributionTemplates, opt =>
+      .ForMember(x => x.IncomeAllocationTemplates, opt =>
         opt.MapFrom((src, _, __, ctx) =>
-          ctx.Mapper.Map<IEnumerable<IncomeDistributionTemplateEntity>>(src.IncomeDistributionTemplates)
+          ctx.Mapper.Map<IEnumerable<IncomeAllocationTemplateEntity>>(src.IncomeAllocationTemplates)
           )
       )
       .ForMember(x => x.Expenses, opt =>
