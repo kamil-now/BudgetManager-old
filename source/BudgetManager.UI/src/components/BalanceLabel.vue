@@ -8,9 +8,9 @@
       >
         0
       </div>
-      <span
+
+      <MoneySpan
         v-else
-        class="money"
         v-for="(value, currency, index) in balance"
         :key="currency"
         :class="{
@@ -19,19 +19,15 @@
           positive: useColors && value > 0,
           negative: useColors && value < 0,
         }"
-      >
-        {{
-          DisplayFormat.money(
-            { amount: value, currency: currency.toString() },
-            useColors
-          )
-        }}
-      </span>
+        :amount="value"
+        :currency="currency.toString()"
+        :addSign="useColors"
+      />
     </div>
   </div>
 </template>
 <script setup lang="ts">
-import { DisplayFormat } from '@/helpers/display-format';
+import MoneySpan from '@/components/MoneySpan.vue';
 import { Balance } from '@/models/balance';
 import { computed } from 'vue';
 

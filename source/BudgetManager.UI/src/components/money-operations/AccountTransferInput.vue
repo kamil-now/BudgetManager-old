@@ -1,6 +1,6 @@
 <template>
   <div class="accountTransfer-input">
-    <Calendar v-model="accountTransferDate" dateFormat="yy/mm/dd" />
+    <Calendar v-model="accountTransferDate" />
     <InputText
       class="p-inputtext-sm"
       placeholder="AccountTransfer title"
@@ -9,7 +9,7 @@
     <Dropdown
       class="p-inputtext-sm"
       v-model="selectedSourceAccount"
-      :options="accounts" 
+      :options="accounts"
     >
       <template #value="{ value }">
         <span>{{ value?.name }}</span>
@@ -21,7 +21,7 @@
     <Dropdown
       class="p-inputtext-sm"
       v-model="selectedTargetAccount"
-      :options="accounts" 
+      :options="accounts"
     >
       <template #value="{ value }">
         <span>{{ value?.name }}</span>
@@ -32,19 +32,19 @@
     </Dropdown>
     <Dropdown
       class="p-inputtext-sm"
-      id="accountTransferCurrency" 
-      v-model="accountTransferCurrency" 
-      :options="currencyCodeList" 
+      id="accountTransferCurrency"
+      v-model="accountTransferCurrency"
+      :options="currencyCodeList"
     />
-    <InputNumber 
+    <InputNumber
       class="p-inputtext-sm"
       id="accountTransferValue"
-      v-model="accountTransferValue" 
+      v-model="accountTransferValue"
       mode="currency"
       currencyDisplay="code"
       :highlightOnFocus="true"
       :allowEmpty="false"
-      :currency="accountTransferCurrency" 
+      :currency="accountTransferCurrency"
       :min="0"
       :maxFractionDigits="2"
       :max="1000000000"
@@ -60,32 +60,32 @@ import { useAppStore } from '@/store/store';
 import { computed, ref, watch } from 'vue';
 const props = defineProps<{ accountTransfer: AccountTransfer }>();
 const emit = defineEmits(['changed']);
-const { accounts }  = useAppStore();
+const { accounts } = useAppStore();
 const currencyCodeList = Object.keys(currencies);
 
 const selectedSourceAccount = ref<Account | undefined>(
-  props.accountTransfer.accountId 
-    ? accounts.find(x => x.id === props.accountTransfer.accountId)
+  props.accountTransfer.accountId
+    ? accounts.find((x) => x.id === props.accountTransfer.accountId)
     : undefined
 );
 watch(selectedSourceAccount, async (account) => {
   emit('changed', {
-    ...props.accountTransfer, 
+    ...props.accountTransfer,
     accountId: account?.id,
-    accountName: account?.name
+    accountName: account?.name,
   });
 });
 
 const selectedTargetAccount = ref<Account | undefined>(
-  props.accountTransfer.targetAccountId 
-    ? accounts.find(x => x.id === props.accountTransfer.targetAccountId)
+  props.accountTransfer.targetAccountId
+    ? accounts.find((x) => x.id === props.accountTransfer.targetAccountId)
     : undefined
 );
 watch(selectedTargetAccount, async (account) => {
   emit('changed', {
-    ...props.accountTransfer, 
+    ...props.accountTransfer,
     targetAccountId: account?.id,
-    targetAccountName: account?.name
+    targetAccountName: account?.name,
   });
 });
 
@@ -93,45 +93,44 @@ const accountTransferDate = computed({
   get: () => props.accountTransfer.date,
   set: (newValue) => {
     emit('changed', {
-      ...props.accountTransfer, 
-      date: DateUtils.createDateOnlyString(new Date(newValue))
+      ...props.accountTransfer,
+      date: DateUtils.createDateOnlyString(new Date(newValue)),
     });
-  }
+  },
 });
 const accountTransferTitle = computed({
   get: () => props.accountTransfer.title,
   set: (newValue) => {
     emit('changed', {
-      ...props.accountTransfer, 
-      title: newValue
+      ...props.accountTransfer,
+      title: newValue,
     });
-  }
+  },
 });
 const accountTransferValue = computed({
   get: () => props.accountTransfer.value.amount,
   set: (newValue) => {
     emit('changed', {
-      ...props.accountTransfer, 
+      ...props.accountTransfer,
       value: {
         ...props.accountTransfer.value,
-        amount: newValue
-      }
+        amount: newValue,
+      },
     });
-  }
+  },
 });
 const accountTransferCurrency = computed({
   get: () => props.accountTransfer.value.currency,
   set: (newValue) => {
     emit('changed', {
-      ...props.accountTransfer, 
+      ...props.accountTransfer,
       value: {
         ...props.accountTransfer.value,
-        currency: newValue
-      }
+        currency: newValue,
+      },
     });
-  }
+  },
 });
-
 </script>
 
 <style lang="scss">

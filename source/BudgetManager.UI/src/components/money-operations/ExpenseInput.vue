@@ -1,6 +1,6 @@
 <template>
   <div class="expense-input">
-    <Calendar v-model="expenseDate" dateFormat="yy/mm/dd" />
+    <Calendar v-model="expenseDate" />
     <InputText
       class="p-inputtext-sm"
       placeholder="Expense title"
@@ -9,7 +9,7 @@
     <Dropdown
       class="p-inputtext-sm"
       v-model="selectedFund"
-      :options="funds" 
+      :options="funds"
     >
       <template #value="{ value }">
         <span>{{ value?.name }}</span>
@@ -21,7 +21,7 @@
     <Dropdown
       class="p-inputtext-sm"
       v-model="selectedAccount"
-      :options="accounts" 
+      :options="accounts"
     >
       <template #value="{ value }">
         <span>{{ value?.name }}</span>
@@ -32,19 +32,19 @@
     </Dropdown>
     <Dropdown
       class="p-inputtext-sm"
-      id="selectedCurrency" 
-      v-model="expenseCurrency" 
-      :options="currencyCodeList" 
+      id="selectedCurrency"
+      v-model="expenseCurrency"
+      :options="currencyCodeList"
     />
-    <InputNumber 
+    <InputNumber
       class="p-inputtext-sm"
       id="accountBalance"
-      v-model="expenseValue" 
+      v-model="expenseValue"
       mode="currency"
       currencyDisplay="code"
       :highlightOnFocus="true"
       :allowEmpty="false"
-      :currency="expenseCurrency" 
+      :currency="expenseCurrency"
       :min="0"
       :maxFractionDigits="2"
       :max="1000000000"
@@ -61,79 +61,78 @@ import { computed, ref, watch } from 'vue';
 import { DateUtils } from '@/helpers/date-utils';
 const props = defineProps<{ expense: Expense }>();
 const emit = defineEmits(['changed']);
-const { accounts, funds }  = useAppStore();
+const { accounts, funds } = useAppStore();
 
 const currencyCodeList = Object.keys(currencies);
 const selectedAccount = ref<Account | undefined>(
-  props.expense.accountId 
-    ? accounts.find(x => x.id === props.expense.accountId)
+  props.expense.accountId
+    ? accounts.find((x) => x.id === props.expense.accountId)
     : undefined
 );
 
 watch(selectedAccount, async (account) => {
   emit('changed', {
-    ...props.expense, 
+    ...props.expense,
     accountId: account?.id,
-    accountName: account?.name
+    accountName: account?.name,
   });
 });
 
 const selectedFund = ref<Fund | undefined>(
-  props.expense.fundId 
-    ? funds.find(x => x.id === props.expense.fundId)
+  props.expense.fundId
+    ? funds.find((x) => x.id === props.expense.fundId)
     : undefined
 );
 
 watch(selectedFund, async (fund) => {
   emit('changed', {
-    ...props.expense, 
+    ...props.expense,
     fundId: fund?.id,
-    fundName: fund?.name
+    fundName: fund?.name,
   });
 });
 const expenseDate = computed({
   get: () => props.expense.date,
   set: (newValue) => {
     emit('changed', {
-      ...props.expense, 
-      date: DateUtils.createDateOnlyString(new Date(newValue))
+      ...props.expense,
+      date: DateUtils.createDateOnlyString(new Date(newValue)),
     });
-  }
+  },
 });
 const expenseTitle = computed({
   get: () => props.expense.title,
   set: (newValue) => {
     emit('changed', {
-      ...props.expense, 
-      title: newValue
+      ...props.expense,
+      title: newValue,
     });
-  }
+  },
 });
 const expenseValue = computed({
   get: () => props.expense.value.amount,
   set: (newValue) => {
     emit('changed', {
-      ...props.expense, 
+      ...props.expense,
       value: {
         ...props.expense.value,
-        amount: newValue
-      }
+        amount: newValue,
+      },
     });
-  }
+  },
 });
 const expenseCurrency = computed({
   get: () => props.expense.value.currency,
   set: (newValue) => {
     emit('changed', {
-      ...props.expense, 
+      ...props.expense,
       value: {
         ...props.expense.value,
-        currency: newValue
-      }
+        currency: newValue,
+      },
     });
-  }
+  },
 });
-
 </script>
 
 <style lang="scss">

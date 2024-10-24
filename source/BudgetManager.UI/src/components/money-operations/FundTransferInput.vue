@@ -1,6 +1,6 @@
 <template>
   <div class="fundTransfer-input">
-    <Calendar v-model="fundTransferDate" dateFormat="yy/mm/dd" />
+    <Calendar v-model="fundTransferDate" />
     <InputText
       class="p-inputtext-sm"
       placeholder="Fund transfer title"
@@ -9,7 +9,7 @@
     <Dropdown
       class="p-inputtext-sm"
       v-model="selectedSourceFund"
-      :options="funds" 
+      :options="funds"
     >
       <template #value="{ value }">
         <span>{{ value?.name }}</span>
@@ -21,7 +21,7 @@
     <Dropdown
       class="p-inputtext-sm"
       v-model="selectedTargetFund"
-      :options="funds" 
+      :options="funds"
     >
       <template #value="{ value }">
         <span>{{ value?.name }}</span>
@@ -32,19 +32,19 @@
     </Dropdown>
     <Dropdown
       class="p-inputtext-sm"
-      id="fundTransferCurrency" 
-      v-model="fundTransferCurrency" 
-      :options="currencyCodeList" 
+      id="fundTransferCurrency"
+      v-model="fundTransferCurrency"
+      :options="currencyCodeList"
     />
     <InputNumber
       class="p-inputtext-sm"
       id="fundTransferValue"
-      v-model="fundTransferValue" 
+      v-model="fundTransferValue"
       mode="currency"
       currencyDisplay="code"
       :highlightOnFocus="true"
       :allowEmpty="false"
-      :currency="fundTransferCurrency" 
+      :currency="fundTransferCurrency"
       :min="0"
       :maxFractionDigits="2"
       :max="1000000000"
@@ -60,34 +60,34 @@ import { useAppStore } from '@/store/store';
 import { computed, ref, watch } from 'vue';
 const props = defineProps<{ fundTransfer: FundTransfer }>();
 const emit = defineEmits(['changed']);
-const { funds }  = useAppStore();
+const { funds } = useAppStore();
 const currencyCodeList = Object.keys(currencies);
 
 const selectedSourceFund = ref<Fund | undefined>(
-  props.fundTransfer.fundId 
-    ? funds.find(x => x.id === props.fundTransfer.fundId)
+  props.fundTransfer.fundId
+    ? funds.find((x) => x.id === props.fundTransfer.fundId)
     : undefined
 );
 
 watch(selectedSourceFund, async (fund) => {
   emit('changed', {
-    ...props.fundTransfer, 
+    ...props.fundTransfer,
     fundId: fund?.id,
-    fundName: fund?.name
+    fundName: fund?.name,
   });
 });
 
 const selectedTargetFund = ref<Fund | undefined>(
-  props.fundTransfer.targetFundId 
-    ? funds.find(x => x.id === props.fundTransfer.targetFundId)
+  props.fundTransfer.targetFundId
+    ? funds.find((x) => x.id === props.fundTransfer.targetFundId)
     : undefined
 );
 
 watch(selectedTargetFund, async (fund) => {
   emit('changed', {
-    ...props.fundTransfer, 
+    ...props.fundTransfer,
     targetFundId: fund?.id,
-    targetFundName: fund?.name
+    targetFundName: fund?.name,
   });
 });
 
@@ -95,31 +95,31 @@ const fundTransferDate = computed({
   get: () => props.fundTransfer.date,
   set: (newValue) => {
     emit('changed', {
-      ...props.fundTransfer, 
-      date: DateUtils.createDateOnlyString(new Date(newValue))
+      ...props.fundTransfer,
+      date: DateUtils.createDateOnlyString(new Date(newValue)),
     });
-  }
+  },
 });
 const fundTransferTitle = computed({
   get: () => props.fundTransfer.title,
   set: (newValue) => {
     emit('changed', {
-      ...props.fundTransfer, 
-      title: newValue
+      ...props.fundTransfer,
+      title: newValue,
     });
-  }
+  },
 });
 const fundTransferValue = computed({
   get: () => props.fundTransfer.value.amount,
   set: (newValue) => {
     emit('changed', {
-      ...props.fundTransfer, 
+      ...props.fundTransfer,
       value: {
         ...props.fundTransfer.value,
-        amount: newValue
-      }
+        amount: newValue,
+      },
     });
-  }
+  },
 });
 
 const fundTransferCurrency = computed({
@@ -129,12 +129,11 @@ const fundTransferCurrency = computed({
       ...props.fundTransfer,
       value: {
         ...props.fundTransfer.value,
-        currency: newValue 
-      }
+        currency: newValue,
+      },
     });
-  }
+  },
 });
-
 </script>
 
 <style lang="scss">

@@ -5,6 +5,6 @@ using BudgetManager.Domain.Models;
 using BudgetManager.Infrastructure;
 
 public class DeleteCurrencyExchangeCommandHandler(IUserBudgetRepository repo, IMapper map)
-  : DeleteMOneyOperationCommandHandler<CurrencyExchange>(repo, map)
+  : DeleteMoneyOperationCommandHandler<CurrencyExchange>(repo, map)
 {
 }

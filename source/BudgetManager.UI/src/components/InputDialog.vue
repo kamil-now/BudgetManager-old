@@ -292,13 +292,18 @@ function discard() {
   padding-top: 1rem;
   gap: 1rem;
   max-width: 100%;
+  max-height: calc(90vh - 5.25rem);
+
   &_content {
     display: flex;
     flex-wrap: wrap;
     gap: 1rem;
+    max-height: calc(90% - 2.5rem);
+    overflow-y: auto;
   }
   &_footer {
     width: 100%;
+    height: 2.5rem;
     display: flex;
     gap: 1rem;
     justify-content: flex-end;

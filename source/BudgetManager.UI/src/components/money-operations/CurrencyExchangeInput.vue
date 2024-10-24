@@ -1,6 +1,6 @@
 <template>
   <div class="currencyExchange-input">
-    <Calendar v-model="currencyExchangeDate" dateFormat="yy/mm/dd" />
+    <Calendar v-model="currencyExchangeDate" />
     <InputText
       class="p-inputtext-sm"
       placeholder="CurrencyExchange title"
@@ -9,7 +9,7 @@
     <Dropdown
       class="p-inputtext-sm"
       v-model="selectedAccount"
-      :options="accounts" 
+      :options="accounts"
     >
       <template #value="{ value }">
         <span>{{ value?.name }}</span>
@@ -20,36 +20,36 @@
     </Dropdown>
     <Dropdown
       class="p-inputtext-sm"
-      id="selectedCurrency" 
-      v-model="sourceCurrency" 
-      :options="currencyCodeList" 
+      id="selectedCurrency"
+      v-model="sourceCurrency"
+      :options="currencyCodeList"
     />
-    <InputNumber 
+    <InputNumber
       class="p-inputtext-sm"
-      v-model="currencyExchangeValue" 
+      v-model="currencyExchangeValue"
       mode="currency"
       currencyDisplay="code"
       :highlightOnFocus="true"
       :allowEmpty="false"
-      :currency="sourceCurrency" 
+      :currency="sourceCurrency"
       :min="0"
       :maxFractionDigits="2"
       :max="1000000000"
     />
     <Dropdown
       class="p-inputtext-sm"
-      id="selectedCurrency" 
-      v-model="targetCurrency" 
-      :options="currencyCodeList" 
+      id="selectedCurrency"
+      v-model="targetCurrency"
+      :options="currencyCodeList"
     />
-    <InputNumber 
+    <InputNumber
       class="p-inputtext-sm"
       v-model="targetValue"
       :allowEmpty="false"
       mode="currency"
       currencyDisplay="code"
       :highlightOnFocus="true"
-      :currency="targetCurrency" 
+      :currency="targetCurrency"
       :min="0.00001"
       :maxFractionDigits="5"
       :max="1000000000"
@@ -65,20 +65,20 @@ import { useAppStore } from '@/store/store';
 import { computed, ref, watch } from 'vue';
 const props = defineProps<{ currencyExchange: CurrencyExchange }>();
 const emit = defineEmits(['changed']);
-const { accounts }  = useAppStore();
+const { accounts } = useAppStore();
 
 const currencyCodeList = Object.keys(currencies);
 const selectedAccount = ref<Account | undefined>(
-  props.currencyExchange.accountId 
-    ? accounts.find(x => x.id === props.currencyExchange.accountId)
+  props.currencyExchange.accountId
+    ? accounts.find((x) => x.id === props.currencyExchange.accountId)
     : undefined
 );
 
 watch(selectedAccount, async (account) => {
   emit('changed', {
-    ...props.currencyExchange, 
+    ...props.currencyExchange,
     accountId: account?.id,
-    accountName: account?.name
+    accountName: account?.name,
   });
 });
 
@@ -86,63 +86,68 @@ const currencyExchangeDate = computed({
   get: () => props.currencyExchange.date,
   set: (newValue) => {
     emit('changed', {
-      ...props.currencyExchange, 
-      date: DateUtils.createDateOnlyString(new Date(newValue))
+      ...props.currencyExchange,
+      date: DateUtils.createDateOnlyString(new Date(newValue)),
     });
-  }
+  },
 });
 const currencyExchangeTitle = computed({
   get: () => props.currencyExchange.title,
   set: (newValue) => {
     emit('changed', {
-      ...props.currencyExchange, 
-      title: newValue
+      ...props.currencyExchange,
+      title: newValue,
     });
-  }
+  },
 });
 const currencyExchangeValue = computed({
   get: () => props.currencyExchange.value.amount,
   set: (newValue) => {
     emit('changed', {
-      ...props.currencyExchange, 
+      ...props.currencyExchange,
       value: {
         ...props.currencyExchange.value,
-        amount: newValue
-      }
+        amount: newValue,
+      },
     });
-  }
+  },
 });
 const sourceCurrency = computed({
   get: () => props.currencyExchange.value.currency,
   set: (newValue) => {
     emit('changed', {
-      ...props.currencyExchange, 
+      ...props.currencyExchange,
       value: {
         ...props.currencyExchange.value,
-        currency: newValue
-      }
+        currency: newValue,
+      },
     });
-  }
+  },
 });
 
 const targetCurrency = computed({
   get: () => props.currencyExchange.targetCurrency,
   set: (newValue) => {
     emit('changed', {
-      ...props.currencyExchange, 
+      ...props.currencyExchange,
       targetCurrency: newValue,
     });
-  }
+  },
 });
 
 const targetValue = computed({
-  get: () => Math.round(props.currencyExchange.value.amount / props.currencyExchange.exchangeRate * Math.pow(10, 2)) / Math.pow(10, 2),
+  get: () =>
+    Math.round(
+      (props.currencyExchange.value.amount /
+        props.currencyExchange.exchangeRate) *
+        Math.pow(10, 2)
+    ) / Math.pow(10, 2),
   set: (newValue) => {
     emit('changed', {
-      ...props.currencyExchange, 
+      ...props.currencyExchange,
       exchangeRate: props.currencyExchange.value.amount / newValue,
     });
-  }
+  },
 });
 </script>
 

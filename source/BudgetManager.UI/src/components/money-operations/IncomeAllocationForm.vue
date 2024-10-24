@@ -28,10 +28,8 @@
         <span>{{ ruleCalculations[rule.id] }}</span>
       </div>
     </div>
-    <div class="income-allocation-form_footer">
-      <span class="money">
-        {{ DisplayFormat.money(leftover) }}
-      </span>
+    <div class="income-distribution-form_footer">
+      <MoneySpan :money="leftover" />
       <i class="pi pi-arrow-right" />
       <Dropdown
         class="p-inputtext-sm"
@@ -61,7 +59,6 @@
 </template>
 <script setup lang="ts">
 import IncomeAllocationRuleInput from '@/components/money-operations/IncomeAllocationRuleInput.vue';
-import { DisplayFormat } from '@/helpers/display-format';
 import { IncomeAllocationUtils } from '@/helpers/income-allocation-utils';
 import { Fund } from '@/models/fund';
 import { IncomeAllocation } from '@/models/income-allocation';
@@ -99,7 +96,7 @@ watch(props, () => {
   updateCalculations();
 });
 
-const ruleCalculations = ref<{ [id: number]: string }>({});
+const ruleCalculations = ref<{ [id: string]: string }>({});
 
 function addRule() {
   (incomeAllocationRules.value = [

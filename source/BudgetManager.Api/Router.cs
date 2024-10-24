@@ -212,6 +212,17 @@ public static class Router
     );
   }
 
+  private static WebApplication MapIncomeDistributionTemplate(this WebApplication app)
+  {
+    return app.MapCRUD<CurrencyExchangeDto, CreateCurrencyExchangeCommand, CurrencyExchangeRequest, UpdateCurrencyExchangeCommand, DeleteMoneyOperationCommand<CurrencyExchange>>(
+      "currency-exchange",
+      (ctx, create) => create with { UserId = ctx.GetUserId() },
+      (ctx, id) => new CurrencyExchangeRequest(ctx.GetUserId(), id),
+      (ctx, update) => update with { UserId = ctx.GetUserId() },
+      (ctx, id) => new DeleteMoneyOperationCommand<CurrencyExchange>(ctx.GetUserId(), id)
+    );
+  }
+
   private static WebApplication MapCRUD<TDto, TCreateCommand, TGetRequest, TUpdateCommand, TDeleteCommand>(
     this WebApplication app,
     string resource,

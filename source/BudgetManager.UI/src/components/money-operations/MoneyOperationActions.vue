@@ -6,7 +6,7 @@
       rounded
       size="small"
       aria-label="Copy"
-      @click="createCopy(operation, !isFilteredByTypeOrContent)"
+      @click="createCopy(operation, isFilteredByTypeOrContent)"
     />
     <Button
       icon="pi pi-pencil"

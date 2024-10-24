@@ -1,10 +1,7 @@
 <template>
   <div class="income-input">
     <div class="income-input_content">
-      <Calendar
-        v-model="incomeDate"
-        dateFormat="yy/mm/dd"
-      />
+      <Calendar v-model="incomeDate" />
       <InputText
         class="p-inputtext-sm"
         placeholder="Income title"
@@ -28,8 +25,12 @@
       />
     </div>
     <div class="income-input_distribute-income-checkbox">
-      <Checkbox id="distributeIncomeCheckbox" v-model="distributeIncome" :binary="true"></Checkbox>
-      <label for="distributeIncomeCheckbox"> Allocate income </label>
+      <Checkbox
+        id="distributeIncomeCheckbox"
+        v-model="distributeIncome"
+        :binary="true"
+      ></Checkbox>
+      <label for="distributeIncomeCheckbox">Allocate income</label>
     </div>
     <IncomeAllocationForm
       v-if="distributeIncome"
@@ -62,7 +63,7 @@ const distributeIncome = computed({
   set: (newValue) => {
     saveIncomeAllocationPreference(newValue);
     distributeIncomePreferenceRef.value = newValue;
-  }
+  },
 });
 const incomeAllocation = ref<IncomeAllocation>({ defaultFundId: funds[0].id,  rules: [] as IncomeAllocationRule[] });
 
@@ -121,6 +122,7 @@ function onIncomeAllocationChange(
   display: flex;
   flex-direction: column;
   gap: 1rem;
+
   &_content {
     display: flex;
     flex-wrap: wrap;
@@ -130,6 +132,7 @@ function onIncomeAllocationChange(
     border-top: 1px solid black;
     padding-top: 1rem;
   }
+
   &_distribute-income-checkbox {
     display: flex;
     align-items: center;

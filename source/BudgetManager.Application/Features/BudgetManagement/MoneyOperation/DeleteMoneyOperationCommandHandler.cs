@@ -4,7 +4,7 @@ using AutoMapper;
 using BudgetManager.Domain.Models;
 using BudgetManager.Infrastructure;
 
-public abstract class DeleteMOneyOperationCommandHandler<T>(IUserBudgetRepository repo, IMapper map)
+public abstract class DeleteMoneyOperationCommandHandler<T>(IUserBudgetRepository repo, IMapper map)
   : BudgetCommandHandler<DeleteMoneyOperationCommand<T>, T>(repo, map) where T : MoneyOperation
 {
   public override T ModifyBudget(DeleteMoneyOperationCommand<T> command, Budget budget)
