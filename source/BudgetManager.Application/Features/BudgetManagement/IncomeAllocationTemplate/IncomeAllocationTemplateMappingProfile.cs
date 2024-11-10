@@ -18,8 +18,13 @@ public class IncomeAllocationTemplateMappingProfile : Profile
     ).ForAllMembers(opt => opt.Ignore());
 
     CreateMap<IncomeAllocationTemplate, IncomeAllocationTemplateEntity>()
-      .ForMember(x => x.Rules, opt => opt.MapFrom(x => x.Rules));
+    .ForMember(x => x.Rules, opt =>
+        opt.MapFrom((src, _, __, ctx) =>
+          ctx.Mapper.Map<IEnumerable<IncomeAllocationRuleEntity>>(src.Rules)
+          )
+      );
 
+    CreateMap<IncomeAllocationRule, IncomeAllocationRuleEntity>();
 
     CreateMap<IncomeAllocationTemplate, IncomeAllocationTemplateDto>()
       .ForMember(x => x.Rules, opt => opt.MapFrom(x => x.Rules))

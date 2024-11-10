@@ -134,7 +134,7 @@ public class Budget(
 
   public void RemoveIncomeAllocationTemplate(string incomeAllocationTemplateId)
   {
-    incomeAllocationTemplates = _incomeAllocationTemplates.Where(x => x.Id != incomeAllocationTemplateId).ToList();
+    _incomeAllocationTemplates.RemoveAll(x => x.Id != incomeAllocationTemplateId);
   }
 
   public void Recalculate()

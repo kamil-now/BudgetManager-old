@@ -23,7 +23,8 @@ public static class Router
       .MapFundTransferEndpoints()
       .MapAccountTransferEndpoints()
       .MapAllocationEndpoints()
-      .MapCurrencyExchangeEndpoints();
+      .MapCurrencyExchangeEndpoints()
+      .MapIncomeAllocationTemplateEndpoints();
   }
 
   private static WebApplication MapBudgetEndpoints(this WebApplication app)
@@ -212,14 +213,14 @@ public static class Router
     );
   }
 
-  private static WebApplication MapIncomeAllocationTemplate(this WebApplication app)
+  private static WebApplication MapIncomeAllocationTemplateEndpoints(this WebApplication app)
   {
-    return app.MapCRUD<CurrencyExchangeDto, CreateCurrencyExchangeCommand, CurrencyExchangeRequest, UpdateCurrencyExchangeCommand, DeleteMoneyOperationCommand<CurrencyExchange>>(
-      "currency-exchange",
+    return app.MapCRUD<IncomeAllocationTemplateDto, CreateIncomeAllocationTemplateCommand, IncomeAllocationTemplateRequest, UpdateIncomeAllocationTemplateCommand, DeleteIncomeAllocationTemplateCommand>(
+      "income-allocation-template",
       (ctx, create) => create with { UserId = ctx.GetUserId() },
-      (ctx, id) => new CurrencyExchangeRequest(ctx.GetUserId(), id),
+      (ctx, id) => new IncomeAllocationTemplateRequest(ctx.GetUserId(), id),
       (ctx, update) => update with { UserId = ctx.GetUserId() },
-      (ctx, id) => new DeleteMoneyOperationCommand<CurrencyExchange>(ctx.GetUserId(), id)
+      (ctx, id) => new DeleteIncomeAllocationTemplateCommand(ctx.GetUserId(), id)
     );
   }
 

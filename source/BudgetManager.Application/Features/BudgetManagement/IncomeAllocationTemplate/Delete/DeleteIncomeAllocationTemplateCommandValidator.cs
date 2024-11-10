@@ -11,6 +11,6 @@ public class DeleteIncomeAllocationTemplateCommandValidator(IUserBudgetRepositor
     {
       var budget = await repository.Get(command.UserId);
       return budget!.IncomeAllocationTemplates?.Any(x => x.Id == command.IncomeAllocationTemplateId) ?? false;
-    }).WithMessage("Income distribution template with a given id does not exist in the budget.");
+    }).WithMessage("Income allocation template with a given id does not exist in the budget.");
   }
 }

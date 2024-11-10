@@ -19,6 +19,8 @@ import { IIncomeActions, IncomeActions } from './actions/income-actions';
 import { IUserSettingsActions, UserSettingsActions } from './actions/user-settings-actions';
 import { APP_GETTERS, AppGetters } from './getters';
 import { AppState, INITIAL_APP_STATE } from './state';
+import { IIncomeAllocationTemplateActions, IncomeAllocationTemplateActions } from './actions/income-allocation-template-actions';
+import { IncomeAllocation } from '@/models/income-allocation';
 
 export type AppActions = 
   IBudgetActions 
@@ -31,6 +33,7 @@ export type AppActions =
   & IFundTransferActions
   & IAccountTransferActions
   & ICurrencyExchangeActions
+  & IIncomeAllocationTemplateActions
   & {
   setLoggedIn(value: boolean): void;
 };
@@ -146,6 +149,16 @@ export const APP_STORE: DefineStoreOptions<
     },
     deleteCurrencyExchange(currencyExchangeId: string) {
       CurrencyExchangeActions.deleteCurrencyExchange(this, currencyExchangeId);
+    },
+
+    createNewIncomeAllocationTemplate(incomeAllocation: IncomeAllocation) {
+      IncomeAllocationTemplateActions.createNewIncomeAllocationTemplate(this, incomeAllocation);
+    },
+    updateIncomeAllocationTemplate(incomeAllocation: IncomeAllocation) {
+      IncomeAllocationTemplateActions.updateIncomeAllocationTemplate(this, incomeAllocation);
+    },
+    deleteIncomeAllocationTemplate(incomeAllocationTemplateId: string) {
+      IncomeAllocationTemplateActions.deleteIncomeAllocationTemplate(this, incomeAllocationTemplateId);
     },
   }
 };

@@ -11,6 +11,7 @@ import { Income } from '@/models/income';
 import { MoneyOperation } from '@/models/money-operation';
 import { MoneyOperationType } from '@/models/money-operation-type.enum';
 import { AppState } from './state';
+import { IncomeAllocation } from '@/models/income-allocation';
 
 export type AppGetters = {
   balance: (state: AppState) => Balance,
@@ -31,6 +32,7 @@ export type AppGetters = {
   lastUsedAccount: (state: AppState) => Account | undefined,
   lastUsedFund: (state: AppState) => Fund | undefined,
   lastOperation: (state: AppState) => (type: MoneyOperationType) => MoneyOperation | undefined,
+  incomeAllocationTemplates: (state: AppState) => IncomeAllocation[]
 };
 
 export const APP_GETTERS: AppGetters = {
@@ -116,4 +118,5 @@ export const APP_GETTERS: AppGetters = {
     const operationsOfType = state.budget.operations.filter(x => x.type === type);
     return operationsOfType ? operationsOfType[0] : undefined;
   },
+  incomeAllocationTemplates: (state: AppState) => state.budget.incomeAllocationTemplates
 };

@@ -54,7 +54,7 @@ import { saveIncomeAllocationPreference, getIncomeAllocationPreference } from '@
 
 const props = defineProps<{ income: Income }>();
 const emit = defineEmits(['changed']);
-const { accounts, funds } = useAppStore();
+const { accounts, incomeAllocationTemplates } = useAppStore();
 
 const incomeRef = ref<Income>(props.income);
 const distributeIncomePreferenceRef = ref<boolean>(getIncomeAllocationPreference());
@@ -65,7 +65,7 @@ const distributeIncome = computed({
     distributeIncomePreferenceRef.value = newValue;
   },
 });
-const incomeAllocation = ref<IncomeAllocation>({ defaultFundId: funds[0].id,  rules: [] as IncomeAllocationRule[] });
+const incomeAllocation = ref<IncomeAllocation>(incomeAllocationTemplates[0]);
 
 const selectedAccount = ref<Account | undefined>(
   props.income.accountId

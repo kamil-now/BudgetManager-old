@@ -11,7 +11,7 @@ public class UpdateIncomeAllocationTemplateCommandValidator : BudgetCommandValid
 
     RuleFor(x => x.Rules)
       .Must(rules => rules is null || rules.Any())
-      .WithMessage("Income distribution template must contain at least 1 rule.");
+      .WithMessage("Income allocation template must contain at least 1 rule.");
   }
 
   protected override void RulesWhenBudgetExists()

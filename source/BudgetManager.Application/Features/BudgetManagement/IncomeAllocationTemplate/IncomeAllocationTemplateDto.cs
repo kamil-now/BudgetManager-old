@@ -5,11 +5,12 @@ public record IncomeAllocationRuleDto(
   int? Value = null,
   string? FundId = null,
   string? FundName = null,
-  int? Type = null
+  IncomeAllocationRuleType? Type = null
 );
 
 public record IncomeAllocationTemplateDto(
   string? Id = null,
+  string? Name = null,
   string? DefaultFundId = null,
   string? DefaultFundName = null,
   IEnumerable<IncomeAllocationRuleDto>? Rules = null

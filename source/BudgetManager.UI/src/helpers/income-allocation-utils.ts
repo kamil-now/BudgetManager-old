@@ -4,11 +4,14 @@ import { IncomeAllocationRuleType } from '@/models/income-allocation-rule-type.e
 import { DisplayFormat } from './display-format';
 
 export class IncomeAllocationUtils {
-  static createNew(): IncomeAllocation {
-    return {
-      rules: []
-    };
-  }
+  // static createNew(): IncomeAllocation {
+  //   return {
+  //     name: '',
+  //     rules: [],
+  //     defaultFundId,
+  //     defaultFundName
+  //   };
+  // }
 
   static copy(incomeAllocation: IncomeAllocation): IncomeAllocation {
     return {

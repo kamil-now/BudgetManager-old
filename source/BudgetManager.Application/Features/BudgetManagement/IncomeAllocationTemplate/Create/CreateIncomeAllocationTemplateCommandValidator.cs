@@ -13,7 +13,7 @@ public class CreateIncomeAllocationTemplateCommandValidator
 
     RuleFor(x => x.Rules)
       .NotEmpty()
-      .WithMessage("Income distribution template must contain at least 1 rule.");
+      .WithMessage("Income allocation template must contain at least 1 rule.");
   }
 
   protected override void RulesWhenBudgetExists()

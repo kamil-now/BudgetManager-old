@@ -107,6 +107,8 @@ const {
   updateFund,
   createNewAccount,
   updateAccount,
+  createNewIncomeAllocationTemplate,
+  updateIncomeAllocationTemplate
 } = store;
 
 const dialogRef = inject<ComputedRef<DynamicDialogInstance>>('dialogRef');
@@ -212,8 +214,11 @@ function save() {
       createNewAccount(account.value);
     }
   } else if (incomeAllocation.value) {
-    console.warn(incomeAllocation.value);
-    // TODO
+    if (incomeAllocation.value.id) {
+      updateIncomeAllocationTemplate(incomeAllocation.value);
+    } else {
+      createNewIncomeAllocationTemplate(incomeAllocation.value);
+    }
   }
   dialogRef?.value.close();
 }

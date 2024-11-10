@@ -17,7 +17,7 @@ public class BudgetSummaryMappingProfile : Profile
           Type = MoneyOperationType.Income,
           AccountId = entity.AccountId,
           AccountName = budgetEntity.Accounts?.First(x => x.Id == entity.AccountId).Name,
-        }) ?? Array.Empty<MoneyOperationDto>();
+        }) ?? [];
 
         var allocations = budgetEntity.Allocations?.Select(entity => CreateDto(entity)
         with
@@ -25,7 +25,7 @@ public class BudgetSummaryMappingProfile : Profile
           Type = MoneyOperationType.Allocation,
           TargetFundId = entity.TargetFundId,
           TargetFundName = budgetEntity.Funds?.First(x => x.Id == entity.TargetFundId).Name
-        }) ?? Array.Empty<MoneyOperationDto>();
+        }) ?? [];
 
         var expenses = budgetEntity.Expenses?.Select(entity => CreateDto(entity)
         with
@@ -35,7 +35,7 @@ public class BudgetSummaryMappingProfile : Profile
           FundId = entity.FundId,
           AccountName = budgetEntity.Accounts?.First(x => x.Id == entity.AccountId).Name,
           FundName = budgetEntity.Funds?.First(x => x.Id == entity.FundId).Name
-        }) ?? Array.Empty<MoneyOperationDto>();
+        }) ?? [];
 
         var currencyExchanges = budgetEntity.CurrencyExchanges?.Select(entity => CreateDto(entity)
         with
@@ -45,7 +45,7 @@ public class BudgetSummaryMappingProfile : Profile
           AccountName = budgetEntity.Accounts?.First(x => x.Id == entity.AccountId).Name,
           TargetCurrency = entity.TargetCurrency,
           ExchangeRate = entity.ExchangeRate
-        }) ?? Array.Empty<MoneyOperationDto>();
+        }) ?? [];
 
         var accountTransfers = budgetEntity.AccountTransfers?.Select(entity => CreateDto(entity)
         with
@@ -55,7 +55,7 @@ public class BudgetSummaryMappingProfile : Profile
           TargetAccountId = entity.TargetAccountId,
           AccountName = budgetEntity.Accounts?.First(x => x.Id == entity.SourceAccountId).Name,
           TargetAccountName = budgetEntity.Accounts?.First(x => x.Id == entity.TargetAccountId).Name
-        }) ?? Array.Empty<MoneyOperationDto>();
+        }) ?? [];
 
         var fundTransfers = budgetEntity.FundTransfers?.Select(entity => CreateDto(entity)
         with
@@ -65,7 +65,20 @@ public class BudgetSummaryMappingProfile : Profile
           TargetFundId = entity.TargetFundId,
           FundName = budgetEntity.Funds?.First(x => x.Id == entity.SourceFundId).Name,
           TargetFundName = budgetEntity.Funds?.First(x => x.Id == entity.TargetFundId).Name
-        }) ?? Array.Empty<MoneyOperationDto>();
+        }) ?? [];
+
+        var incomeAllocationTemplates = budgetEntity.IncomeAllocationTemplates?.Select(entity => new IncomeAllocationTemplateDto(
+          entity.Id!,
+          entity.Name!,
+          entity.DefaultFundId!,
+          budgetEntity.Funds?.First(x => x.Id == entity.DefaultFundId).Name,
+          entity.Rules!.Select(x => new IncomeAllocationRuleDto(
+            x.Id!,
+            (int)x.Value!,
+            x.FundId!,
+            budgetEntity.Funds?.First(fund => fund.Id == x.FundId).Name, (IncomeAllocationRuleType?)x.Type!)
+          ))
+        );
 
         var budget = new BudgetSummaryDto(
           ctx.Mapper.Map<UserSettingsDto>(budgetEntity.UserSettings),
@@ -73,6 +86,7 @@ public class BudgetSummaryMappingProfile : Profile
           unallocated,
           ctx.Mapper.Map<IEnumerable<FundDto>>(budgetEntity.Funds),
           ctx.Mapper.Map<IEnumerable<AccountDto>>(budgetEntity.Accounts),
+          incomeAllocationTemplates!,
           incomes
           .Concat(allocations)
           .Concat(expenses)

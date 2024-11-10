@@ -6,5 +6,6 @@ public record BudgetSummaryDto(
   Balance Unallocated,
   IEnumerable<FundDto> Funds,
   IEnumerable<AccountDto> Accounts,
+  IEnumerable<IncomeAllocationTemplateDto> IncomeAllocationTemplates,
   IEnumerable<MoneyOperationDto> Operations
   );

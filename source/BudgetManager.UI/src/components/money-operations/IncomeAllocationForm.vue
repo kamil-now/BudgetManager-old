@@ -58,6 +58,7 @@
   </div>
 </template>
 <script setup lang="ts">
+import MoneySpan from '@/components/MoneySpan.vue';
 import IncomeAllocationRuleInput from '@/components/money-operations/IncomeAllocationRuleInput.vue';
 import { IncomeAllocationUtils } from '@/helpers/income-allocation-utils';
 import { Fund } from '@/models/fund';
