@@ -81,7 +81,16 @@ const ruleType = computed({
   },
 });
 
-const ruleValue = computed(() => rule.value.value);
+const ruleValue = computed({
+  get: () => rule.value.value,
+  set: (newValue: number) => {
+    rule.value.value = newValue;
+    emit('changed', {
+      ...rule.value,
+      value: newValue,
+    });
+  }
+});
 
 const valueSuffix = computed(() => ruleType.value === IncomeAllocationRuleType.Percent ? ' %' : '');
 const valuePrefix = computed(() => ruleType.value === IncomeAllocationRuleType.Fixed ? `${props.currency} ` : '');

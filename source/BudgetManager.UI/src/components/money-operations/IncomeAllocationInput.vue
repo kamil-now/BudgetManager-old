@@ -1,7 +1,12 @@
 <template>
   <div class="income-allocation-form-input">
     <div class="income-allocation-form-input_income">
-      <span>Test income</span>
+      <InputText
+        class="p-inputtext-sm"
+        id="title" 
+        placeholder="Allocation title"
+        v-model="title"
+      />
       <MoneyInput :money="testIncome" @changed="onIncomeChange($event)" />
     </div>
     <IncomeAllocationForm
@@ -17,13 +22,22 @@ import MoneyInput from '@/components/money-operations/MoneyInput.vue';
 import IncomeAllocationForm from '@/components/money-operations/IncomeAllocationForm.vue';
 import { IncomeAllocation } from '@/models/income-allocation';
 import { Money } from '@/models/money';
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 
-defineProps<{ incomeAllocation: IncomeAllocation }>();
+const props = defineProps<{ incomeAllocation: IncomeAllocation }>();
 const emit = defineEmits(['changed']);
 const testIncome = ref<Money>({
   amount: 0,
   currency: Object.keys(currencies)[0],
+});
+const title = computed({
+  get: () => props.incomeAllocation.name,
+  set: (newValue) => {
+    emit('changed', {
+      ...props.incomeAllocation, 
+      name: newValue
+    });
+  }
 });
 
 function onIncomeAllocationChange(changed: IncomeAllocation) {

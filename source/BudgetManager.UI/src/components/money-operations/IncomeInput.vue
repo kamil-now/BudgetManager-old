@@ -36,7 +36,6 @@
       v-if="distributeIncome"
       :incomeAllocation="incomeAllocation"
       :income="incomeValue"
-      @changed="onIncomeAllocationChange($event)"
     ></IncomeAllocationForm>
   </div>
 </template>
@@ -49,7 +48,6 @@ import { Income } from '@/models/income';
 import { useAppStore } from '@/store/store';
 import { computed, ref, watch } from 'vue';
 import { IncomeAllocation } from '@/models/income-allocation';
-import { IncomeAllocationRule } from '@/models/income-allocation-rule';
 import { saveIncomeAllocationPreference, getIncomeAllocationPreference } from '@/storage';
 
 const props = defineProps<{ income: Income }>();
@@ -109,12 +107,6 @@ const incomeValue = computed({
     });
   },
 });
-
-function onIncomeAllocationChange(
-  changedIncomeAllocation: IncomeAllocation
-) {
-  // TODO
-}
 </script>
 
 <style lang="scss">

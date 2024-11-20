@@ -118,10 +118,10 @@ function toggle() {
 function createNewIncomeAllocation() {
   dialog.open(InputDialog, {
     data: {
-      incomeAllocation: IncomeAllocationUtils.createNew()
+      incomeAllocation: IncomeAllocationUtils.createNew(store.funds[0])
     },
     props: {
-      header: 'Create New Income allocation Template',
+      header: 'Create New Income Allocation Template',
       modal: true,
       closable: false,
     },

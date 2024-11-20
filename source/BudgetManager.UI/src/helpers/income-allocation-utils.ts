@@ -2,16 +2,18 @@ import { IncomeAllocation } from '@/models/income-allocation';
 import { IncomeAllocationRule } from '@/models/income-allocation-rule';
 import { IncomeAllocationRuleType } from '@/models/income-allocation-rule-type.enum';
 import { DisplayFormat } from './display-format';
+import { Fund } from '@/models/fund';
 
 export class IncomeAllocationUtils {
-  // static createNew(): IncomeAllocation {
-  //   return {
-  //     name: '',
-  //     rules: [],
-  //     defaultFundId,
-  //     defaultFundName
-  //   };
-  // }
+  static createNew(defaultFund: Fund): IncomeAllocation {
+    return {
+      id: undefined,
+      name: '',
+      rules: [],
+      defaultFundId: defaultFund.id,
+      defaultFundName: defaultFund.name
+    };
+  }
 
   static copy(incomeAllocation: IncomeAllocation): IncomeAllocation {
     return {
