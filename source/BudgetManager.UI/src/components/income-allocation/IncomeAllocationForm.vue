@@ -83,6 +83,7 @@ const leftover = ref({ ...props.income });
 const incomeAllocationRules = computed({ 
   get: () => props.incomeAllocation.rules,
   set: (newValue: IncomeAllocationRule[]) => {
+    updateCalculations();
     emit('changed', {
       ...props.incomeAllocation,
       rules: newValue
@@ -110,26 +111,16 @@ watch(props, () => {
 const ruleCalculations = ref<{ [id: string]: string }>({});
 
 function addRule() {
-  (incomeAllocationRules.value = [
+  incomeAllocationRules.value = [
     ...props.incomeAllocation.rules,
     createNewIncomeAllocationRule(),
-  ]),
-  updateCalculations();
-  emit('changed', {
-    ...props.incomeAllocation,
-    rules: incomeAllocationRules.value,
-  });
+  ];
 }
 
 function removeRule(rule: IncomeAllocationRule) {
   incomeAllocationRules.value = incomeAllocationRules.value.filter(
     (x) => x.id !== rule.id
   );
-  updateCalculations();
-  emit('changed', {
-    ...props.incomeAllocation,
-    rules: incomeAllocationRules.value,
-  });
 }
 
 function createNewIncomeAllocationRule(): IncomeAllocationRule {
@@ -166,57 +157,42 @@ function onRuleChanged(rule: IncomeAllocationRule) {
 }
 
 function updateCalculations() {
+  // percent rules should take the same base value as the percent rules directly before them
+  /* 
+    e.g. for income 1500 and rules:
+    1: allocates fixed 200 to fund A
+    2: allocates 10% to fund B
+    3: allocates 10% to fund C
+    4: fixed 300 to fund D
+    4: leftover to fund E
+    then allocations should be 
+    200 -> fund A
+    300 (10% of 1300) -> fund B (leftover 1170 leftoverAfterLastFixedAllocation 1300)
+    700 (10% of 1300) -> fund C (leftover 1040 leftoverAfterLastFixedAllocation 1300)
+    300 -> fund D (leftover 740 leftoverAfterLastFixedAllocation 740)
+    740 leftover to E
+  */
+  let leftoverAfterLastFixedAllocation = props.income.amount;
   leftover.value.amount = props.income.amount;
-  incomeAllocationRules.value.forEach((rule, index) => {
+  incomeAllocationRules.value.forEach(rule => {
     if (leftover.value.amount < 0) {
       ruleCalculations.value[rule.id] = '-';
-    } else {
-      const { label, leftoverAmount } = IncomeAllocationUtils.calculate(
-        index === 0 ? props.income.amount : leftover.value.amount,
-        rule
-      );
-      ruleCalculations.value[rule.id] = label;
+      return;
+    } 
+    const { label, leftoverAmount } = IncomeAllocationUtils.calculate(
+      rule.type === IncomeAllocationRuleType.Percent ? leftoverAfterLastFixedAllocation : leftover.value.amount,
+      rule
+    );
+    ruleCalculations.value[rule.id] = label;
+    if (rule.type === IncomeAllocationRuleType.Fixed) {
       leftover.value.amount = leftoverAmount;
+      leftoverAfterLastFixedAllocation = leftoverAmount;
+    } else {
+      const ruleValue = leftoverAfterLastFixedAllocation - leftoverAmount;
+      leftover.value.amount -= ruleValue;
     }
   });
 }
-// function updateCalculations() {
-//   // percent rules should take the same base value as the percent rules directly before them
-//   /* 
-//     e.g. for income 1500 and rules:
-//     1: allocates fixed 200 to fund A
-//     2: allocates 30% to fund B
-//     3: allocates 70% to fund C
-//     4: fixed 300 to fund D
-//     4: leftover to fund E
-//     then allocations should be 
-//     200 -> fund A
-//     300 (30% of 1000) -> fund B
-//     700 (70% of 1000) -> fund C
-//     300 -> fund D
-//     0 leftover to E
-//   */
-//   let leftoverAfterLastFixedAllocation = props.income.amount;
-//   leftover.value.amount = props.income.amount;
-//   incomeAllocationRules.value.forEach(rule => {
-//     if (leftover.value.amount < 0) {
-//       ruleCalculations.value[rule.id] = '-';
-//     } else {
-//       const { label, leftoverAmount } = IncomeAllocationUtils.calculate(
-//         rule.type === IncomeAllocationRuleType.Percent ? leftoverAfterLastFixedAllocation : leftover.value.amount,
-//         rule
-//       );
-//       ruleCalculations.value[rule.id] = label;
-//       if (rule.type === IncomeAllocationRuleType.Fixed) {
-//         leftover.value.amount = leftoverAmount;
-//         leftoverAfterLastFixedAllocation = leftoverAmount;
-//       } else {
-//         // TODO
-//         leftover.value.amount = leftover.value.amount - leftoverAfterLastFixedAllocation - leftoverAmount;
-//       }
-//     }
-//   });
-// }
 </script>
 
 <style lang="scss">
