@@ -1,5 +1,5 @@
 <template>
-  <div class="income-allocation-template-view">
+  <div class="income-allocation-templates-view">
     <ListView
       header="IncomeAllocation"
       v-model="incomeAllocationTemplates"
@@ -38,7 +38,7 @@ function onIncomeAllocationChanged(IncomeAllocation: IncomeAllocation, newValue:
 </script>
 
 <style lang="scss">
-.income-allocation-template-view {
+.income-allocation-templates-view {
   width: 100%;
   height: 100%;
   &_body {

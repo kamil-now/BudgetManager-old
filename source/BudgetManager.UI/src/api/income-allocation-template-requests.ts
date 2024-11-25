@@ -16,6 +16,7 @@ export async function updateIncomeAllocationTemplateRequest(incomeAllocation: In
   return axios.put<IncomeAllocation>(
     'income-allocation-template', 
     {
+      incomeAllocationTemplateId: incomeAllocation.id,
       name: incomeAllocation.name,
       defaultFundId: incomeAllocation.defaultFundId,
       rules: incomeAllocation.rules

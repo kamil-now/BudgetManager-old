@@ -10,6 +10,9 @@
             <TabPanel header="Funds">
               <FundsView />
             </TabPanel>
+            <TabPanel header="Allocation templates">
+              <IncomeAllocationTemplatesView />
+            </TabPanel>
             <TabPanel header="Accounts">
               <AccountsView />
             </TabPanel>
@@ -26,14 +29,28 @@
           <TabPanel header="Funds">
             <FundsView />
           </TabPanel>
+          <TabPanel header="Allocation templates">
+            <IncomeAllocationTemplatesView />
+          </TabPanel>
           <TabPanel header="Accounts">
             <AccountsView />
           </TabPanel>
         </TabView>
         <template v-else>
-          <FundsView />
+          <TabView :lazy="true">
+            <TabPanel header="Funds">
+              <FundsView />
+            </TabPanel>
+            <TabPanel header="Allocation templates">
+              <IncomeAllocationTemplatesView />
+            </TabPanel>
+          </TabView>
           <OperationsView></OperationsView>
-          <AccountsView />
+          <TabView>
+            <TabPanel header="Accounts">
+              <AccountsView />
+            </TabPanel>
+          </TabView>
         </template>
       </div>
     </div>
@@ -44,6 +61,7 @@
 import AccountsView from '@/components/account/AccountsView.vue';
 import FundsView from '@/components/fund/FundsView.vue';
 import OperationsView from '@/components/money-operations/OperationsView.vue';
+import IncomeAllocationTemplatesView from '@/components/income-allocation/IncomeAllocationTemplatesView.vue';
 import AppPage from '@/pages/AppPage.vue';
 import { useAppStore } from '@/store/store';
 import { storeToRefs } from 'pinia';
@@ -62,8 +80,6 @@ onMounted(() => {
     onResize();
     window.addEventListener('resize', onResize);
   });
-
-  
 });
 
 onDeactivated(() => {
@@ -103,6 +119,9 @@ const onResize = () => (windowWidth.value = window.innerWidth);
       flex: 1;
     }
     .accounts-view {
+      flex: 1;
+    }
+    .income-allocation-templates-view {
       flex: 1;
     }
     .p-tabview {
