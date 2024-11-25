@@ -19,7 +19,7 @@
 <script setup lang="ts">
 import currencies from '@/assets/currencies.json';
 import MoneyInput from '@/components/money-operations/MoneyInput.vue';
-import IncomeAllocationForm from '@/components/money-operations/IncomeAllocationForm.vue';
+import IncomeAllocationForm from './IncomeAllocationForm.vue';
 import { IncomeAllocation } from '@/models/income-allocation';
 import { Money } from '@/models/money';
 import { ref, computed } from 'vue';

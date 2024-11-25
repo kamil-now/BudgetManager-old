@@ -22,7 +22,7 @@
 </template>
 <script setup lang="ts">
 import ListView from '@/components/ListView.vue';
-import IncomeAllocationInput from '@/components/money-operations/IncomeAllocationInput.vue';
+import IncomeAllocationInput from './IncomeAllocationInput.vue';
 import { IncomeAllocation } from '@/models/income-allocation';
 import { useAppStore } from '@/store/store';
 import { storeToRefs } from 'pinia';

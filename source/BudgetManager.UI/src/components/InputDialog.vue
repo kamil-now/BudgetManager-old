@@ -82,7 +82,7 @@ import ExpenseInput from '@/components/money-operations/ExpenseInput.vue';
 import CurrencyExchangeInput from '@/components/money-operations/CurrencyExchangeInput.vue';
 import AccountTransferInput from '@/components/money-operations/AccountTransferInput.vue';
 import FundTransferInput from '@/components/money-operations/FundTransferInput.vue';
-import IncomeAllocationInput from '@/components/money-operations/IncomeAllocationInput.vue';
+import IncomeAllocationInput from '@/components/income-allocation/IncomeAllocationInput.vue';
 import { useAppStore } from '@/store/store';
 import { Account } from '@/models/account';
 import { Fund } from '@/models/fund';
