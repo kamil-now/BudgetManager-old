@@ -66,6 +66,7 @@ public class IncomeAllocationTemplate(
         if (existing is not null)
         {
           existing.Update(rule.Value, rule.FundId, rule.Type);
+          Rules = Rules.Select(r => r.Id == rule.Id ? existing : r);
         }
         else
         {
