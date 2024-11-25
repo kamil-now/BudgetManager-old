@@ -4,6 +4,39 @@ using BudgetManager.Infrastructure.Models;
 
 internal class UserBudgetRepository(IMongoCollection<BudgetEntity> _collection, IBudgetFactory _budgetFactory) : IUserBudgetRepository
 {
+  public async Task<bool> TryAcquireLock(string userId)
+  {
+    var filter = Builders<BudgetEntity>.Filter.And(
+        Builders<BudgetEntity>.Filter.Eq("_id", userId),
+        Builders<BudgetEntity>.Filter.Or(
+          Builders<BudgetEntity>.Filter.Eq("IsLocked", false),
+          Builders<BudgetEntity>.Filter.Exists("IsLocked", false)
+        )
+    );
+
+    var update = Builders<BudgetEntity>.Update
+        .Set("IsLocked", true)
+        .Set("LockTimestamp", DateTime.UtcNow);
+
+    var options = new FindOneAndUpdateOptions<BudgetEntity>
+    {
+      ReturnDocument = ReturnDocument.After
+    };
+
+    var result = await _collection.FindOneAndUpdateAsync(filter, update, options);
+
+    return result != null;
+  }
+  public async Task ReleaseLock(string userId)
+  {
+    var filter = Builders<BudgetEntity>.Filter.Eq("_id", userId);
+
+    var update = Builders<BudgetEntity>.Update
+        .Set("IsLocked", false)
+        .Unset("LockTimestamp");
+
+    await _collection.UpdateOneAsync(filter, update);
+  }
   public async Task Create(string userId)
   {
     var doc = _budgetFactory.Create(userId);

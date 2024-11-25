@@ -17,15 +17,42 @@ public abstract class BudgetCommandHandler<TCommand, TResult>(
 
   public async Task<TResult> Handle(TCommand command, CancellationToken cancellationToken)
   {
-    var src = await _repository.Get(command.UserId);
-    var budget = _mapper.Map<Budget>(src);
+    return await Run(command.UserId, async () =>
+    {
+      var src = await _repository.Get(command.UserId);
+      var budget = _mapper.Map<Budget>(src);
 
-    var id = ModifyBudget(command, budget);
-    var updatedBudget = _mapper.Map<BudgetEntity>(budget);
-    updatedBudget.UserId = command.UserId;
+      var id = ModifyBudget(command, budget);
+      var updatedBudget = _mapper.Map<BudgetEntity>(budget);
+      updatedBudget.UserId = command.UserId;
 
-    await _repository.Update(updatedBudget);
+      await _repository.Update(updatedBudget);
 
-    return id;
+      return id;
+    });
+
+  }
+  private async Task<T> Run<T>(string userId, Func<Task<T>> task)
+  {
+    // TODO timeout
+    bool lockAcquired = false;
+
+    while (!lockAcquired)
+    {
+      lockAcquired = await _repository.TryAcquireLock(userId);
+      if (!lockAcquired)
+      {
+        await Task.Delay(10);
+      }
+    }
+
+    try
+    {
+      return await task();
+    }
+    finally
+    {
+      await _repository.ReleaseLock(userId);
+    }
   }
 }

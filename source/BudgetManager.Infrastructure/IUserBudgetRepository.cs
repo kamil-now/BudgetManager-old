@@ -10,4 +10,6 @@ public interface IUserBudgetRepository
   Task<bool> Exists(string userId);
   Task Update(BudgetEntity budget);
   Task Delete(string userId);
+  Task<bool> TryAcquireLock(string userId);
+  Task ReleaseLock(string userId);
 }

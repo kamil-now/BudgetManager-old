@@ -8,6 +8,8 @@ public class BudgetEntity : IVersioned
   [BsonId]
   public string? UserId { get; set; }
   public int Version { get; set; }
+  public bool IsLocked { get; set; }
+  public DateTime LockTimestamp { get; set; }
   public UserSettingsEntity? UserSettings { get; set; }
   public IEnumerable<AccountEntity>? Accounts { get; set; }
   public IEnumerable<FundEntity>? Funds { get; set; }
