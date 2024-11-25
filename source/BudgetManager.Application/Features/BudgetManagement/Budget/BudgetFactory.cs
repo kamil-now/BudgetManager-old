@@ -2,9 +2,9 @@ using AutoMapper;
 
 namespace BudgetManager.Application.Features.BudgetManagement;
 
-
 public class BudgetFactory(IMapper _mapper) : IBudgetFactory
 {
+  const string DATE_FORMAT = "yyyy/MM/dd";
   public BudgetEntity Create(string userId)
   {
     return new BudgetEntity()
@@ -90,7 +90,7 @@ public class BudgetFactory(IMapper _mapper) : IBudgetFactory
         accuntId,
         title,
         money,
-        date.ToString(),
+        date.ToString(DATE_FORMAT),
         string.Empty,
         DateTime.Now);
 
@@ -100,7 +100,7 @@ public class BudgetFactory(IMapper _mapper) : IBudgetFactory
         title,
         money,
         fundId,
-        date.ToString(),
+        date.ToString(DATE_FORMAT),
         string.Empty,
         DateTime.Now);
 
@@ -111,7 +111,7 @@ public class BudgetFactory(IMapper _mapper) : IBudgetFactory
         money,
         sourceAccuntId,
         targetAccountId,
-        date.ToString(),
+        date.ToString(DATE_FORMAT),
         string.Empty,
         DateTime.Now);
 
@@ -120,7 +120,7 @@ public class BudgetFactory(IMapper _mapper) : IBudgetFactory
         Guid.NewGuid().ToString(),
         title,
         money,
-        date.ToString(),
+        date.ToString(DATE_FORMAT),
         accountId,
         fundId,
         string.Empty,
