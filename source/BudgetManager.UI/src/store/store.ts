@@ -1,3 +1,7 @@
+import { createAllocationRequest } from '@/api/allocation-requests';
+import { createIncomeRequest } from '@/api/income-requests';
+import { IncomeAllocationUtils } from '@/helpers/income-allocation-utils';
+import { MoneyOperationFactory } from '@/helpers/money-operation-factory';
 import { Account } from '@/models/account';
 import { AccountTransfer } from '@/models/account-transfer';
 import { Allocation } from '@/models/allocation';
@@ -6,6 +10,9 @@ import { Expense } from '@/models/expense';
 import { Fund } from '@/models/fund';
 import { FundTransfer } from '@/models/fund-transfer';
 import { Income } from '@/models/income';
+import { IncomeAllocation } from '@/models/income-allocation';
+import { IncomeAllocationRuleType } from '@/models/income-allocation-rule-type.enum';
+import { MoneyOperationType } from '@/models/money-operation-type.enum';
 import { DefineStoreOptions, Store, defineStore } from 'pinia';
 import { AccountActions, IAccountActions } from './actions/account-actions';
 import { AccountTransferActions, IAccountTransferActions } from './actions/account-transfer-actions';
@@ -16,11 +23,11 @@ import { ExpenseActions, IExpenseActions } from './actions/expense-actions';
 import { FundActions, IFundActions } from './actions/fund-actions';
 import { FundTransferActions, IFundTransferActions } from './actions/fund-transfer-actions';
 import { IIncomeActions, IncomeActions } from './actions/income-actions';
+import { IIncomeAllocationTemplateActions, IncomeAllocationTemplateActions } from './actions/income-allocation-template-actions';
 import { IUserSettingsActions, UserSettingsActions } from './actions/user-settings-actions';
 import { APP_GETTERS, AppGetters } from './getters';
 import { AppState, INITIAL_APP_STATE } from './state';
-import { IIncomeAllocationTemplateActions, IncomeAllocationTemplateActions } from './actions/income-allocation-template-actions';
-import { IncomeAllocation } from '@/models/income-allocation';
+import { StoreUtils } from './store-utils';
 
 export type AppActions = 
   IBudgetActions 
@@ -101,8 +108,72 @@ export const APP_STORE: DefineStoreOptions<
       ExpenseActions.deleteExpense(this, expenseId);
     },
 
-    createNewIncome(income: Income) {
-      IncomeActions.createNewIncome(this, income);
+    createNewIncome(income: Income, incomeAllocation?: IncomeAllocation) {
+      if (incomeAllocation && income.value) {
+        // TODO validate income value is sufficient to accomodate all allocations
+        const allocations: Allocation[] = [];
+        const incomeValue = income.value.amount;
+        const currency = income.value.currency;
+        // TODO move allocation logic to one place
+        let leftoverAfterLastFixedAllocation = incomeValue;
+        let leftover = incomeValue;
+        incomeAllocation.rules.forEach(rule => {
+          if (leftover < 0) {
+            leftoverAfterLastFixedAllocation = leftover = 0;
+            return;
+          }
+          if (!rule.fundId) {
+            throw new Error('Invalid income allocation rule.');
+          }
+          const { leftoverAmount } = IncomeAllocationUtils.calculate(
+            rule.type === IncomeAllocationRuleType.Percent ? leftoverAfterLastFixedAllocation : leftover,
+            rule
+          );
+          let ruleValue = 0;
+          if (rule.type === IncomeAllocationRuleType.Fixed) {
+            ruleValue = leftover - leftoverAmount;
+            leftover = leftoverAmount;
+            leftoverAfterLastFixedAllocation = leftoverAmount;
+          } else {
+            ruleValue = leftoverAfterLastFixedAllocation - leftoverAmount;
+            leftover = leftover - ruleValue;
+          }
+          allocations.push({
+            ...MoneyOperationFactory.create(this, MoneyOperationType.Allocation),
+            title: '',
+            value: {
+              amount: ruleValue,
+              currency
+            },
+            targetFundId: rule.fundId,
+            targetFundName: rule.fundName,
+            date: income.date
+          });
+        });
+        if (leftover > 0) {
+          if (!incomeAllocation.defaultFundId) {
+            throw new Error('Income allocation default fund id must be defined.');
+          }
+          allocations.push({
+            ...MoneyOperationFactory.create(this, MoneyOperationType.Allocation),
+            title: '',
+            value: {
+              amount: leftover,
+              currency
+            },
+            targetFundId: incomeAllocation.defaultFundId,
+            targetFundName: incomeAllocation.defaultFundName,
+            date: income.date
+          });
+        }
+        
+        // console.warn(rule.type, leftoverAmount, leftover, leftoverAfterLastFixedAllocation, ruleValue)
+        // console.warn(allocations.map(x => (x.targetFundName ?? '') + x.value.amount));
+        StoreUtils.runAsyncOperation(this, async () => {
+          await createIncomeRequest(income);
+          await Promise.all(allocations.map(async allocation => createAllocationRequest(allocation)));
+        }).then(() => this.fetchBudget());
+      }
     },
     updateIncome(income: Income) {
       IncomeActions.updateIncome(this, income);

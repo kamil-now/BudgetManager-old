@@ -2,9 +2,9 @@
   <div class="input-dialog">
     <div class="input-dialog_content">
       <IncomeAllocationInput
-        v-if="incomeAllocation"
-        :incomeAllocation="incomeAllocation"
-        @changed="onIncomeAllocationChanged($event)"
+        v-if="incomeAllocationTemplate"
+        :incomeAllocation="incomeAllocationTemplate"
+        @changed="onIncomeAllocationTemplateChanged($event)"
       />
       <FundInput
         v-if="fund"
@@ -16,11 +16,52 @@
         :account="account"
         @changed="onAccountChanged($event)"
       />
-      <IncomeInput
+      <div
+        class="income-input-container"
         v-if="operation?.type === MoneyOperationType.Income"
-        :income="(operation as Income)"
-        @changed="onOperationChanged($event)"
-      />
+      >
+        <div class="income-input_section">
+          <IncomeInput
+            :income="(operation as Income)"
+            @changed="onOperationChanged($event)"
+          />
+        </div>
+        <div class="income-input_section">
+          <div
+            class="income-input_distribute-income-checkbox"
+            v-if="!operation.id && incomeAllocationTemplates?.length"
+          >
+            <label for="allocateIncomeCheckbox">Allocate income</label>
+            <Checkbox
+              id="allocateIncomeCheckbox"
+              v-model="allocateIncome"
+              :binary="true"
+            ></Checkbox>
+          </div>
+          <Dropdown
+            v-if="allocateIncome && incomeAllocationTemplates.length"
+            class="p-inputtext-sm"
+            v-model="incomeAllocation"
+            :options="incomeAllocationTemplates"
+          >
+            <template #value="{ value }">
+              <span>{{ value?.name }}</span>
+            </template>
+            <template #option="{ option }">
+              <span>{{ option?.name }}</span>
+            </template>
+          </Dropdown>
+        </div>
+        <div class="income-input_content">
+          <IncomeAllocationForm
+            v-if="allocateIncome && incomeAllocation"
+            :incomeAllocation="incomeAllocation"
+            :income="operation.value"
+            @changed="onIncomeAllocationChanged($event)"
+          ></IncomeAllocationForm>
+        </div>
+      </div>
+
       <AllocationInput
         v-if="operation?.type === MoneyOperationType.Allocation"
         :allocation="(operation as Allocation)"
@@ -64,30 +105,36 @@
   </div>
 </template>
 <script setup lang="ts">
-import { Expense } from '@/models/expense';
-import { MoneyOperation } from '@/models/money-operation';
-import { MoneyOperationType } from '@/models/money-operation-type.enum';
-import { DynamicDialogInstance } from 'primevue/dynamicdialogoptions';
-import { ComputedRef, inject, onMounted, ref } from 'vue';
-import { Income } from '@/models/income';
+import AccountInput from '@/components/account/AccountInput.vue';
+import FundInput from '@/components/fund/FundInput.vue';
+import IncomeAllocationForm from '@/components/income-allocation/IncomeAllocationForm.vue';
+import IncomeAllocationInput from '@/components/income-allocation/IncomeAllocationInput.vue';
+import AccountTransferInput from '@/components/money-operations/AccountTransferInput.vue';
+import AllocationInput from '@/components/money-operations/AllocationInput.vue';
+import CurrencyExchangeInput from '@/components/money-operations/CurrencyExchangeInput.vue';
+import ExpenseInput from '@/components/money-operations/ExpenseInput.vue';
+import FundTransferInput from '@/components/money-operations/FundTransferInput.vue';
+import IncomeInput from '@/components/money-operations/IncomeInput.vue';
+import { IncomeAllocationUtils } from '@/helpers/income-allocation-utils';
+import { Account } from '@/models/account';
+import { AccountTransfer } from '@/models/account-transfer';
 import { Allocation } from '@/models/allocation';
 import { CurrencyExchange } from '@/models/currency-exchange';
-import { AccountTransfer } from '@/models/account-transfer';
-import { FundTransfer } from '@/models/fund-transfer';
-import FundInput from '@/components/fund/FundInput.vue';
-import AccountInput from '@/components/account/AccountInput.vue';
-import IncomeInput from '@/components/money-operations/IncomeInput.vue';
-import AllocationInput from '@/components/money-operations/AllocationInput.vue';
-import ExpenseInput from '@/components/money-operations/ExpenseInput.vue';
-import CurrencyExchangeInput from '@/components/money-operations/CurrencyExchangeInput.vue';
-import AccountTransferInput from '@/components/money-operations/AccountTransferInput.vue';
-import FundTransferInput from '@/components/money-operations/FundTransferInput.vue';
-import IncomeAllocationInput from '@/components/income-allocation/IncomeAllocationInput.vue';
-import { useAppStore } from '@/store/store';
-import { Account } from '@/models/account';
+import { Expense } from '@/models/expense';
 import { Fund } from '@/models/fund';
+import { FundTransfer } from '@/models/fund-transfer';
+import { Income } from '@/models/income';
 import { IncomeAllocation } from '@/models/income-allocation';
-import { IncomeAllocationUtils } from '@/helpers/income-allocation-utils';
+import { MoneyOperation } from '@/models/money-operation';
+import { MoneyOperationType } from '@/models/money-operation-type.enum';
+import {
+  getIncomeAllocationPreference,
+  saveIncomeAllocationPreference,
+} from '@/storage';
+import { useAppStore } from '@/store/store';
+import { storeToRefs } from 'pinia';
+import { DynamicDialogInstance } from 'primevue/dynamicdialogoptions';
+import { ComputedRef, computed, inject, onMounted, ref } from 'vue';
 
 const store = useAppStore();
 const {
@@ -108,8 +155,11 @@ const {
   createNewAccount,
   updateAccount,
   createNewIncomeAllocationTemplate,
-  updateIncomeAllocationTemplate
+  updateIncomeAllocationTemplate,
+  incomeAllocationTemplates,
 } = store;
+
+const { funds } = storeToRefs(store);
 
 const dialogRef = inject<ComputedRef<DynamicDialogInstance>>('dialogRef');
 const operation = ref<MoneyOperation>();
@@ -118,16 +168,30 @@ const fund = ref<Fund>();
 const initialFundValue = ref<Fund>();
 const account = ref<Account>();
 const initialAccountValue = ref<Account>();
-const incomeAllocation = ref<IncomeAllocation>();
+const incomeAllocationTemplate = ref<IncomeAllocation>();
+
+const allocateIncomePreferenceRef = ref<boolean>(
+  getIncomeAllocationPreference()
+);
+const allocateIncome = computed({
+  get: () => allocateIncomePreferenceRef.value && !operation.value?.id,
+  set: (newValue) => {
+    saveIncomeAllocationPreference(newValue);
+    allocateIncomePreferenceRef.value = newValue;
+  },
+});
+const incomeAllocation = ref<IncomeAllocation | undefined>(
+  incomeAllocationTemplates.length ? IncomeAllocationUtils.copy(incomeAllocationTemplates[0]) : IncomeAllocationUtils.createNew(funds.value[0])
+);
 
 onMounted(() => {
-  incomeAllocation.value = dialogRef?.value.data?.incomeAllocation;
-  if (incomeAllocation.value) {
-    incomeAllocation.value = JSON.parse(
+  incomeAllocationTemplate.value = dialogRef?.value.data?.incomeAllocation;
+  if (incomeAllocationTemplate.value) {
+    incomeAllocationTemplate.value = JSON.parse(
       JSON.stringify(dialogRef?.value.data?.incomeAllocation)
     );
   }
-  
+
   operation.value = dialogRef?.value.data?.operation;
   if (operation.value) {
     initialOperationValue.value = JSON.parse(
@@ -149,7 +213,12 @@ onMounted(() => {
     );
   }
 
-  if (!operation.value && !fund.value && !account.value && !incomeAllocation.value) {
+  if (
+    !operation.value &&
+    !fund.value &&
+    !account.value &&
+    !incomeAllocationTemplate.value
+  ) {
     throw new Error();
   }
 });
@@ -195,35 +264,36 @@ function onOperationChanged(changed: MoneyOperation) {
 function onIncomeAllocationChanged(changed: IncomeAllocation) {
   incomeAllocation.value = IncomeAllocationUtils.copy(changed);
 }
+function onIncomeAllocationTemplateChanged(changed: IncomeAllocation) {
+  incomeAllocationTemplate.value = IncomeAllocationUtils.copy(changed);
+}
 
 function save() {
   if (operation.value) {
     saveOperation();
-  }
-  else if (fund.value) {
+  } else if (fund.value) {
     if (fund.value.id) {
       updateFund(fund.value);
     } else {
       createNewFund(fund.value);
     }
-  }
-  else if (account.value) {
+  } else if (account.value) {
     if (account.value.id) {
       updateAccount(account.value);
     } else {
       createNewAccount(account.value);
     }
-  } else if (incomeAllocation.value) {
-    if (incomeAllocation.value.id) {
-      updateIncomeAllocationTemplate(incomeAllocation.value);
+  } else if (incomeAllocationTemplate.value) {
+    if (incomeAllocationTemplate.value.id) {
+      updateIncomeAllocationTemplate(incomeAllocationTemplate.value);
     } else {
-      createNewIncomeAllocationTemplate(incomeAllocation.value);
+      createNewIncomeAllocationTemplate(incomeAllocationTemplate.value);
     }
   }
   dialogRef?.value.close();
 }
 function saveOperation() {
-  if (!operation.value) {
+  if (!operation.value) { 
     throw new Error();
   }
   if (operation.value.id) {
@@ -254,7 +324,7 @@ function saveOperation() {
     // TODO move switch to store - createOperation action
     switch (operation.value.type) {
       case MoneyOperationType.Income:
-        createNewIncome(operation.value as Income);
+        createNewIncome(operation.value as Income, allocateIncome.value ? incomeAllocation.value : undefined);
         break;
       case MoneyOperationType.Allocation:
         createNewAllocation(operation.value as Allocation);
@@ -312,6 +382,34 @@ function discard() {
     display: flex;
     gap: 1rem;
     justify-content: flex-end;
+  }
+
+  .income-input {
+    &-container {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      gap: 1rem;
+      :last-of-type(div) {
+        margin-bottom: 1rem;
+      }
+    }
+
+    &_section {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .income-allocation-form {
+      border-top: 1px solid black;
+      padding-top: 1rem;
+    }
+
+    &_distribute-income-checkbox {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
   }
 }
 </style>

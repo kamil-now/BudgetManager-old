@@ -25,8 +25,7 @@ export class StoreUtils {
     create: () => Promise<string>,
     get: (id: string) => Promise<T>
   ) {
-    const id = await create(); 
-    const fromResponse = await get(id);
+    const fromResponse = await create().then(id => get(id));
     state.budget.operations.unshift(fromResponse);
     MoneyOperationUtils.sort(state.budget.operations);
     return fromResponse;

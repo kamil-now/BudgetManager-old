@@ -58,7 +58,6 @@ function onAmountInput(event: InputNumberInputEvent) {
 .money-input {
   display: flex;
   max-width: 100%;
-  flex-wrap: wrap;
   gap: 1rem;
 }
 </style>

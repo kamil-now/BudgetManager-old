@@ -117,6 +117,10 @@ function onValueInput(event: InputNumberInputEvent) {
   gap: 1rem;
   align-items: center;
 
+  .p-inputgroup {
+    width: 10rem;
+  }
+
   i {
     font-size: 0.75rem;
     cursor: pointer;
