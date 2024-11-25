@@ -324,7 +324,7 @@ function saveOperation() {
     // TODO move switch to store - createOperation action
     switch (operation.value.type) {
       case MoneyOperationType.Income:
-        createNewIncome(operation.value as Income, allocateIncome.value ? incomeAllocation.value : undefined);
+        createNewIncome(operation.value as Income);
         break;
       case MoneyOperationType.Allocation:
         createNewAllocation(operation.value as Allocation);
