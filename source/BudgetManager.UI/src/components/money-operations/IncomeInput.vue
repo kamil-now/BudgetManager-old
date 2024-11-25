@@ -24,19 +24,39 @@
         @changed="incomeValue = $event"
       />
     </div>
-    <div class="income-input_distribute-income-checkbox">
-      <Checkbox
-        id="distributeIncomeCheckbox"
-        v-model="distributeIncome"
-        :binary="true"
-      ></Checkbox>
-      <label for="distributeIncomeCheckbox">Allocate income</label>
+    <div class="income-input_content">
+      <div
+        class="income-input_distribute-income-checkbox"
+        v-if="incomeAllocationTemplates?.length"
+      >
+        <label for="distributeIncomeCheckbox">Allocate income</label>
+        <Checkbox
+          id="distributeIncomeCheckbox"
+          v-model="distributeIncome"
+          :binary="true"
+        ></Checkbox>
+      </div>
+      <Dropdown
+        v-if="distributeIncome"
+        class="p-inputtext-sm"
+        v-model="selectedIncomeAllocationTemplate"
+        :options="incomeAllocationTemplates"
+      >
+        <template #value="{ value }">
+          <span>{{ value?.name }}</span>
+        </template>
+        <template #option="{ option }">
+          <span>{{ option?.name }}</span>
+        </template>
+      </Dropdown>
     </div>
-    <IncomeAllocationForm
-      v-if="distributeIncome"
-      :incomeAllocation="incomeAllocation"
-      :income="incomeValue"
-    ></IncomeAllocationForm>
+    <div class="income-input_content">
+      <IncomeAllocationForm
+        v-if="distributeIncome && selectedIncomeAllocationTemplate"
+        :incomeAllocation="selectedIncomeAllocationTemplate"
+        :income="incomeValue"
+      ></IncomeAllocationForm>
+    </div>
   </div>
 </template>
 <script setup lang="ts">
@@ -48,14 +68,19 @@ import { Income } from '@/models/income';
 import { useAppStore } from '@/store/store';
 import { computed, ref, watch } from 'vue';
 import { IncomeAllocation } from '@/models/income-allocation';
-import { saveIncomeAllocationPreference, getIncomeAllocationPreference } from '@/storage';
+import {
+  saveIncomeAllocationPreference,
+  getIncomeAllocationPreference,
+} from '@/storage';
 
 const props = defineProps<{ income: Income }>();
 const emit = defineEmits(['changed']);
 const { accounts, incomeAllocationTemplates } = useAppStore();
 
 const incomeRef = ref<Income>(props.income);
-const distributeIncomePreferenceRef = ref<boolean>(getIncomeAllocationPreference());
+const distributeIncomePreferenceRef = ref<boolean>(
+  getIncomeAllocationPreference()
+);
 const distributeIncome = computed({
   get: () => distributeIncomePreferenceRef.value,
   set: (newValue) => {
@@ -63,12 +88,15 @@ const distributeIncome = computed({
     distributeIncomePreferenceRef.value = newValue;
   },
 });
-const incomeAllocation = ref<IncomeAllocation>(incomeAllocationTemplates[0]);
 
 const selectedAccount = ref<Account | undefined>(
   props.income.accountId
     ? accounts.find((x) => x.id === props.income.accountId)
     : undefined
+);
+
+const selectedIncomeAllocationTemplate = ref<IncomeAllocation | undefined>(
+  incomeAllocationTemplates[0]
 );
 
 watch(selectedAccount, async (account) => {
@@ -114,6 +142,9 @@ const incomeValue = computed({
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  :last-of-type(div) {
+    margin-bottom: 1rem;
+  }
 
   &_content {
     display: flex;

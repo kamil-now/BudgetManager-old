@@ -67,7 +67,9 @@ import { IncomeAllocationRule } from '@/models/income-allocation-rule';
 import { IncomeAllocationRuleType } from '@/models/income-allocation-rule-type.enum';
 import { Money } from '@/models/money';
 import { useAppStore } from '@/store/store';
-import { computed, ref, toRef, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
+
+onMounted(() => updateCalculations());
 
 const MAX_RULES = 100;
 const props = defineProps<{
@@ -78,7 +80,15 @@ const emit = defineEmits(['changed']);
 const { funds } = useAppStore();
 const leftover = ref({ ...props.income });
 
-const incomeAllocationRules = toRef(props.incomeAllocation, 'rules');
+const incomeAllocationRules = computed({ 
+  get: () => props.incomeAllocation.rules,
+  set: (newValue: IncomeAllocationRule[]) => {
+    emit('changed', {
+      ...props.incomeAllocation,
+      rules: newValue
+    });
+  }
+});
 
 const selectedFund = computed({
   get: () => props.incomeAllocation.defaultFundId
