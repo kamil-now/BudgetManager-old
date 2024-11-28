@@ -2,7 +2,7 @@ namespace BudgetManager.Application.Features.BudgetManagement;
 
 public record IncomeAllocationRuleDto(
   string? Id = null,
-  int? Value = null,
+  decimal? Value = null,
   string? FundId = null,
   string? FundName = null,
   IncomeAllocationRuleType? Type = null
