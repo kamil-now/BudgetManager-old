@@ -32,8 +32,11 @@ const { updateIncomeAllocationTemplate, deleteIncomeAllocationTemplate } = store
 
 const { incomeAllocationTemplates } = storeToRefs(store);
 
-function onIncomeAllocationChanged(IncomeAllocation: IncomeAllocation, newValue: IncomeAllocation) {
-  IncomeAllocation.name = newValue.name;
+function onIncomeAllocationChanged(incomeAllocation: IncomeAllocation, newValue: IncomeAllocation) {
+  incomeAllocation.name = newValue.name;
+  incomeAllocation.rules = newValue.rules;
+  incomeAllocation.defaultFundId = newValue.defaultFundId;
+  incomeAllocation.defaultFundName = newValue.defaultFundName;
 }
 </script>
 
