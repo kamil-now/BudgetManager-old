@@ -73,6 +73,9 @@
           Expense
           <ExpenseIcon />
         </Button>
+        <Button @click="logout()">
+          Logout
+        </Button>
       </div>
     </div>
     <div class="app-page-content">
@@ -86,7 +89,7 @@ import BalanceLabel from '@/components/BalanceLabel.vue';
 import currencies from '@/assets/currencies.json';
 import { useAppStore } from '@/store/store';
 import ThemeToggle from '@/components/ThemeToggle.vue';
-import { ref } from 'vue';
+import { ref, inject } from 'vue';
 import { useDialog } from 'primevue/usedialog';
 import InputDialog from '@/components/InputDialog.vue';
 import AccountTransferIcon from '@/components/icons/AccountTransferIcon.vue';
@@ -102,7 +105,9 @@ import { MoneyOperationFactory } from '@/helpers/money-operation-factory';
 import { StringUtils } from '@/helpers/string-utils';
 import { storeToRefs } from 'pinia';
 import { IncomeAllocationUtils } from '@/helpers/income-allocation-utils';
+import { AUTH, IAuthService } from '@/auth';
 
+const auth = inject<IAuthService>(AUTH);
 const dialog = useDialog();
 
 const store = useAppStore();
@@ -113,6 +118,9 @@ const header = ref<HTMLDivElement>();
 
 function toggle() {
   isOpen.value = !isOpen.value;
+}
+function logout() {
+  auth?.logout();
 }
 
 function createNewIncomeAllocation() {

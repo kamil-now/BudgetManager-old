@@ -1,10 +1,9 @@
 import {
   AccountInfo,
-  AuthenticationResult,
   PublicClientApplication,
   RedirectRequest
 } from '@azure/msal-browser';
-import { Router } from 'vue-router';
+import axios from 'axios';
 import { AppStore, useAppStore } from './store/store';
 
 export const AUTH = Symbol();
@@ -23,24 +22,22 @@ export type MsalConfiguration = {
 
 export class MsalAuthService implements IAuthService {
   get activeAccount(): AccountInfo | null {
-    return this.msal.getActiveAccount();
-  }
-
-  get accessToken(): string | undefined {
-    return this._accessToken;
+    const msalAcc =  this.msal.getActiveAccount() ;
+    if (msalAcc) {
+      return msalAcc;
+    }
+    
+    const acc = localStorage.getItem('acc');
+    return acc ? JSON.parse(acc) : null;
   }
 
   private readonly msal: PublicClientApplication;
   private redirectRequest?: RedirectRequest;
-  private router: Router;
   private config: MsalConfiguration;
   private readonly appStore: AppStore;
 
-  private _accessToken: string | undefined;
-
-  constructor(config: MsalConfiguration, router: Router) {
+  constructor(config: MsalConfiguration) {
     this.appStore = useAppStore();
-    this.router = router;
     this.config = config;
     this.msal = new PublicClientApplication({
       auth: {
@@ -53,23 +50,10 @@ export class MsalAuthService implements IAuthService {
       },
       cache: {
         cacheLocation: 'localStorage',
-        storeAuthStateInCookie: true,
+        storeAuthStateInCookie: false,
       },
     });
-  }
-
-  async initialize(): Promise<void> {
-    await this.msal.initialize();
-    this.router.beforeEach((to, _, next) => {
-      if (!to.path.includes('/login') && !this.appStore.isLoggedIn) {
-        console.warn(
-          `Prevented unauthorized access to ${to.path}, redirecting to /login`
-        );
-        next({ path: '/login' });
-      } else if (to.path.includes('/login') && this.appStore.isLoggedIn) {
-        next({ path: '/home' });
-      } else next();
-    });
+    
     this.redirectRequest = {
       scopes: this.config.scopeNames.map(
         (scope) => `api://${this.config.clientId}/${scope}`
@@ -77,50 +61,74 @@ export class MsalAuthService implements IAuthService {
     };
   }
 
+  async initialize(): Promise<void> {
+    await this.msal.initialize();
+    this.initializeInterceptors();
+    const response = await this.msal.handleRedirectPromise();
+  
+    if (response) {
+      this.msal.setActiveAccount(response.account);
+      console.warn('Logged in as', this.activeAccount?.username);
+      localStorage.setItem('acc', JSON.stringify(response.account));
+    } else {
+      if (this.activeAccount) {
+        this.msal.setActiveAccount(this.activeAccount);
+        console.warn('Already logged in as', this.activeAccount?.username);
+      } else {
+        console.warn('No active account found, redirecting to login.');
+        await this.msal.loginRedirect(this.redirectRequest);
+      }
+    }
+  }
+
   logout(): Promise<void> {
     return this.msal.logoutRedirect();
   }
 
   async login(): Promise<void> {
-    const loggedIn = await this.acquireTokenSilent()
-      .then(loggedIn => {
-        this.appStore.setLoggedIn(loggedIn);
-        return loggedIn;
-      });
-    if (!loggedIn) {
+    const accessToken = await this.acquireTokenSilent();
+    if (!accessToken) {
       this.msal.loginRedirect(this.redirectRequest);
+    } else {
+      this.appStore.setLoggedIn(true);
     }
   }
 
-  acquireTokenSilent(): Promise<boolean> {
-    return new Promise((resolve) => {
-      this.msal.handleRedirectPromise()
-        .then(() => {
-          const accounts = this.msal.getAllAccounts();
+  private async acquireTokenSilent(): Promise<string | null> {
+    if (this.activeAccount) {
+      const request = {
+        ...this.redirectRequest!,
+        account: this.activeAccount
+      };
+      try {
+        const tokenResponse = await this.msal.acquireTokenSilent(request);
+        return tokenResponse.accessToken;
+      } catch (error) {
+        console.error(error);
+        return null;
+      }
+    } else {
+      return null;
+    }
+  }
 
-          if (accounts.length > 0) {
-            this.msal.setActiveAccount(accounts[0]);
-
-            const request = {
-              ...this.redirectRequest!,
-              account: accounts[0],
-            };
-
-            this.msal
-              .acquireTokenSilent(request)
-              .then((tokenResponse: AuthenticationResult) => {
-                console.warn('Logged in as', this.activeAccount?.username);
-                this._accessToken = tokenResponse.accessToken;
-                resolve(true);
-              })
-              .catch((error) => {
-                console.error(error);
-                resolve(false);
-              });
+  private initializeInterceptors(): void {
+    axios.interceptors.request.clear();
+    axios.interceptors.request.use(
+      async (config) => {
+        try {
+          const accessToken = await this.acquireTokenSilent();
+          if (accessToken) {
+            config.headers['Authorization'] = `Bearer ${accessToken}`;
           } else {
-            resolve(false);
+            await this.msal.loginRedirect(this.redirectRequest);
           }
-        });
-    });
+        } catch {
+          await this.msal.loginRedirect(this.redirectRequest);
+        }
+        return config;
+      },
+      (error) => Promise.reject(error)
+    );   
   }
 }
