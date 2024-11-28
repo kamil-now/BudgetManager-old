@@ -255,7 +255,10 @@ $header-column-width: 2rem;
   }
 
   .p-button {
-    min-width: 3rem;
+    min-width: 2rem;
+    width: 2rem;
+    height: 2rem;
+    margin: 0 0.25rem;
   }
 
   th {
