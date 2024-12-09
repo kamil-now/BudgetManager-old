@@ -166,13 +166,12 @@ export const APP_STORE: DefineStoreOptions<
             date: income.date
           });
         }
-        
-        // console.warn(rule.type, leftoverAmount, leftover, leftoverAfterLastFixedAllocation, ruleValue)
-        // console.warn(allocations.map(x => (x.targetFundName ?? '') + x.value.amount));
         StoreUtils.runAsyncOperation(this, async () => {
           await createIncomeRequest(income);
           await Promise.all(allocations.map(async allocation => createAllocationRequest(allocation)));
         }).then(() => this.fetchBudget());
+      } else {
+        IncomeActions.createNewIncome(this, income);
       }
     },
     updateIncome(income: Income) {
