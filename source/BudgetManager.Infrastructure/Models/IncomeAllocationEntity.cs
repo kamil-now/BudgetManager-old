@@ -3,7 +3,7 @@ namespace BudgetManager.Infrastructure.Models;
 public class IncomeAllocationRuleEntity
 {
   public string? Id { get; set; }
-  public int? Value { get; set; }
+  public decimal? Value { get; set; }
   public string? FundId { get; set; }
   public int? Type { get; set; }
   public DateTime CreatedDate { get; set; }

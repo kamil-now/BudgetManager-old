@@ -9,20 +9,20 @@ public enum IncomeAllocationRuleType
 
 public class IncomeAllocationRule(
   string id,
-  int value,
+  decimal value,
   string fundId,
   IncomeAllocationRuleType type
 )
 {
   public string Id { get; private set; } = id;
-  public int Value { get; private set; } = value;
+  public decimal Value { get; private set; } = value;
   public string FundId { get; private set; } = fundId;
   public IncomeAllocationRuleType Type { get; private set; } = type;
-  public void Update(int? value, string? fundId, IncomeAllocationRuleType? type)
+  public void Update(decimal? value, string? fundId, IncomeAllocationRuleType? type)
   {
     if (value is not null)
     {
-      Value = (int)value;
+      Value = (decimal)value;
     }
     if (fundId is not null)
     {
