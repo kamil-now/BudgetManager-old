@@ -38,19 +38,31 @@
               :binary="true"
             ></Checkbox>
           </div>
-          <Dropdown
-            v-if="allocateIncome && incomeAllocationTemplates.length"
-            class="p-inputtext-sm"
-            v-model="incomeAllocation"
-            :options="incomeAllocationTemplates"
-          >
-            <template #value="{ value }">
-              <span>{{ value?.name }}</span>
-            </template>
-            <template #option="{ option }">
-              <span>{{ option?.name }}</span>
-            </template>
-          </Dropdown>
+          <div class="income-input_section-dropdown">
+            <Dropdown
+              v-if="allocateIncome && incomeAllocationTemplates.length"
+              class="p-inputtext-sm"
+              placeholder="Select template..."
+              v-model="incomeAllocation"
+              :options="incomeAllocationTemplates"
+            >
+              <template #value="{ value }">
+                {{ value?.name }}
+              </template>
+              <template #option="{ option }">
+                {{ option?.name }}
+              </template>
+            </Dropdown>
+            <Button
+              icon="pi pi-times"
+              severity="danger"
+              text
+              rounded
+              size="small"
+              aria-label="Clear"
+              @click="clearSelectedAllocationTemplate()"
+            />
+          </div>
         </div>
         <div class="income-input_content">
           <IncomeAllocationForm
@@ -157,6 +169,7 @@ const {
   createNewIncomeAllocationTemplate,
   updateIncomeAllocationTemplate,
   incomeAllocationTemplates,
+  lastOperation
 } = store;
 
 const { funds } = storeToRefs(store);
@@ -180,9 +193,7 @@ const allocateIncome = computed({
     allocateIncomePreferenceRef.value = newValue;
   },
 });
-const incomeAllocation = ref<IncomeAllocation | undefined>(
-  incomeAllocationTemplates.length ? IncomeAllocationUtils.copy(incomeAllocationTemplates[0]) : IncomeAllocationUtils.createNew(funds.value[0])
-);
+const incomeAllocation = ref<IncomeAllocation | undefined>(createNewIncomeAllocation());
 
 onMounted(() => {
   incomeAllocationTemplate.value = dialogRef?.value.data?.incomeAllocation;
@@ -268,6 +279,16 @@ function onIncomeAllocationTemplateChanged(changed: IncomeAllocation) {
   incomeAllocationTemplate.value = IncomeAllocationUtils.copy(changed);
 }
 
+function clearSelectedAllocationTemplate() {
+  incomeAllocation.value = createNewIncomeAllocation();
+}
+
+function createNewIncomeAllocation() {
+  return IncomeAllocationUtils.createNew(
+    funds.value.find(f => f.id === lastOperation(MoneyOperationType.Allocation)?.fundId) ?? funds.value[0]
+  );
+}
+
 function save() {
   if (operation.value) {
     saveOperation();
@@ -293,7 +314,7 @@ function save() {
   dialogRef?.value.close();
 }
 function saveOperation() {
-  if (!operation.value) { 
+  if (!operation.value) {
     throw new Error();
   }
   if (operation.value.id) {
@@ -324,7 +345,10 @@ function saveOperation() {
     // TODO move switch to store - createOperation action
     switch (operation.value.type) {
       case MoneyOperationType.Income:
-        createNewIncome(operation.value as Income);
+        createNewIncome(
+          operation.value as Income,
+          allocateIncome.value ? incomeAllocation.value : undefined
+        );
         break;
       case MoneyOperationType.Allocation:
         createNewAllocation(operation.value as Allocation);
@@ -399,6 +423,9 @@ function discard() {
       display: flex;
       flex-wrap: wrap;
       gap: 1rem;
+      &-dropdown {
+        display: flex;
+      }
     }
     .income-allocation-form {
       border-top: 1px solid black;

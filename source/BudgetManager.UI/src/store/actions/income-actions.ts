@@ -2,9 +2,10 @@ import { createIncomeRequest, deleteIncomeRequest, getIncomeRequest, updateIncom
 import { Income } from '@/models/income';
 import { AppStore } from '../store';
 import { StoreUtils } from '../store-utils';
+import { IncomeAllocation } from '@/models/income-allocation';
 
 export interface IIncomeActions { 
-  createNewIncome(income: Income): void,
+  createNewIncome(income: Income, incomeAllocation?: IncomeAllocation): void;
   updateIncome(income: Income): void;
   deleteIncome(incomeId: string): void;
 }
