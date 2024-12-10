@@ -9,7 +9,6 @@ import { AUTH, IAuthService } from '@/auth';
 import { inject, onBeforeMount, ref } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import axios, { AxiosError } from 'axios';
-import { useRouter } from 'vue-router';
 
 const auth = inject<IAuthService>(AUTH);
 if (!auth) {
@@ -17,7 +16,6 @@ if (!auth) {
 }
 const store = useAppStore();
 const toast = useToast();
-const router = useRouter();
 const failed = ref<boolean>(false);
 
 onBeforeMount(async () => {
@@ -40,7 +38,6 @@ onBeforeMount(async () => {
         return;
       }
       if ((error as AxiosError).response?.status === 401) {
-        router.push('/login');
         return;
       }
       const axiosErrorMessage = (error as AxiosError).response

@@ -121,14 +121,22 @@ export class MsalAuthService implements IAuthService {
           if (accessToken) {
             config.headers['Authorization'] = `Bearer ${accessToken}`;
           } else {
-            await this.msal.loginRedirect(this.redirectRequest);
+            this.tryLoginWithRedirect();
           }
         } catch {
-          await this.msal.loginRedirect(this.redirectRequest);
+          this.tryLoginWithRedirect();
         }
         return config;
       },
       (error) => Promise.reject(error)
     );   
+  }
+
+  private async tryLoginWithRedirect(): Promise<void> {
+    try {
+      await this.msal.loginRedirect(this.redirectRequest);
+    } catch (e) {
+      console.error(e);
+    }
   }
 }
