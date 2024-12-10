@@ -249,6 +249,10 @@ function getIcon(type: MoneyOperationType) {
   align-items: center;
   flex-direction: column;
 
+  .p-inputtext {
+    text-transform: uppercase;
+  }
+
   &_filters {
     padding-bottom: 0.25rem;
 
