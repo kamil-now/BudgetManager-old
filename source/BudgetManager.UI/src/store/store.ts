@@ -1,4 +1,4 @@
-import { createAllocationRequest } from '@/api/allocation-requests';
+import { createManyAllocationsequest } from '@/api/allocation-requests';
 import { createIncomeRequest } from '@/api/income-requests';
 import { IncomeAllocationUtils } from '@/helpers/income-allocation-utils';
 import { MoneyOperationFactory } from '@/helpers/money-operation-factory';
@@ -168,7 +168,7 @@ export const APP_STORE: DefineStoreOptions<
         }
         StoreUtils.runAsyncOperation(this, async () => {
           await createIncomeRequest(income);
-          await Promise.all(allocations.map(async allocation => createAllocationRequest(allocation)));
+          await createManyAllocationsequest(allocations);
         }).then(() => this.fetchBudget());
       } else {
         IncomeActions.createNewIncome(this, income);

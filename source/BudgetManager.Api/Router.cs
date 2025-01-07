@@ -193,6 +193,21 @@ public static class Router
 
   private static WebApplication MapAllocationEndpoints(this WebApplication app)
   {
+    // TODO refactor MapCRUD
+    app.MapPost("/allocations",
+      async (
+        HttpContext context,
+        IMediator mediator,
+        [FromBody] CreateManyAllocationsCommand command,
+        CancellationToken cancellationToken
+      ) =>
+      {
+        var id = await mediator.Send(command with { UserId = context.GetUserId() }, cancellationToken);
+        return Results.Created();
+      })
+      .WithTags("Allocation")
+      .RequireAuthorization();
+
     return app.MapCRUD<AllocationDto, CreateAllocationCommand, AllocationRequest, UpdateAllocationCommand, DeleteMoneyOperationCommand<Allocation>>(
       "allocation",
       (ctx, create) => create with { UserId = ctx.GetUserId() },

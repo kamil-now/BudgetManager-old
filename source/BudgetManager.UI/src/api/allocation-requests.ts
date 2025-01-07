@@ -2,8 +2,12 @@ import { MoneyOperationUtils } from '@/helpers/money-operation-utils';
 import { Allocation } from '@/models/allocation';
 import axios, { AxiosResponse } from 'axios';
 
-export async function createAllocationRequest(allocation:Allocation): Promise<string> {
+export async function createAllocationRequest(allocation: Allocation): Promise<string> {
   return axios.post<string>('allocation', allocation).then((response: AxiosResponse<string>) => response.data);
+}
+
+export async function createManyAllocationsequest(allocations: Allocation[]): Promise<string> {
+  return axios.post<string>('allocations', { allocations }).then((response: AxiosResponse<string>) => response.data);
 }
 
 export async function updateAllocationRequest(allocation: Allocation): Promise<Allocation> {
