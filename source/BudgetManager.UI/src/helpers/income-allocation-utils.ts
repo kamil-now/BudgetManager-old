@@ -28,7 +28,7 @@ export class IncomeAllocationUtils {
       return { label: this.getFixedRuleLabel(baseValue, rule.value, leftoverAmount), leftoverAmount };
     } else if (rule.type === IncomeAllocationRuleType.Percent) {
       const leftoverAmount = baseValue * (1 - (rule.value / 100));
-      return { label: this.getPercentRuleLabel(baseValue, rule.value, leftoverAmount), leftoverAmount };
+      return { label: this.getPercentRuleLabel(baseValue, rule.value), leftoverAmount };
     }
     throw new Error(`Unhandled allocation rule type ${rule.type}.`);
   }
@@ -37,8 +37,8 @@ export class IncomeAllocationUtils {
     return `${DisplayFormat.rounded(baseValue)} - ${DisplayFormat.rounded(ruleValue)} = ${DisplayFormat.rounded(leftover)} left`;
   }
 
-  private static getPercentRuleLabel(baseValue: number, ruleValue: number, leftover: number): string {
+  private static getPercentRuleLabel(baseValue: number, ruleValue: number): string {
     const value =  baseValue * (ruleValue / 100);
-    return `${DisplayFormat.rounded(baseValue)} x ${DisplayFormat.rounded(ruleValue)}% = ${DisplayFormat.rounded(value)} → ${DisplayFormat.rounded(leftover)} left`;
+    return `${DisplayFormat.rounded(baseValue)} x ${DisplayFormat.rounded(ruleValue)}% = ${DisplayFormat.rounded(value)}`;
   }
 }

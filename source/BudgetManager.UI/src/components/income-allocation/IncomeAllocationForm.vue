@@ -25,7 +25,7 @@
             @click="removeRule(rule)"
           />
         </div>
-        <span>{{ ruleCalculations[rule.id] }}</span>
+        <span v-if="income.amount > 0" class="income-allocation-form_rule-calculations">{{ ruleCalculations[rule.id] }}</span>
       </div>
     </div>
     <div class="income-allocation-form_footer">
@@ -172,6 +172,10 @@ function updateCalculations() {
     300 -> fund D (leftover 740 leftoverAfterLastFixedAllocation 740)
     740 leftover to E
   */
+  if (props.income.amount <= 0) {
+    leftover.value.amount = 0;
+    return;
+  }
   let leftoverAfterLastFixedAllocation = props.income.amount;
   leftover.value.amount = props.income.amount;
   incomeAllocationRules.value.forEach(rule => {
@@ -205,12 +209,12 @@ function updateCalculations() {
     flex-direction: column;
     max-width: 100%;
     flex-wrap: wrap;
-    gap: 1rem;
+    gap: 0.5rem;
   }
   &_rule {
     display: flex;
     align-items: start;
-    gap: 1rem;
+    gap: 0.5rem;
     flex-wrap: wrap;
     flex-direction: column;
     span {
@@ -219,6 +223,10 @@ function updateCalculations() {
     &-input {
       display: flex;
       align-items: center;
+    }
+    &-calculations {
+      font-size: 0.75rem;
+      color: var(--text-color-secondary);
     }
   }
   &_footer {

@@ -120,6 +120,9 @@ function onValueInput(event: InputNumberInputEvent) {
   .p-inputgroup {
     width: 10rem;
   }
+  .p-inputgroup-addon {
+    padding: 0;
+  }
 
   i {
     font-size: 0.75rem;
