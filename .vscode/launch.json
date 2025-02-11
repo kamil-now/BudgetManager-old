@@ -10,14 +10,15 @@
       "request": "launch",
       "preLaunchTask": "build",
       // If you have changed target frameworks, make sure to update the program path.
-      "program": "${workspaceFolder}/source/BudgetManager.Api/bin/Debug/net6.0/BudgetManager.Api.dll",
+      "program": "${workspaceFolder}/source/BudgetManager.Api/bin/Debug/net8.0/BudgetManager.Api.dll",
       "args": [],
       "cwd": "${workspaceFolder}/source/BudgetManager.Api",
       "stopAtEntry": false,
       // Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
       "serverReadyAction": {
         "action": "openExternally",
-        "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+        "pattern": "\\bNow listening on:\\s+(https?://\\S+)",
+        "uriFormat": "%s/swagger/index.html"
       },
       "env": {
         "ASPNETCORE_ENVIRONMENT": "Development"
