@@ -1,13 +1,11 @@
 namespace BudgetManager.Infrastructure.Models;
 
 using MongoDB.Bson.Serialization.Attributes;
-using MongoDB.Extensions.Migration;
 
-public class BudgetEntity : IVersioned
+public class BudgetEntity
 {
   [BsonId]
   public string? UserId { get; set; }
-  public int Version { get; set; }
   public bool IsLocked { get; set; }
   public DateTime LockTimestamp { get; set; }
   public UserSettingsEntity? UserSettings { get; set; }

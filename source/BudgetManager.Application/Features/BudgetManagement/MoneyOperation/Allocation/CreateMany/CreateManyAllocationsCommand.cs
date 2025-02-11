@@ -6,7 +6,7 @@ public record CreateManyAllocationsCommand(
   [property: JsonIgnore()] string UserId,
   IEnumerable<CreateAllocationDto> Allocations
 
-) : IRequest<string>, IBudgetCommand;
+) : IRequest<Unit>, IBudgetCommand;
 public record CreateAllocationDto(
   string Title,
   Money Value,

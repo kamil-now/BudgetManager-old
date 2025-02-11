@@ -5,13 +5,13 @@ using BudgetManager.Domain.Models;
 using BudgetManager.Infrastructure;
 
 public class CreateManyAllocationsCommandHandler(IUserBudgetRepository repo, IMapper map)
-  : BudgetCommandHandler<CreateManyAllocationsCommand, string>(repo, map)
+  : BudgetCommandHandler<CreateManyAllocationsCommand, Unit>(repo, map)
 {
-  public override string ModifyBudget(CreateManyAllocationsCommand command, Budget budget)
+  public override Unit ModifyBudget(CreateManyAllocationsCommand command, Budget budget)
   {
-    var id = Guid.NewGuid().ToString();
     foreach (var allocation in command.Allocations)
     {
+      var id = Guid.NewGuid().ToString();
 
       budget.AddOperation(
         new Allocation(
@@ -26,6 +26,6 @@ public class CreateManyAllocationsCommandHandler(IUserBudgetRepository repo, IMa
         );
     }
 
-    return id;
+    return Unit.Value;
   }
 }

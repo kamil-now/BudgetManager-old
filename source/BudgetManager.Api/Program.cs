@@ -3,15 +3,12 @@ using System.Runtime.InteropServices;
 using BudgetManager.Api;
 using BudgetManager.Application;
 using BudgetManager.Application.Extensions;
-using BudgetManager.Infrastructure.Database.Migrations;
-using BudgetManager.Infrastructure.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.FileProviders;
 #if RELEASE
 using Microsoft.Identity.Web;
 #endif
 using Microsoft.OpenApi.Models;
-using MongoDB.Extensions.Migration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -94,11 +91,6 @@ app.UseSwaggerUI(c =>
   c.InjectStylesheet("/assets/swagger-dark.css");
   c.OAuthClientId(builder.Configuration["AzureAd:ClientId"]);
 });
-
-app.UseMongoMigration(m => m
-    .ForEntity<BudgetEntity>(e => e
-        .AtVersion(1)
-        .WithMigration(new RemoveBudgetEntityUnallocated())));
 
 app.MapGet("/", (HttpContext context) => context.Response.Redirect("/swagger", true)).ExcludeFromDescription();
 
