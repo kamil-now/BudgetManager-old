@@ -21,7 +21,6 @@
         v-model="ruleValue"
         :allowEmpty="false"
         :highlightOnFocus="true"
-        :min="0"
         :suffix="valueSuffix"
         :prefix="valuePrefix"
         :maxFractionDigits="2"
