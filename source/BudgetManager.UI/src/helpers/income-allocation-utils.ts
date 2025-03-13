@@ -34,7 +34,7 @@ export class IncomeAllocationUtils {
   }
 
   private static getFixedRuleLabel(baseValue: number, ruleValue: number, leftover: number): string {
-    return `${DisplayFormat.rounded(baseValue)} - ${DisplayFormat.rounded(ruleValue)} = ${DisplayFormat.rounded(leftover)} left`;
+    return `${DisplayFormat.rounded(baseValue)} ${ruleValue > 0 ? '-' : '+' } ${DisplayFormat.rounded(Math.abs(ruleValue))} = ${DisplayFormat.rounded(leftover)} left`;
   }
 
   private static getPercentRuleLabel(baseValue: number, ruleValue: number): string {

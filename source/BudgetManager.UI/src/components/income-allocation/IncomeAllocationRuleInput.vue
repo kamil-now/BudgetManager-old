@@ -21,7 +21,6 @@
         v-model="ruleValue"
         :allowEmpty="false"
         :highlightOnFocus="true"
-        :min="0"
         :suffix="valueSuffix"
         :prefix="valuePrefix"
         :maxFractionDigits="2"
@@ -77,6 +76,7 @@ const ruleType = computed({
     emit('changed', {
       ...rule.value,
       type: newValue,
+      value: 0
     });
   },
 });
@@ -97,9 +97,12 @@ const valuePrefix = computed(() => ruleType.value === IncomeAllocationRuleType.F
 
 function onValueInput(event: InputNumberInputEvent) {
   let newValue = Number(event.value);
+  if (isNaN(newValue)) {
+    return;
+  }
   if (ruleType.value === IncomeAllocationRuleType.Percent && newValue > 100) {
     newValue = 100;
-  } else if (newValue < 0) {
+  } else if (ruleType.value === IncomeAllocationRuleType.Percent && newValue < 0) {
     newValue = 0;
   }
 
