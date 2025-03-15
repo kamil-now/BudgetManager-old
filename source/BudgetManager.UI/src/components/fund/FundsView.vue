@@ -10,12 +10,14 @@
       <template #content="{ data }">
         <div class="funds-view_body">
           <div class="funds-view_body_balance">
-            <MoneySpan
-              v-for="(value, currency) in data.balance"
-              :key="currency"
-              :amount="value"
-              :currency="currency.toString()"
-            />
+            <template v-for="(value, currency) in data.balance">
+              <MoneySpan
+                v-if="value > 0.01"
+                :key="currency"
+                :amount="value"
+                :currency="currency.toString()"
+              />
+            </template>
           </div>
           <div class="funds-view_body_name fund-name">{{ data.name }}</div>
         </div>
