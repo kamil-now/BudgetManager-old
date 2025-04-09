@@ -12,7 +12,7 @@
           <div class="funds-view_body_balance">
             <template v-for="(value, currency) in data.balance">
               <MoneySpan
-                v-if="value > 0.01"
+                v-if="value > 0.01 || value < -0.01"
                 :key="currency"
                 :amount="value"
                 :currency="currency.toString()"
